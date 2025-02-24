@@ -1,7 +1,7 @@
 <style>
 	@font-face {
-    	font-family: "THSarabun";
-    	src: url("{{ frappe.urllib.get_full_url('/assets/erpnext_thailand/fonts/THSarabun.ttf') }}") format("truetype");
+		font-family: "THSarabun";
+		src: url("{{ frappe.urllib.get_full_url('/assets/erpnext_thailand/fonts/THSarabun.ttf') }}") format("truetype");
 	}
 	.print-format {
 		margin-top: 0mm;
@@ -49,18 +49,18 @@
 		margin-top: 10px;
 		height: 16px;
 	}
-    .company-tax {
+	.company-tax {
 		margin-top: 18px;
 		margin-left: 501px;
 		width: 234px;
 		display: inline-block;
-    }
-    .company-branch {
+	}
+	.company-branch {
 		margin-top: 18px;
 		margin-left: 45px;
 		width: 76px;
 		display: inline-block;
-    }
+	}
 	.number-page-from {
 		margin-left: 930px;
 		width: 38px;
@@ -268,7 +268,7 @@
 			</div>
 		</div>
 		<!-- WHT Cert -->
-		 <div class="wht-group">
+		<div class="wht-group">
 			{% for (var index = (page - 1) * 6; index < Math.min(page * 6, data.length - 1); index++) { %}
 				{% var wht_line = data[index] %}
 				<div class="supplier-tax-group">
