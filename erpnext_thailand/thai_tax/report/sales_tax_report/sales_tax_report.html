@@ -1,47 +1,30 @@
-{% var report_columns = report.get_columns_for_print(); %}
-<head>
-	<meta charset="UTF-8">
-	<!-- Chrome, Firefox OS and Opera -->
-	<meta name="theme-color" content="#0089FF">
-	<!-- Windows Phone -->
-	<meta name="msapplication-navbutton-color" content="#0089FF">
-	<!-- iOS Safari -->
-	<meta content="text/html;charset=utf-8" http-equiv="Content-Type">
-	<meta content="utf-8" http-equiv="encoding">
-</head>
 <style>
 	.title {
 		color: black;
 		text-align: center;
 		font-weight: bold;
 	}
-
 	.pdf-variables,
 	.pdf-variable,
 	.visible-pdf {
 		display: none !important;
 	}
-
 	.print-format.landscape {
         max-width: 11.69in;  
         max-height: 8.27in; 
         padding: 0.2in;      
     }
-
 	.print-format td {
 		vertical-align: top !important;
 		padding: 3px !important;
 	}
-
 	.print-format th {
 		vertical-align: center !important;
 		padding: 6px !important;
 	}
-
 	.print-format-preview [data-fieldtype="Table"] {
 		overflow: auto;
 	}
-
 	.print-format th {
 		color: black;
 		font-weight: normal;
@@ -49,48 +32,24 @@
 		border-top-width: 1px !important;
 		background-color: white;
 	}
-
 	.data-field {
 		margin-top: 5px;
 		margin-bottom: 5px;
 	}
-
 	.data-field .value {
 		word-wrap: break-word;
 		font-size: 10px;
 	}
-
 	.page-break {
 		page-break-after: always;
 	}
-
-	.print-format label {
-		/* wkhtmltopdf breaks label into multiple lines when it is inline-block */
-		display: block;
-		font-weight: 700;
-	}
-
-	.print-format label {
-		font-weight: normal;
-		font-size: 12px;
-		color: black;
-		margin-bottom: 0;
-	}
-
-	.important label {
-		line-height: 1.8;
-		margin: 0px;
-	}
-
 	.print-format .section-break:not(:last-child) {
 		margin-bottom: 0;
 	}
-
 	.print-format .row:not(.section-break) {
 		line-height: 1.2;
 		margin-top: 10px !important;
 	}
-
 	.print-format {
 		background-color: white;
 		border-radius: 10px;
@@ -100,61 +59,50 @@
 		margin: auto;
 		color: var(--gray-900);
 	}
-
     .print-format {
 		margin-left: 0mm;
 		margin-right: 0mm;
 		margin-bottom: 8mm;
 	}
-
     th, td {
         padding: 4px; 
         font-size: 10px; 
         text-align: center;
     }
-
     table, th, td {
         border: 1px solid black;
         border-collapse: collapse;
     }
-
     th {
         background-color: #f2f2f236;
         color: black; 
     }
-
     .page-header {
-            text-align: center;
-            font-weight: bold;
-            page-break-before: always;
+        text-align: center;
+        font-weight: bold;
+        page-break-before: always;
     }
-
     table {
         width: 100%;
         border-collapse: collapse;
         margin-bottom: 2px;
     }
-
     th, td {
         border: 1px solid black;
         padding: 4px;
         text-align: center;
     }
-
     @media print {
         thead {
             display: table-header-group;
         }
-
         tfoot {
             display: table-row-group;
         }
-        
         tbody tr:nth-child(11n) {
             page-break-after: always;
         }
     }
-
 </style>
 {% let month = filters.month %}
 {% let month_th = {
@@ -185,7 +133,9 @@
                         <span style="display: inline-block; width: 10px; height: 10px; border: 1px solid #000; background-color: #fff; vertical-align: middle;"></span>
                         สาขาที่ {{ data[0].company_branch_code }}
                     </th>
-                    <th class="text-left" style="width: 80px; border: none;">หน้าที่ <span class="page"></span> / <span class="topage"></span></th>
+                    <th class="text-left" style="width: 80px; border: none;">
+                        หน้าที่ {{ __("Page {0}/{1}").format('<span class="page"></span>', '<span class="topage"></span>') | safe }}
+                    </th>
                 </tr>
                 <tr>
                     <th class="text-left" style="width: 100px; border: none;">ที่อยู่</th>
@@ -301,19 +251,3 @@
     </div> 
 </div> 
 </body>
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        let pageNumber = 1; 
-        let rowsPerPage = 10; 
-        let rows = document.querySelectorAll("#detail-html tbody tr");
-        
-        rows.forEach((row, index) => {
-            if (index % rowsPerPage === 0 && index !== 0) {
-                pageNumber++;
-            }
-            row.setAttribute("data-page", pageNumber);
-        });
-
-        document.getElementById("page-number").textContent = pageNumber;
-    });
-</script>
