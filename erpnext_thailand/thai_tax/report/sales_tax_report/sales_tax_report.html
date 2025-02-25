@@ -1,0 +1,319 @@
+{% var report_columns = report.get_columns_for_print(); %}
+<head>
+	<meta charset="UTF-8">
+	<!-- Chrome, Firefox OS and Opera -->
+	<meta name="theme-color" content="#0089FF">
+	<!-- Windows Phone -->
+	<meta name="msapplication-navbutton-color" content="#0089FF">
+	<!-- iOS Safari -->
+	<meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+	<meta content="utf-8" http-equiv="encoding">
+</head>
+<style>
+	.title {
+		color: black;
+		text-align: center;
+		font-weight: bold;
+	}
+
+	.pdf-variables,
+	.pdf-variable,
+	.visible-pdf {
+		display: none !important;
+	}
+
+	.print-format.landscape {
+        max-width: 11.69in;  
+        max-height: 8.27in; 
+        padding: 0.2in;      
+    }
+
+	.print-format td {
+		vertical-align: top !important;
+		padding: 3px !important;
+	}
+
+	.print-format th {
+		vertical-align: center !important;
+		padding: 6px !important;
+	}
+
+	.print-format-preview [data-fieldtype="Table"] {
+		overflow: auto;
+	}
+
+	.print-format th {
+		color: black;
+		font-weight: normal;
+		border-bottom-width: 1px !important;
+		border-top-width: 1px !important;
+		background-color: white;
+	}
+
+	.data-field {
+		margin-top: 5px;
+		margin-bottom: 5px;
+	}
+
+	.data-field .value {
+		word-wrap: break-word;
+		font-size: 10px;
+	}
+
+	.page-break {
+		page-break-after: always;
+	}
+
+	.print-format label {
+		/* wkhtmltopdf breaks label into multiple lines when it is inline-block */
+		display: block;
+		font-weight: 700;
+	}
+
+	.print-format label {
+		font-weight: normal;
+		font-size: 12px;
+		color: black;
+		margin-bottom: 0;
+	}
+
+	.important label {
+		line-height: 1.8;
+		margin: 0px;
+	}
+
+	.print-format .section-break:not(:last-child) {
+		margin-bottom: 0;
+	}
+
+	.print-format .row:not(.section-break) {
+		line-height: 1.2;
+		margin-top: 10px !important;
+	}
+
+	.print-format {
+		background-color: white;
+		border-radius: 10px;
+		max-width: 100%;
+		min-height: 100%;
+		padding: 10px;
+		margin: auto;
+		color: var(--gray-900);
+	}
+
+    .print-format {
+		margin-left: 0mm;
+		margin-right: 0mm;
+		margin-bottom: 8mm;
+	}
+
+    th, td {
+        padding: 4px; 
+        font-size: 10px; 
+        text-align: center;
+    }
+
+    table, th, td {
+        border: 1px solid black;
+        border-collapse: collapse;
+    }
+
+    th {
+        background-color: #f2f2f236;
+        color: black; 
+    }
+
+    .page-header {
+            text-align: center;
+            font-weight: bold;
+            page-break-before: always;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 2px;
+    }
+
+    th, td {
+        border: 1px solid black;
+        padding: 4px;
+        text-align: center;
+    }
+
+    @media print {
+        thead {
+            display: table-header-group;
+        }
+
+        tfoot {
+            display: table-row-group;
+        }
+        
+        tbody tr:nth-child(11n) {
+            page-break-after: always;
+        }
+    }
+
+</style>
+{% let month = filters.month %}
+{% let month_th = {
+    '1': 'มกราคม', '2': 'กุมภาพันธ์', '3': 'มีนาคม', '4': 'เมษายน',
+    '5': 'พฤษภาคม', '6': 'มิถุนายน', '7': 'กรกฎาคม', '8': 'สิงหาคม',
+    '9': 'กันยายน', '10': 'ตุลาคม', '11': 'พฤศจิกายน', '12': 'ธันวาคม'
+}[month] %}
+{% let year_th = parseInt(filters.year) + 543 %}
+<body>
+<div style="font-family:THSarabun">	
+    <div id="header-html">
+        <h4 class="text-center">รายงานภาษีขาย</h4>
+        <h4 class="text-center">เดือนภาษี {{month_th}} ปี {{year_th}}</h4>
+        <table style="border: none;">
+            <thead>
+                <tr>
+                    <th class="text-left" style="width: 120px; border: none;">ชื่อผู้ประกอบการ</th>
+                    <th class="text-left" style="width: 100px; border: none;">{{ data[0].company_name }}</th>
+                    <th class="text-left" style="width: 150px; border: none;">เลขประจำตัวผู้เสียภาษีอากร</th>
+                    <th class="text-left" style="width: 100px; border: none;">{{ data[0].company_tax_id }}</th>
+                </tr>
+                <tr>
+                    <th class="text-left" style="width: 140px; border: none;">ชื่อสถานประกอบการ</th>
+                    <th class="text-left" style="width: 100px; border: none;">{{ data[0].company_name }}</th>
+                    <th class="text-left" style="width: 50px; border: none;">
+                        <span style="display: inline-block; width: 10px; height: 10px; border: 1px solid #000; background-color: #fff; vertical-align: middle;"></span>
+                        สำนักงานใหญ่
+                        <span style="display: inline-block; width: 10px; height: 10px; border: 1px solid #000; background-color: #fff; vertical-align: middle;"></span>
+                        สาขาที่ {{ data[0].company_branch_code }}
+                    </th>
+                    <th class="text-left" style="width: 80px; border: none;">หน้าที่ <span class="page"></span> / <span class="topage"></span></th>
+                </tr>
+                <tr>
+                    <th class="text-left" style="width: 100px; border: none;">ที่อยู่</th>
+                    <th class="text-left" style="width: 400px; border: none;">
+                        {{ data[0].company_address_line1 }}
+                        {{ data[0].company_address_line2 }}
+                        {{ data[0].company_city }}
+                        {{ data[0].company_county }}
+                        {{ data[0].company_state }}
+                        {{ data[0].company_pincode }}
+                    </th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+    <div id="detail-html">
+        <table>
+            <thead>
+                <tr>
+                    <th class="text-center" rowspan="2" style="width: 40px; background-color: #d3d3d3;">ลำดับ</th>
+                    <th class="text-center" colspan="2" style="width: 150px; background-color: #d3d3d3;">ใบกำกับภาษี</th>
+                    <th class="text-center" rowspan="2" style="width: 120px; background-color: #d3d3d3;">เลขที่เอกสาร</th>
+                    <th class="text-center" rowspan="2" style="width: 200px; background-color: #d3d3d3;">ชื่อผู้ซื้อสินค้า/ผู้รับบริการ</th>
+                    <th class="text-center" rowspan="2" style="width: 200px; background-color: #d3d3d3;">เลขประจำตัวผู้เสียภาษีอากร<br>ของชื่อผู้ซื้อสินค้า/ผู้รับบริการ</th>
+                    <th class="text-center" colspan="2" style="width: 150px; background-color: #d3d3d3;">สถานประกอบการ</th>
+                    <th class="text-center" rowspan="2" style="width: 100px; background-color: #d3d3d3;">มูลค่าสินค้าหรือ<br>บริการ</th>
+                    <th class="text-center" rowspan="2" style="width: 100px; background-color: #d3d3d3;">จำนวนเงินภาษีมูลค่าเพิ่ม</th>
+                    <th class="text-center" rowspan="2" style="width: 100px; background-color: #d3d3d3;">จำนวนเงินรวม</th>
+                </tr>
+                <tr>
+                    <th class="text-center" style="width: 120px; background-color: #d3d3d3;">วันที่</th>
+                    <th class="text-center" style="width: 180px; background-color: #d3d3d3;">เลขที่</th>
+                    <th class="text-center" style="background-color: #d3d3d3;">สำนักงานใหญ่</th>
+                    <th class="text-center" style="background-color: #d3d3d3;">สาขาที่</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% var idx = 1; %}
+                {% var page_idx = 1; %}
+                {% var sum_tax_base = 0; %}
+                {% var sum_tax_amount = 0; %}
+                {% var sum_total = 0; %}
+            
+                {% var grand_tax_base = 0; %}
+                {% var grand_tax_amount = 0; %}
+                {% var grand_total = 0; %}
+            
+                {% for row in data %}
+                    {% if idx < data.length %}
+                    <tr>
+                        <td class="text-center">{%= idx %}</td>
+                        <td class="text-left">{%= frappe.datetime.str_to_user(row['report_date']) %}</td>
+                        <td class="text-left">{{ row.name }}</td>
+                        <td class="text-left">{{ row.voucher_no }}</td>
+                        <td class="text-left">{{ row.party_name }}</td>
+                        <td class="text-left">{{ row.tax_id }}</td>
+                        <td>
+                            {% if row.branch_code == '00000' %}
+                                {{ row.branch_code }}
+                            {% else %}
+                                &nbsp;
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if row.branch_code == '00000' %}
+                                &nbsp;
+                            {% else %}
+                                {{ row.branch_code }}
+                            {% endif %}
+                        </td>
+                        <td class="text-right">{{ row.tax_base.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) }}</td>
+                        <td class="text-right">{{ row.tax_amount.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) }}</td>
+                        <td class="text-right">{{ (row.tax_base + row.tax_amount).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) }}</td>                        
+                    </tr>
+            
+                    {% var sum_tax_base = sum_tax_base + row.tax_base; %}
+                    {% var sum_tax_amount = sum_tax_amount + row.tax_amount; %}
+                    {% var sum_total = sum_total + row.tax_base + row.tax_amount; %}
+            
+                    {% var grand_tax_base = grand_tax_base + row.tax_base; %}
+                    {% var grand_tax_amount = grand_tax_amount + row.tax_amount; %}
+                    {% var grand_total = grand_total + row.tax_base + row.tax_amount; %}
+            
+                    {% if page_idx == 10 || idx == data.length - 1 %}
+                        <tr>
+                            <td class="text-center" colspan="8" style="background-color: #d3d3d3;"><strong>รวมหน้า</strong></td>
+                            <td class="text-right"><strong>{%= sum_tax_base.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) %}</strong></td>
+                            <td class="text-right"><strong>{%= sum_tax_amount.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) %}</strong></td>
+                            <td class="text-right"><strong>{%= sum_total.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) %}</strong></td>
+                        </tr>
+            
+                        {% if idx == data.length - 1 %}
+                            <tr>
+                                <td class="text-center" colspan="8" style="background-color: #d3d3d3;"><strong>รวมทั้งหมด</strong></td>
+                                <td class="text-right"><strong>{%= grand_tax_base.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) %}</strong></td>
+                                    <td class="text-right"><strong>{%= grand_tax_amount.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) %}</strong></td>
+                                    <td class="text-right"><strong>{%= grand_total.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) %}</strong></td>
+                            </tr>
+                        {% endif %}
+            
+                        {% var page_idx = 0; %}
+                        {% var sum_tax_base = 0; %}
+                        {% var sum_tax_amount = 0; %}
+                        {% var sum_total = 0; %}
+                    {% endif %}
+            
+                    {% var page_idx = page_idx + 1; %}
+                    {% endif %}
+                    {% var idx = idx + 1; %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div> 
+</div> 
+</body>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        let pageNumber = 1; 
+        let rowsPerPage = 10; 
+        let rows = document.querySelectorAll("#detail-html tbody tr");
+        
+        rows.forEach((row, index) => {
+            if (index % rowsPerPage === 0 && index !== 0) {
+                pageNumber++;
+            }
+            row.setAttribute("data-page", pageNumber);
+        });
+
+        document.getElementById("page-number").textContent = pageNumber;
+    });
+</script>
