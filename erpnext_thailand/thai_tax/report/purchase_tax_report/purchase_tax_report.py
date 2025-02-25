@@ -99,6 +99,7 @@ def get_data(filters):
 	tinv = frappe.qb.DocType("Purchase Tax Invoice")
 	sup = frappe.qb.DocType("Supplier")
 	addr = frappe.qb.DocType("Address")
+	addr_company = addr.as_("company_address") 
 	round = CustomFunction("round", ["value", "digit"])
 	coalesce = CustomFunction("coalesce", ["value1", "value2"])
 	month = CustomFunction("month", ["date"])
@@ -111,9 +112,18 @@ def get_data(filters):
 		.on(sup.name == tinv.party)
 		.left_join(addr)
 		.on(addr.name == sup.supplier_primary_address)
+		.left_join(addr_company)  
+		.on(addr_company.name == tinv.company_tax_address) 
 		.select(
 			tinv.company_tax_address.as_("company_tax_address"),
 			tinv.report_date.as_("report_date"),
+			addr_company.address_line1.as_("company_address_line1"), 
+			addr_company.address_line2.as_("company_address_line2"),
+            addr_company.city.as_("company_city"),
+            addr_company.county.as_("company_county"),
+            addr_company.state.as_("company_state"),
+            addr_company.pincode.as_("company_pincode"),
+            addr_company.branch_code.as_("company_branch_code"),
 			coalesce(tinv.number, tinv.name).as_("name"),
 			sup.supplier_name.as_("party_name"),
 			sup.tax_id.as_("tax_id"),
@@ -132,6 +142,7 @@ def get_data(filters):
 			tinv.voucher_type.as_("voucher_type"),
 			tinv.voucher_no.as_("voucher_no"),
 			tinv.name.as_("tax_invoice"),
+			tinv.company.as_("company"),
 		)
 		.where(tinv.docstatus == 1)
 		.orderby(tinv.report_date)

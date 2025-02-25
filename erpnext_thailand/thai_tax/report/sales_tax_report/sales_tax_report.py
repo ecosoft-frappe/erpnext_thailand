@@ -83,19 +83,35 @@ def get_columns():
 
 def get_data(filters):
 
-	tinv = frappe.qb.DocType("Sales Tax Invoice")
-	cust = frappe.qb.DocType("Customer")
-	round = CustomFunction("round", ["value", "digit"])
-	month = CustomFunction("month", ["date"])
-	year = CustomFunction("year", ["date"])
-	concat = CustomFunction("concat", ["1", "2"])
+    tinv = frappe.qb.DocType("Sales Tax Invoice")
+    cust = frappe.qb.DocType("Customer")
+    addr = frappe.qb.DocType("Address")
+    comp = frappe.qb.DocType("Company") 
+    addr_company = addr.as_("company_address") 
+    round = CustomFunction("round", ["value", "digit"])
+    month = CustomFunction("month", ["date"])
+    year = CustomFunction("year", ["date"])
+    concat = CustomFunction("concat", ["1", "2"])
 
-	query = (
+    query = (
 		frappe.qb.from_(tinv)
 		.left_join(cust)
 		.on(cust.name == tinv.party)
+		.left_join(addr)
+		.on(addr.name == cust.customer_primary_address)
+		.left_join(comp)
+		.on(comp.name == tinv.company)
+		.left_join(addr_company)  
+		.on(addr_company.name == tinv.company_tax_address)  
 		.select(
-			tinv.company_tax_address.as_("company_tax_address"),
+            tinv.company_tax_address.as_("company_tax_address"),   
+			addr_company.address_line1.as_("company_address_line1"), 
+			addr_company.address_line2.as_("company_address_line2"),
+            addr_company.city.as_("company_city"),
+            addr_company.county.as_("company_county"),
+            addr_company.state.as_("company_state"),
+            addr_company.pincode.as_("company_pincode"),
+            addr_company.branch_code.as_("company_branch_code"),
 			tinv.report_date.as_("report_date"),
 			Case()
 			.when(tinv.docstatus == 1, tinv.name)
@@ -108,28 +124,31 @@ def get_data(filters):
 			.when(tinv.docstatus == 1, round(tinv.tax_amount, 2))
 			.else_(0)
 			.as_("tax_amount"),
-            tinv.tax_percent.as_("tax_percent"),
+			tinv.tax_percent.as_("tax_percent"),
 			tinv.voucher_type.as_("voucher_type"),
 			tinv.voucher_no.as_("voucher_no"),
+			comp.company_name.as_("company_name"),
+			comp.tax_id.as_("company_tax_id"),
+			addr.branch_code.as_("branch_code")
 		)
 		.where(tinv.docstatus.isin([1, 2]))
 		.orderby(tinv.name)
 	)
 
-	if filters.get("filter_based_on") == "Fiscal Year":
-		query = query.where(month(tinv.report_date) == filters.get("month"))
-		query = query.where(year(tinv.report_date) == filters.get("year"))
+    if filters.get("filter_based_on") == "Fiscal Year":
+        query = query.where(month(tinv.report_date) == filters.get("month"))
+        query = query.where(year(tinv.report_date) == filters.get("year"))
 
-	if filters.get("filter_based_on") == "Date Range":
-		query = query.where(tinv.report_date >= filters.get("start_date"))
-		query = query.where(tinv.report_date <= filters.get("end_date"))
+    if filters.get("filter_based_on") == "Date Range":
+        query = query.where(tinv.report_date >= filters.get("start_date"))
+        query = query.where(tinv.report_date <= filters.get("end_date"))
 
-	if filters.get("tax_percent"):
-		query = query.where(tinv.tax_percent == filters.get("tax_percent"))
+    if filters.get("tax_percent"):
+        query = query.where(tinv.tax_percent == filters.get("tax_percent"))
 
-	if filters.get("company_tax_address"):
-		query = query.where(tinv.company_tax_address == filters.get("company_tax_address"))
+    if filters.get("company_tax_address"):
+        query = query.where(tinv.company_tax_address == filters.get("company_tax_address"))
 
-	result = query.run(as_dict=True)
+    result = query.run(as_dict=True)
 
-	return result
+    return result
