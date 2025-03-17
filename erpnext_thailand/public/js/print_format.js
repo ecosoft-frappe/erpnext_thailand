@@ -10,7 +10,7 @@ erpnext_thailand.print.print_pdf = function(doc) {
 		},
 		callback: function(r) {
 			if (r.message) {
-				let { print_formats, default_format } = r.message;
+				let { print_formats, default_format, default_copies } = r.message;
 				// Create a dialog to select print format
 				let d = new frappe.ui.Dialog({
 					title: __("Select Print Format"),
@@ -26,12 +26,27 @@ erpnext_thailand.print.print_pdf = function(doc) {
 					],
 					primary_action_label: __("Print PDF"),
 					primary_action(values) {
-						// Redirect to print preview with selected print format
 						let print_format = values.print_format;
-						let api = "/api/method/frappe.utils.print_format.download_pdf"
-						// let print_url = `/printview?doctype=${doctype}&name=${docname}&format=${print_format}&no_letterhead=0`;
-						let print_url = `${api}?doctype=${doc.doctype}&name=${doc.name}&format=${print_format}&letterhead=None&no_letterhead=0&_lang=en&key=None`;
-						window.open(print_url, "_blank");
+						const w = window.open(
+							"/api/method/erpnext_thailand.custom.print_format.download_print_pdf?" +
+								"doctype=" +
+								encodeURIComponent(doc.doctype) +
+								"&name=" +
+								encodeURIComponent(doc.name) +
+								"&format=" +
+								encodeURIComponent(print_format)
+								// Following are params for future imple.
+								// "&no_letterhead=" +
+								// (with_letterhead ? "0" : "1") +
+								// "&letterhead=" +
+								// encodeURIComponent(letterhead) +
+								// "&options=" +
+								// encodeURIComponent(pdf_options)
+								// --
+							);
+						if (!w) {
+							frappe.msgprint(__("Please enable pop-ups"));
+						}
 						d.hide();
 					}
 				});
