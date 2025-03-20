@@ -30,6 +30,18 @@ fixtures = [
 				)
 			]
 		],
+	},
+    {
+		"doctype": "Property Setter",
+		"filters": [
+			[
+				"name",
+				"in",
+				(
+					"Currency Exchange Settings-service_provider-options",
+				),
+			]
+		],
 	}
 ]
 
@@ -68,6 +80,7 @@ doctype_js = {
 	"Purchase Tax Invoice": "public/js/purchase_tax_invoice.js",
 	"Sales Tax Invoice": "public/js/sales_tax_invoice.js",
 	"Address": "public/js/address.js",
+    "Currency Exchange Settings": "public/js/currency_exchange_settings.js",
 }
 
 

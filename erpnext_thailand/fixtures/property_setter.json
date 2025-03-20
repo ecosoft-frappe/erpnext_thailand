@@ -1,0 +1,18 @@
+[
+    {
+     "default_value": null,
+     "doc_type": "Currency Exchange Settings",
+     "docstatus": 0,
+     "doctype": "Property Setter",
+     "doctype_or_field": "DocField",
+     "field_name": "service_provider",
+     "is_system_generated": 0,
+     "modified": "2024-10-29 12:42:11.496071",
+     "module": "Thai Tax",
+     "name": "Currency Exchange Settings-service_provider-options",
+     "property": "options",
+     "property_type": "Select",
+     "row_name": null,
+     "value": "frankfurter.app\nexchangerate.host\nCustom\nBank of Thailand"
+    }
+]
