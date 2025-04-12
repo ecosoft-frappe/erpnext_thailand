@@ -50,7 +50,13 @@ fixtures = [
 				"name",
 				"in",
 				(
-					"Currency Exchange Settings-custom_client_id",
+					"Currency Exchange Settings-client_id",
+					"Sales Invoice-get_deposit_received",
+					"Sales Invoice-deposits",
+					"Sales Invoice-deposit_deductions",
+					"Sales Invoice-is_deposit_invoice",
+					"Item-item_deposit_accounts",
+					"Item-is_deposit_item",
 				),
 			]
 		],
@@ -217,7 +223,10 @@ doc_events = {
 	},
     "Address": {
         "on_update": "erpnext_thailand.custom.address.update_tax_info_in_linked_doc"
-    }
+    },
+    "Item": {
+        "validate": "erpnext_thailand.custom.item.validate_deposit_item",
+	}
 }
 
 # Scheduled Tasks

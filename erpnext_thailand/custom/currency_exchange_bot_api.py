@@ -22,7 +22,7 @@ def get_api_currency_exchange(
 
 	if not client_id:
 		currency_exchange_settings = frappe.get_single("Currency Exchange Settings")
-		client_id = currency_exchange_settings.get_password("custom_client_id")
+		client_id = currency_exchange_settings.get_password("client_id")
 
 	conn = http.client.HTTPSConnection("apigw1.bot.or.th")
 	headers = {
