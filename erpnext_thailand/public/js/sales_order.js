@@ -26,25 +26,15 @@ frappe.ui.form.on("Sales Order", {
                     ],
                     primary_action_label: __("Create"),
                     primary_action: function(values) {
-                        dialog.hide();
-
-                        // Call server-side function to create the Sales Invoice
-                        frappe.call({
+                        // Use frappe.model.open_mapped_doc to create the Sales Invoice
+                        frappe.model.open_mapped_doc({
                             method: "erpnext_thailand.custom.sales_order.create_deposit_invoice",
+                            frm: frm,
                             args: {
-                                sales_order: frm.doc.name,
-                                deposit_percentage: values.deposit_percentage
-                            },
-                            callback: function(response) {
-                                if (response.message) {
-                                    // Open the new Sales Invoice in draft mode
-                                    frappe.model.with_doctype("Sales Invoice", function() {
-                                        const si = frappe.model.sync(response.message)[0];
-                                        frappe.set_route("Form", "Sales Invoice", si.name);
-                                    });
-                                }
+                                deposit_amount: values.deposit_amount
                             }
                         });
+                        dialog.hide();
                     }
                 });
 

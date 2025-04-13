@@ -4,43 +4,48 @@ from frappe.model.document import Document
 
 
 @frappe.whitelist()
-def create_deposit_invoice(sales_order, deposit_percentage=None, deposit_amount=None):
-    # Fetch the Sales Order
-    so = frappe.get_doc("Sales Order", sales_order)
+def create_deposit_invoice(source_name, target_doc=None):
+    """
+    Create a deposit Sales Invoice from a Sales Order.
+    This method is used with frappe.model.open_mapped_doc.
+    """
+    from frappe.model.mapper import get_mapped_doc
 
-    # Fetch the deposit item
-    deposit_item = frappe.call("erpnext_thailand.custom.item.get_deposit_item", company=so.company)
-    if not deposit_item:
-        frappe.throw(_("No deposit item or account is configured for the selected company."))
+    def set_missing_values(source, target):
+        # Set additional fields on the target document
+        target.is_deposit_invoice = 1
+        target.due_date = frappe.utils.nowdate()
 
-    # Calculate the deposit amount
-    total_amount = so.grand_total or 0
-    if deposit_amount:
-        deposit_amount = float(deposit_amount)
-    elif deposit_percentage:
-        deposit_percentage = float(deposit_percentage)
-        deposit_amount = (total_amount * deposit_percentage) / 100
-    else:
-        frappe.throw(_("Either deposit percentage or deposit amount must be provided."))
+        # Add the deposit item
+        deposit_item = frappe.call(
+            "erpnext_thailand.custom.item.get_deposit_item", company=source.company
+        )
+        if not deposit_item:
+            frappe.throw(_("No deposit item is configured for the company {0}.").format(source.company))
 
-    # Create a new Sales Invoice (not saved)
-    si = frappe.new_doc("Sales Invoice")
-    si.customer = so.customer
-    si.company = so.company
-    si.due_date = frappe.utils.nowdate()
-    si.is_deposit_invoice = 1
-    si.currency = so.currency
-    si.selling_price_list = so.selling_price_list
-    si.append("items", {
-        "item_code": deposit_item["item_code"],
-        "item_name": deposit_item["item_name"],
-        "qty": 1,
-        "rate": deposit_amount,
-        "income_account": deposit_item["sales_deposit_account"],
-        "uom": deposit_item["uom"],
-        "sales_order": so.name,
-        "cost_center": frappe.db.get_value("Company", so.company, "cost_center")
-    })
+        target.append("items", {
+            "item_code": deposit_item["item_code"],
+            "item_name": deposit_item["item_name"],
+            "qty": 1,
+            "rate": frappe.flags.args.deposit_amount,
+            "income_account": deposit_item["sales_deposit_account"],
+            "uom": deposit_item["uom"],
+            "sales_order": source.name,
+            "cost_center": frappe.db.get_value("Company", source.company, "cost_center")
+        })
 
-    # Return the document as a dictionary (not saved)
-    return si.as_dict()
+    # Map the Sales Order to a Sales Invoice
+    doc = get_mapped_doc(
+        "Sales Order",
+        source_name,
+        {
+            "Sales Order": {
+                "doctype": "Sales Invoice",
+                "validation": {"docstatus": ["=", 1]}
+            }
+        },
+        target_doc,
+        set_missing_values
+    )
+
+    return doc

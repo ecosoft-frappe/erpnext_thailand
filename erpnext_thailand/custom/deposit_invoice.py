@@ -1,3 +1,4 @@
+import json
 import frappe
 from frappe import _
 from frappe.utils import get_link_to_form
@@ -66,7 +67,11 @@ def validate_deposit_invoice(doc, order_doctype, order_field):
 
 
 def validate_normal_invoice(doc, order_doctype, order_field):
-    """ For normal invoice, if it's order require 1st deposit, ensure they are not the first invoice """
+    """ 
+    1. For normal invoice, if it's order require 1st deposit, ensure they are not the first invoice 
+    2. Allocation amount must not exceed the deposit amount.
+    """
+    # Ensure this is not the first invoice in case of require deposit
     linked_docs = {item.get(order_field) for item in doc.items if item.get(order_field)}
     for linked_doc in linked_docs:
         order = frappe.get_value(order_doctype, linked_doc, ["has_deposit", "deposit_invoice"], as_dict=True)
@@ -74,6 +79,11 @@ def validate_normal_invoice(doc, order_doctype, order_field):
         if order["has_deposit"] and not order["deposit_invoice"]:
             link = get_link_to_form(order_doctype, linked_doc)
             frappe.throw(_("The 1st invoice of {} should be a deposit invoice.").format(link))
+
+    # Ensure allocation amount must not exceed the deposit amount
+    for d in doc.deposits:
+        if d.allocated_amount > d.deposit_amount:
+            frappe.throw(_("Allocated amount cannot exceed the deposit amount."))
 
 
 def cancel_deposit_invoice(doc, method):
@@ -85,3 +95,90 @@ def cancel_deposit_invoice(doc, method):
     order.db_set("deposit_invoice", "", update_modified=False)
     order.reload()
     # TODO: please make sure it is not cancelled if it already used as deposit deduction
+
+
+def apply_deposit_deduction(doc, method):
+    """
+    If the row of deductions child table in this invoice has allocation_amount
+    Get the Sales Invoice Item from row.reference_row
+    Copy data in the Sales Invoice Item as another row in this invoice with rate = negative allocation_amount
+    """
+    if doc.is_deposit_invoice or doc.docstatus != 0:  # Only draft
+        return
+
+    # Remove any line item with is_deposit_item = 1
+    doc.items = [item for item in doc.items if not frappe.db.get_value("Item", item.item_code, "is_deposit_item")]
+
+    for d in doc.deposits:
+        if d.allocated_amount and d.reference_row:
+            # Fetch the Sales Invoice Item using reference_row
+            reference_item = frappe.get_doc("Sales Invoice Item", d.reference_row)
+            # Copy the reference item and modify necessary fields
+            new_item = reference_item.as_dict()
+            new_item.update({
+                "name": None,  # Clear the name to allow insertion as a new row
+                "parent": doc.name,
+                "parentfield": "items",
+                "parenttype": doc.doctype,
+                "qty": 1,
+                "rate": -d.allocated_amount,
+                "amount": -d.allocated_amount,
+            })
+            doc.append("items", new_item)
+
+
+@frappe.whitelist()
+def get_deposit_received(doc):
+    invoice = json.loads(doc)
+    # From the invoice, loop through items and we can get all sales_order.
+    orders = {item.get("sales_order") for item in invoice.get("items", []) if item.get("sales_order")}
+    deductions = []
+    for order in orders:
+        # Get all deposit invoices linked to the sales order
+        deposit_invoices = frappe.get_all(
+            "Sales Invoice",
+            filters={
+                "docstatus": 1,
+                "is_deposit_invoice": 1,
+                "sales_order": order
+            },
+            pluck="name"
+        )
+        for di in deposit_invoices:
+            di = frappe.get_cached_doc("Sales Invoice", di)
+            if not di.items:
+                continue
+
+            initial_amount = di.items[0].amount
+            # Get the total allocated amount from the deductions line with same reference_row
+            prev_deducts = frappe.get_all(
+                "Sales Invoice",
+                filters=[
+                    ["Sales Invoice", "docstatus", "=", 1],
+                    ["Sales Invoice", "is_deposit_invoice", "=", 0],
+                    ["Sales Invoice Deposit", "reference_row", "=", di.items[0].name],
+                ],
+                fields=["name", "`tabSales Invoice Deposit`.allocated_amount"],
+            )
+            deducted_amount = sum(d["allocated_amount"] for d in prev_deducts)
+            # Remaining Deposit
+            balance = initial_amount - deducted_amount
+            # Allocation must not exceed amount of the same order
+            invoice_amount = sum([
+                item.get("amount")
+                for item in invoice.get("items", [])
+                if item.get("sales_order") == order and not item.get("is_deposit_item")
+            ])
+            allocated_amount = min(invoice_amount, balance)
+            if allocated_amount <= 0:
+                continue
+            deductions.append({
+                "reference_type": di.doctype,
+                "reference_name": di.name,
+                "reference_row": di.items[0].name,
+                "remarks": di.items[0].description,
+                "deposit_amount": balance,
+                "allocated_amount": allocated_amount,
+            })
+
+    return deductions
