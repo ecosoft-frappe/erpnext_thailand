@@ -108,14 +108,16 @@ def apply_deposit_deduction(doc, method):
 
     # Remove any line item with is_deposit_item = 1
     doc.items = [item for item in doc.items if not frappe.db.get_value("Item", item.item_code, "is_deposit_item")]
-
+    next_idx = len(doc.items)
     for d in doc.deposits:
         if d.allocated_amount and d.reference_row:
             # Fetch the Sales Invoice Item using reference_row
             reference_item = frappe.get_doc("Sales Invoice Item", d.reference_row)
             # Copy the reference item and modify necessary fields
             new_item = reference_item.as_dict()
+            next_idx += 1
             new_item.update({
+                "idx": next_idx,
                 "name": None,  # Clear the name to allow insertion as a new row
                 "parent": doc.name,
                 "parentfield": "items",
@@ -128,7 +130,7 @@ def apply_deposit_deduction(doc, method):
 
 
 @frappe.whitelist()
-def get_deposit_received(doc):
+def get_deposits(doc):
     invoice = json.loads(doc)
     # From the invoice, loop through items and we can get all sales_order.
     orders = {item.get("sales_order") for item in invoice.get("items", []) if item.get("sales_order")}

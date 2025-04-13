@@ -51,7 +51,7 @@ fixtures = [
 				"in",
 				(
 					"Currency Exchange Settings-client_id",
-					"Sales Invoice-get_deposit_received",
+					"Sales Invoice-get_deposits",
 					"Sales Invoice-deposits",
 					"Sales Invoice-deposit_deductions",
 					"Sales Invoice-is_deposit_invoice",

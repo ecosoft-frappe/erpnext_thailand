@@ -7,17 +7,17 @@ frappe.ui.form.on("Sales Invoice", {
     },
 
     onload: function(frm) {
-        // Delay for 1 second and then trigger get_deposit_received
+        // Delay for 1 second and then trigger get_deposits
         if (frm.is_new() && !frm.doc.is_deposit_invoice) {
             setTimeout(function() {
-                frm.events.get_deposit_received(frm, false);
+                frm.events.get_deposits(frm, false);
             }, 1000)    
         };
     },
 
-    get_deposit_received(frm, is_button_clicked = true) {
+    get_deposits(frm, is_button_clicked = true) {
         frappe.call({
-            method: "erpnext_thailand.custom.deposit_invoice.get_deposit_received",
+            method: "erpnext_thailand.custom.deposit_invoice.get_deposits",
             args: { doc: frm.doc },
             callback: function(r) {
                 if (r.message.length > 0) {
