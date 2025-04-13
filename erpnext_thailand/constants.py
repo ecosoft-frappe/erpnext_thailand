@@ -396,6 +396,17 @@ ERP_CUSTOM_FIELDS = {
 			"label": "Tax Base Amount",
 		},
 	],
+    "Currency Exchange Settings": [
+		{
+			"depends_on": "eval:doc.service_provider == 'Bank of Thailand';",
+			"fieldname": "client_id",
+			"fieldtype": "Password",
+			"insert_after": "access_key",
+			"label": "Client ID",
+			"mandatory_depends_on": "eval:doc.service_provider == 'Bank of Thailand';",
+			"module": "Thai Tax"
+		},
+	]
 }
 
 HRMS_CUSTOM_FIELDS = {
@@ -495,7 +506,10 @@ ERP_PROPERTY_SETTERS = {
 	],
 	"Document Naming Settings": [
 		("help_html", "options", "<div class=\"well\">\n    Edit list of Series in the box. Rules:\n    <ul>\n        <li>Each Series Prefix on a new line.</li>\n        <li>Allowed special characters are \"/\" and \"-\"</li>\n        <li>\n            Optionally, set the number of digits in the series using dot (.)\n            followed by hashes (#). For example, \".####\" means that the series\n            will have four digits. Default is five digits.\n        </li>\n        <li>\n            You can also use variables in the series name by putting them\n            between (.) dots\n            <br>\n            Supported Variables:\n            <ul>\n                <li><code>.YYYY.</code> - Year in 4 digits</li>\n                <li><code>.YYYY-DATE.</code> - Year in 4 digits by Document Date</li>\n                <li><code>.YY.</code> - Year in 2 digits</li>\n                <li><code>.YY-DATE.</code> - Year in 2 digits by Document Date</li>\n                <li><code>.MM.</code> - Month</li>\n                <li><code>.MM-DATE.</code> - Month by Document Date</li>\n                <li><code>.DD.</code> - Day of month</li>\n                <li><code>.DD-DATE.</code> - Day of month by Document Date</li>\n                <li><code>.WW.</code> - Week of the year</li>\n                <li><code>.WW-DATE.</code> - Week of the year by Document Date</li>\n                <li><code>.FY.</code> - Fiscal Year</li>\n                <li>\n                    <code>.{fieldname}.</code> - fieldname on the document e.g.\n                    <code>branch</code>\n                </li>\n            </ul>\n        </li>\n    </ul>\n    Examples:\n    <ul>\n        <li>INV-</li>\n        <li>INV-10-</li>\n        <li>INVK-</li>\n        <li>INV-.YYYY.-.{branch}.-.MM.-.####</li>\n    </ul>\n</div>\n<br>\n", "Text"),
-	]
+	],
+	"Currency Exchange Settings": [
+		("service_provider", "options", "frankfurter.app\nexchangerate.host\nBank of Thailand\nCustom", "Select"),
+	],
 }
 
 BILLING_CUSTOM_FIELDS =  {
@@ -548,4 +562,117 @@ BILLING_CUSTOM_FIELDS =  {
             "insert_after": "purchase_billing",
         },
     ],
+}
+
+DEPOSIT_CUSTOM_FIELDS =  {
+    "Item": [
+		{
+			"depends_on": "eval:!doc.is_stock_item",
+			"fieldname": "is_deposit_item",
+			"fieldtype": "Check",
+			"insert_after": "is_stock_item",
+			"label": "Is Deposit Item"
+		},
+	],
+    "Sales Order": [
+		{
+			"fieldname": "section_break_o8q38",
+			"fieldtype": "Section Break",
+			"insert_after": "payment_schedule"
+		}, 
+		{
+			"description": "If checked, the 1st invoice from this order should be a deposit invoice.",
+			"fieldname": "has_deposit",
+			"fieldtype": "Check",
+			"insert_after": "section_break_o8q38",
+			"label": "Desposit on 1st Invoice",
+			"allow_on_submit": 1
+		},
+		{
+			"fieldname": "column_break_euapx",
+			"fieldtype": "Column Break",
+			"insert_after": "has_deposit"
+		},
+		{
+			"fieldname": "deposit_invoice",
+			"fieldtype": "Data",
+			"insert_after": "column_break_euapx",
+			"label": "Deposit Invoice",
+			"no_copy": 1,
+			"read_only": 1
+		},
+	],
+    "Sales Invoice": [
+		{
+			"depends_on": "eval:doc.is_deposit_invoice",
+			"fieldname": "is_deposit_invoice",
+			"fieldtype": "Check",
+			"insert_after": "company_tax_id",
+			"label": "Is Deposit Invoice",
+			"read_only": 1
+		},
+		{
+			"collapsible": 1,
+			"collapsible_depends_on": "deposits",
+			"depends_on": "eval:!doc.is_deposit_invoice",
+			"fieldname": "deposit_deductions",
+			"fieldtype": "Section Break",
+			"insert_after": "advances",
+			"label": "Deposit Deductions"
+		},
+		{
+			"fieldname": "get_deposits",
+			"fieldtype": "Button",
+			"insert_after": "deposit_deductions",
+			"label": "Get Deposit Received"
+		},
+		{
+			"fieldname": "deposits",
+			"fieldtype": "Table",
+			"insert_after": "get_deposits",
+			"label": "Deposits",
+			"options": "Sales Invoice Deposit"
+		}
+	],
+    "Sales Invoice Item": [
+		{
+			"fetch_from": "item_code.is_deposit_item",
+			"fieldname": "is_deposit_item",
+			"fieldtype": "Check",
+			"insert_after": "item_code",
+			"label": "Is Deposit Item",
+			"read_only": 1
+		},
+	],
+    "Item Default": [
+		{
+			"depends_on": "eval:parent.is_deposit_item",
+			"fieldname": "purchase_deposit_account",
+			"fieldtype": "Link",
+			"insert_after": "column_break_r6eft",
+			"label": "Purchase Deposit Account",
+			"link_filters": "[[\"Account\",\"root_type\",\"=\",\"Asset\"]]",
+			"options": "Account"
+		},
+		{
+			"depends_on": "eval:parent.is_deposit_item",
+			"fieldname": "sales_deposit_account",
+			"fieldtype": "Link",
+			"insert_after": "deposit_defaults",
+			"label": "Sales Deposit Account",
+			"link_filters": "[[\"Account\",\"root_type\",\"=\",\"Liability\"]]",
+			"options": "Account"
+		},
+		{
+			"fieldname": "deposit_defaults",
+			"fieldtype": "Section Break",
+			"insert_after": "deferred_revenue_account",
+			"label": "Deposit Defaults"
+		},
+		{
+			"fieldname": "column_break_deposit_account",
+			"fieldtype": "Column Break",
+			"insert_after": "sales_deposit_account"
+		},
+	],
 }

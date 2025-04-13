@@ -31,44 +31,6 @@ fixtures = [
 			]
 		],
 	},
-	{
-		"doctype": "Property Setter",
-		"filters": [
-			[
-				"name",
-				"in",
-				(
-					"Currency Exchange Settings-service_provider-options",
-				),
-			]
-		],
-	},
-	{
-		"doctype": "Custom Field",
-		"filters": [
-			[
-				"name",
-				"in",
-				(
-					"Currency Exchange Settings-client_id",
-					"Sales Invoice-get_deposits",
-					"Sales Invoice-deposits",
-					"Sales Invoice-deposit_deductions",
-					"Sales Invoice-is_deposit_invoice",
-					"Item-is_deposit_item",
-                    "Item Default-column_break_r6eft",
-                    "Item Default-sales_deposit_account",
-                    "Item Default-purchase_deposit_account",
-                    "Item Default-deposit_defaults",
-                    "Sales Order-deposit_invoice",
-                    "Sales Order-column_break_euapx",
-                    "Sales Order-has_deposit",
-                    "Sales Order-section_break_o8q38",
-                    "Sales Invoice Item-is_deposit_item"
-				),
-			]
-		],
-	}
 ]
 
 
