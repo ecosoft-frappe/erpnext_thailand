@@ -6,7 +6,6 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "reference_type",
   "reference_name",
   "reference_row",
   "remarks",
@@ -16,18 +15,11 @@
  ],
  "fields": [
   {
-   "fieldname": "reference_type",
-   "fieldtype": "Select",
-   "label": "Reference Type",
-   "options": "Sales Invoice\nPurchase Invoice",
-   "read_only": 1
-  },
-  {
    "fieldname": "reference_name",
-   "fieldtype": "Dynamic Link",
+   "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Reference Name",
-   "options": "reference_type",
+   "options": "Sales Invoice",
    "read_only": 1
   },
   {

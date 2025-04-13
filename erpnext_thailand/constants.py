@@ -602,6 +602,34 @@ DEPOSIT_CUSTOM_FIELDS =  {
 			"read_only": 1
 		},
 	],
+    "Purchase Order": [
+		{
+			"fieldname": "section_break_o8q38",
+			"fieldtype": "Section Break",
+			"insert_after": "payment_schedule"
+		}, 
+		{
+			"description": "If checked, the 1st invoice from this order should be a deposit invoice.",
+			"fieldname": "has_deposit",
+			"fieldtype": "Check",
+			"insert_after": "section_break_o8q38",
+			"label": "Desposit on 1st Invoice",
+			"allow_on_submit": 1
+		},
+		{
+			"fieldname": "column_break_euapx",
+			"fieldtype": "Column Break",
+			"insert_after": "has_deposit"
+		},
+		{
+			"fieldname": "deposit_invoice",
+			"fieldtype": "Data",
+			"insert_after": "column_break_euapx",
+			"label": "Deposit Invoice",
+			"no_copy": 1,
+			"read_only": 1
+		},
+	],
     "Sales Invoice": [
 		{
 			"depends_on": "eval:doc.is_deposit_invoice",
@@ -635,6 +663,48 @@ DEPOSIT_CUSTOM_FIELDS =  {
 		}
 	],
     "Sales Invoice Item": [
+		{
+			"fetch_from": "item_code.is_deposit_item",
+			"fieldname": "is_deposit_item",
+			"fieldtype": "Check",
+			"insert_after": "item_code",
+			"label": "Is Deposit Item",
+			"read_only": 1
+		},
+	],
+    "Purchase Invoice": [
+		{
+			"depends_on": "eval:doc.is_deposit_invoice",
+			"fieldname": "is_deposit_invoice",
+			"fieldtype": "Check",
+			"insert_after": "company",
+			"label": "Is Deposit Invoice",
+			"read_only": 1
+		},
+		{
+			"collapsible": 1,
+			"collapsible_depends_on": "deposits",
+			"depends_on": "eval:!doc.is_deposit_invoice",
+			"fieldname": "deposit_deductions",
+			"fieldtype": "Section Break",
+			"insert_after": "advance_tax",
+			"label": "Deposit Deductions"
+		},
+		{
+			"fieldname": "get_deposits",
+			"fieldtype": "Button",
+			"insert_after": "deposit_deductions",
+			"label": "Get Deposit Paid"
+		},
+		{
+			"fieldname": "deposits",
+			"fieldtype": "Table",
+			"insert_after": "get_deposits",
+			"label": "Deposits",
+			"options": "Purchase Invoice Deposit"
+		}
+	],
+    "Purchase Invoice Item": [
 		{
 			"fetch_from": "item_code.is_deposit_item",
 			"fieldname": "is_deposit_item",

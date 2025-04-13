@@ -41,17 +41,18 @@ def get_deposit_item(company):
     item_default = frappe.db.get_value(
         "Item Default",
         {"parent": deposit_item["name"], "company": company},
-        ["sales_deposit_account"],
+        ["sales_deposit_account", "purchase_deposit_account"],
         as_dict=True
     )
-    if not item_default or not item_default.get("sales_deposit_account"):
+    if not item_default or not item_default.get("sales_deposit_account") or not item_default.get("purchase_deposit_account"):
         link = get_link_to_form("Item", deposit_item["name"])
-        frappe.throw(_("{}'s Sales Deposit Account is not set in Item Defaults").format(link), )
+        frappe.throw(_("{}'s Deposit Account is not set in Item Defaults").format(link), )
 
     # Return the deposit item details with the account
     return {
         "item_code": deposit_item["name"],
         "item_name": deposit_item["item_name"],
         "sales_deposit_account": item_default["sales_deposit_account"],
+        "purchase_deposit_account": item_default["purchase_deposit_account"],
         "uom": deposit_item["stock_uom"],
     }

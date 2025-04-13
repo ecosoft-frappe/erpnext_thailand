@@ -1,4 +1,4 @@
-frappe.ui.form.on("Sales Order", {
+frappe.ui.form.on("Purchase Order", {
     refresh: function(frm) {
         // Add a custom button "Create Deposit Invoice"
         if (!frm.is_new() && frm.doc.docstatus === 1 && !frm.doc.deposit_invoice) {
@@ -26,13 +26,13 @@ frappe.ui.form.on("Sales Order", {
                     ],
                     primary_action_label: __("Create"),
                     primary_action: function(values) {
-                        // Use frappe.model.open_mapped_doc to create the Sales Invoice
+                        // Use frappe.model.open_mapped_doc to create the Purchase Invoice
                         frappe.model.open_mapped_doc({
                             method: "erpnext_thailand.custom.deposit_invoice.create_deposit_invoice",
                             frm: frm,
                             args: {
                                 doctype: frm.doc.doctype,
-                                deposit_amount: values.deposit_amount
+                                deposit_amount: values.deposit_amount,
                             }
                         });
                         dialog.hide();

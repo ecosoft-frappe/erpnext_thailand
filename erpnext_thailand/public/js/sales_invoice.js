@@ -6,7 +6,7 @@ frappe.ui.form.on("Sales Invoice", {
         }
     },
 
-    onload: function(frm) {
+    refresh: function(frm) {
         // Delay for 1 second and then trigger get_deposits
         if (frm.is_new() && !frm.doc.is_deposit_invoice) {
             setTimeout(function() {
@@ -28,7 +28,6 @@ frappe.ui.form.on("Sales Invoice", {
                     // Add new deductions
                     deductions.forEach(function(d) {
                         let c = frm.add_child("deposits");
-                        c.reference_type = d.reference_type
                         c.reference_name = d.reference_name
                         c.reference_row = d.reference_row
                         c.remarks = d.remarks

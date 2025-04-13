@@ -65,6 +65,7 @@ doctype_js = {
 	"Expense Claim": "public/js/expense_claim.js",
 	"Purchase Invoice": "public/js/purchase_invoice.js",
 	"Sales Order": "public/js/sales_order.js",
+	"Purchase Order": "public/js/purchase_order.js",
 	"Sales Invoice": "public/js/sales_invoice.js",
 	"Purchase Tax Invoice": "public/js/purchase_tax_invoice.js",
 	"Sales Tax Invoice": "public/js/sales_tax_invoice.js",
@@ -186,6 +187,12 @@ doc_events = {
 	"Purchase Invoice": {
 		"after_insert": "erpnext_thailand.custom.custom_api.validate_tax_invoice",
 		"on_update": "erpnext_thailand.custom.custom_api.validate_tax_invoice",
+        "validate": [
+            "erpnext_thailand.custom.deposit_invoice.validate_invoice",
+            "erpnext_thailand.custom.deposit_invoice.apply_deposit_deduction"
+		],
+        "on_cancel": "erpnext_thailand.custom.deposit_invoice.cancel_deposit_invoice",        
+        "on_trash": "erpnext_thailand.custom.deposit_invoice.cancel_deposit_invoice",
 	},
 	"Expense Claim": {
 		"after_insert": "erpnext_thailand.custom.custom_api.validate_tax_invoice",
