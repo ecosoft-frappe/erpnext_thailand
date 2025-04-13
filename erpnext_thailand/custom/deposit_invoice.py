@@ -71,6 +71,7 @@ def validate_normal_invoice(doc, order_doctype, order_field):
     """ 
     1. For normal invoice, if it's order require 1st deposit, ensure they are not the first invoice 
     2. Allocation amount must not exceed the deposit amount.
+    3. Ensure total allocated amount does not exceed the deposit balance
     """
     # Ensure this is not the first invoice in case of require deposit
     linked_docs = {item.get(order_field) for item in doc.items if item.get(order_field)}
@@ -85,6 +86,16 @@ def validate_normal_invoice(doc, order_doctype, order_field):
     for d in doc.deposits:
         if d.allocated_amount > d.deposit_amount:
             frappe.throw(_("Allocated amount cannot exceed the deposit amount."))
+    
+    # Ensure total allocated amount (on ui) does not exceed the deposit balance (from db)
+    doc_json = json.dumps(doc.as_dict())
+    db_deposit = sum([x["deposit_amount"]for x in get_deposits(doc_json)])
+    ui_allocation = sum([x.allocated_amount for x in doc.deposits])
+    if ui_allocation > db_deposit:
+        frappe.throw(_(
+            "The Deposit Deduction in this document is {} but the remaining deposit for deduction is {}. "
+            "Please verify Deposit Deduction").format("{:,}".format(ui_allocation), "{:,}".format(db_deposit)
+        ))
 
 
 def cancel_deposit_invoice(doc, method):
@@ -187,7 +198,7 @@ def create_deposit_invoice(source_name, target_doc=None):
 def get_deposits(doc):
     invoice = json.loads(doc)
     invoice_doctype = invoice["doctype"]
-    order_doctype, order_field = get_invoice_order_type(invoice_doctype)
+    _, order_field = get_invoice_order_type(invoice_doctype)
     # From the invoice, loop through items and we can get all order.
     orders = {item.get(order_field) for item in invoice.get("items", []) if item.get(order_field)}
     deductions = []

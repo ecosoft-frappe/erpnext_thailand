@@ -20,11 +20,11 @@ frappe.ui.form.on("Purchase Invoice", {
             method: "erpnext_thailand.custom.deposit_invoice.get_deposits",
             args: { doc: frm.doc },
             callback: function(r) {
+                // Clear existing deductions
+                frm.clear_table("deposits");
                 if (r.message.length > 0) {
                     let deductions = r.message;
                     let allocated_amount = 0;
-                    // Clear existing deductions
-                    frm.clear_table("deposits");
                     // Add new deductions
                     deductions.forEach(function(d) {
                         let c = frm.add_child("deposits");
@@ -36,9 +36,6 @@ frappe.ui.form.on("Purchase Invoice", {
                         // Keep track of the total allocated amount
                         allocated_amount += d.allocated_amount
                     });
-                    
-                    // Refresh the child table
-                    frm.refresh_field("deposits");
                     if (!is_button_clicked) {
                         let formatted_amount = new Intl.NumberFormat().format(allocated_amount);
                         frappe.show_alert({
@@ -51,6 +48,9 @@ frappe.ui.form.on("Purchase Invoice", {
                         }, 20);
                     }
                 }
+                // Refresh the child table
+                frm.refresh_field("deposits");
+                frm.dirty();
             }
         });
     }
