@@ -35,7 +35,7 @@ erpnext_thailand.print.print_pdf = function(doc) {
 								encodeURIComponent(doc.name) +
 								"&format=" +
 								encodeURIComponent(print_format)
-								// Following are params for future imple.
+								// Following are params for future implementation.
 								// "&no_letterhead=" +
 								// (with_letterhead ? "0" : "1") +
 								// "&letterhead=" +
