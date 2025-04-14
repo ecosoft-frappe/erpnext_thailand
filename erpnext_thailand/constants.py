@@ -578,7 +578,8 @@ DEPOSIT_CUSTOM_FIELDS =  {
 		{
 			"fieldname": "section_break_o8q38",
 			"fieldtype": "Section Break",
-			"insert_after": "payment_schedule"
+			"insert_after": "payment_schedule",
+            "label": "Deposit",
 		}, 
 		{
 			"description": "If checked, the 1st invoice from this order should be a deposit invoice.",
@@ -589,24 +590,39 @@ DEPOSIT_CUSTOM_FIELDS =  {
 			"allow_on_submit": 1
 		},
 		{
-			"fieldname": "column_break_euapx",
-			"fieldtype": "Column Break",
-			"insert_after": "has_deposit"
-		},
-		{
 			"fieldname": "deposit_invoice",
 			"fieldtype": "Data",
-			"insert_after": "column_break_euapx",
+			"insert_after": "has_deposit",
 			"label": "Deposit Invoice",
 			"no_copy": 1,
 			"read_only": 1
 		},
+		{
+			"fieldname": "column_break_euapx",
+			"fieldtype": "Column Break",
+			"insert_after": "deposit_invoice"
+		},
+		{
+			"fieldname": "percent_deposit",
+			"fieldtype": "Percent",
+			"insert_after": "column_break_euapx",
+			"label": "Percent Deposit",
+		},
+		{
+			"fieldname": "deposit_deduction_method",
+			"fieldtype": "Select",
+			"label": "Deposit Deduction Method",
+			"options": "Percent\nFull Amount",
+			"description": "Deposit deduction (return of deposit) on following invoice(s).",
+			"insert_after": "percent_deposit",
+		}
 	],
     "Purchase Order": [
 		{
 			"fieldname": "section_break_o8q38",
 			"fieldtype": "Section Break",
-			"insert_after": "payment_schedule"
+			"insert_after": "payment_schedule",
+            "label": "Deposit",
 		}, 
 		{
 			"description": "If checked, the 1st invoice from this order should be a deposit invoice.",
@@ -617,18 +633,32 @@ DEPOSIT_CUSTOM_FIELDS =  {
 			"allow_on_submit": 1
 		},
 		{
-			"fieldname": "column_break_euapx",
-			"fieldtype": "Column Break",
-			"insert_after": "has_deposit"
-		},
-		{
 			"fieldname": "deposit_invoice",
 			"fieldtype": "Data",
-			"insert_after": "column_break_euapx",
+			"insert_after": "has_deposit",
 			"label": "Deposit Invoice",
 			"no_copy": 1,
 			"read_only": 1
 		},
+		{
+			"fieldname": "column_break_euapx",
+			"fieldtype": "Column Break",
+			"insert_after": "deposit_invoice"
+		},
+		{
+			"fieldname": "percent_deposit",
+			"fieldtype": "Percent",
+			"insert_after": "column_break_euapx",
+			"label": "Percent Deposit",
+		},
+		{
+			"fieldname": "deposit_deduction_method",
+			"fieldtype": "Select",
+			"label": "Deposit Deduction Method",
+			"options": "Percent\nFull Amount",
+			"description": "Deposit deduction (return of deposit) on following invoice(s).",
+			"insert_after": "percent_deposit",
+		}
 	],
     "Sales Invoice": [
 		{

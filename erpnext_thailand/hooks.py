@@ -177,22 +177,22 @@ doc_events = {
     "Sales Invoice": {
         "on_submit": "erpnext_thailand.custom.custom_api.create_sales_tax_invoice_on_zero_tax",
 		"before_cancel": "erpnext_thailand.custom.custom_api.cancel_related_tax_invoice",
-        "validate": [
-            "erpnext_thailand.custom.deposit_invoice.validate_invoice",
-            "erpnext_thailand.custom.deposit_invoice.apply_deposit_deduction"
+        "before_validate": [
+            "erpnext_thailand.custom.deposit_utils.validate_invoice",
+            "erpnext_thailand.custom.deposit_utils.apply_deposit_deduction"
 		],
-        "on_cancel": "erpnext_thailand.custom.deposit_invoice.cancel_deposit_invoice",        
-        "on_trash": "erpnext_thailand.custom.deposit_invoice.cancel_deposit_invoice",
+        "on_cancel": "erpnext_thailand.custom.deposit_utils.cancel_deposit_invoice",        
+        "on_trash": "erpnext_thailand.custom.deposit_utils.cancel_deposit_invoice",
     },
 	"Purchase Invoice": {
 		"after_insert": "erpnext_thailand.custom.custom_api.validate_tax_invoice",
 		"on_update": "erpnext_thailand.custom.custom_api.validate_tax_invoice",
-        "validate": [
-            "erpnext_thailand.custom.deposit_invoice.validate_invoice",
-            "erpnext_thailand.custom.deposit_invoice.apply_deposit_deduction"
+        "before_validate": [
+            "erpnext_thailand.custom.deposit_utils.validate_invoice",
+            "erpnext_thailand.custom.deposit_utils.apply_deposit_deduction"
 		],
-        "on_cancel": "erpnext_thailand.custom.deposit_invoice.cancel_deposit_invoice",        
-        "on_trash": "erpnext_thailand.custom.deposit_invoice.cancel_deposit_invoice",
+        "on_cancel": "erpnext_thailand.custom.deposit_utils.cancel_deposit_invoice",        
+        "on_trash": "erpnext_thailand.custom.deposit_utils.cancel_deposit_invoice",
 	},
 	"Expense Claim": {
 		"after_insert": "erpnext_thailand.custom.custom_api.validate_tax_invoice",

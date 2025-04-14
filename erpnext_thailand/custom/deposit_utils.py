@@ -60,10 +60,12 @@ def validate_deposit_invoice(doc, order_doctype, order_field):
         link = get_link_to_form(order_doctype, linked_doc)
         frappe.throw(_("Cannot create deposit invoice for order {}.<br/>Deposit invoice must be the 1st invoice").format(link))
 
-    # Update deposit invoice back to SO/PO
+    # Update deposit invoice and percent deposit back to SO/PO
     if doc.docstatus in [0, 1]:
         order = frappe.get_cached_doc(order_doctype, linked_doc)
+        percent = doc.grand_total / order.grand_total * 100
         order.db_set("deposit_invoice", doc.name, update_modified=False)
+        order.db_set("percent_deposit", percent, update_modified=False)
         order.reload()
 
 
@@ -198,18 +200,19 @@ def create_deposit_invoice(source_name, target_doc=None):
 def get_deposits(doc):
     invoice = json.loads(doc)
     invoice_doctype = invoice["doctype"]
-    _, order_field = get_invoice_order_type(invoice_doctype)
+    order_doctype, order_field = get_invoice_order_type(invoice_doctype)
     # From the invoice, loop through items and we can get all order.
     orders = {item.get(order_field) for item in invoice.get("items", []) if item.get(order_field)}
     deductions = []
     for order in orders:
+        order = frappe.get_cached_doc(order_doctype, order)
         # Get all deposit invoices linked to the sales order
         deposit_invoices = frappe.get_all(
             invoice_doctype,
             filters={
                 "docstatus": 1,
                 "is_deposit_invoice": 1,
-                order_field: order
+                order_field: order.name
             },
             pluck="name"
         )
@@ -236,9 +239,14 @@ def get_deposits(doc):
             invoice_amount = sum([
                 item.get("amount")
                 for item in invoice.get("items", [])
-                if item.get(order_field) == order and not item.get("is_deposit_item")
+                if item.get(order_field) == order.name and not item.get("is_deposit_item")
             ])
-            allocated_amount = min(invoice_amount, balance)
+            # If deduction method is by Percent = invoice_amount / order_amount * percent/100 * initial_amount
+            if order.deposit_deduction_method == "Percent":
+                percent_amount = invoice_amount/order.grand_total * initial_amount
+                allocated_amount = min(percent_amount, invoice_amount, balance)
+            else:  # Else Full Amount
+                allocated_amount = min(invoice_amount, balance)
             if allocated_amount <= 0:
                 continue
             deductions.append({

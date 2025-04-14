@@ -45,7 +45,7 @@
   frappe.provide("erpnext_thailand.deposit_utils");
   erpnext_thailand.deposit_utils.get_deposits = function(frm, is_button_clicked = true) {
     frappe.call({
-      method: "erpnext_thailand.custom.deposit_invoice.get_deposits",
+      method: "erpnext_thailand.custom.deposit_utils.get_deposits",
       args: { doc: frm.doc },
       callback: function(r) {
         frm.clear_table("deposits");
@@ -65,11 +65,11 @@
             let formatted_amount = new Intl.NumberFormat().format(allocated_amount);
             frappe.show_alert({
               message: __(
-                "Deposit amount <b>{0}</b> will be allocated.<br/>                            Please verify Deposit Deductions section in tab Payment.<br/>                            Then save the document to add the deduction amount in Items child table.",
+                "Deposit amount <b>{0}</b> will be allocated.<br/>                            Please verify <b>Deposit Deductions</b> section in tab Payment.<br/>                            Then save the document to add the deduction amount in Items child table.",
                 [formatted_amount]
               ),
               indicator: "green"
-            }, 20);
+            }, 10);
           }
         }
         frm.refresh_field("deposits");
@@ -89,20 +89,20 @@
               fieldname: "deposit_percentage",
               fieldtype: "Percent",
               reqd: 1,
-              default: 10
+              default: frm.doc.percent_deposit
             },
             {
               label: __("Deposit Amount"),
               fieldname: "deposit_amount",
               fieldtype: "Currency",
               reqd: 1,
-              default: (frm.doc.grand_total || 0) * 0.1
+              default: (frm.doc.grand_total || 0) * frm.doc.percent_deposit / 100
             }
           ],
           primary_action_label: __("Create"),
           primary_action: function(values) {
             frappe.model.open_mapped_doc({
-              method: "erpnext_thailand.custom.deposit_invoice.create_deposit_invoice",
+              method: "erpnext_thailand.custom.deposit_utils.create_deposit_invoice",
               frm,
               args: {
                 doctype: frm.doc.doctype,
@@ -156,4 +156,4 @@
     }
   };
 })();
-//# sourceMappingURL=erpnext_thailand.bundle.35IXC7YY.js.map
+//# sourceMappingURL=erpnext_thailand.bundle.J6G5XYRE.js.map
