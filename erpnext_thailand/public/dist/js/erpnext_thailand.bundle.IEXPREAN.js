@@ -96,7 +96,7 @@
               fieldname: "deposit_amount",
               fieldtype: "Currency",
               reqd: 1,
-              default: (frm.doc.grand_total || 0) * frm.doc.percent_deposit / 100
+              default: (frm.doc.total || 0) * frm.doc.percent_deposit / 100
             }
           ],
           primary_action_label: __("Create"),
@@ -117,7 +117,7 @@
             return;
           is_updating = true;
           const percent = parseFloat(dialog.get_value("deposit_percentage") || 0);
-          const total = frm.doc.grand_total || 0;
+          const total = frm.doc.total || 0;
           if (percent > 100) {
             frappe.msgprint({
               title: __("Warning"),
@@ -135,7 +135,7 @@
             return;
           is_updating = true;
           const amount = parseFloat(dialog.get_value("deposit_amount") || 0);
-          const total = frm.doc.grand_total || 0;
+          const total = frm.doc.total || 0;
           const percent = total > 0 ? amount / total * 100 : 0;
           if (percent > 100) {
             frappe.msgprint({
@@ -156,4 +156,4 @@
     }
   };
 })();
-//# sourceMappingURL=erpnext_thailand.bundle.J6G5XYRE.js.map
+//# sourceMappingURL=erpnext_thailand.bundle.IEXPREAN.js.map

@@ -42,7 +42,7 @@ def validate_deposit_invoice(doc, order_doctype, order_field):
     linked_doc = doc.items[0].get(order_field)
     if not linked_doc:
         frappe.throw(_("Deposit invoice must be linked to a {}.").format(order_doctype))
-    linked_doc_amount = frappe.db.get_value(order_doctype, linked_doc, "grand_total")
+    linked_doc_amount = frappe.db.get_value(order_doctype, linked_doc, "total")
     if doc.items[0].amount > linked_doc_amount:
         frappe.throw(_("Deposit invoice amount cannot exceed the {}'s amount.").format(order_doctype))
 
@@ -63,10 +63,17 @@ def validate_deposit_invoice(doc, order_doctype, order_field):
     # Update deposit invoice and percent deposit back to SO/PO
     if doc.docstatus in [0, 1]:
         order = frappe.get_cached_doc(order_doctype, linked_doc)
-        percent = doc.grand_total / order.grand_total * 100
+        percent = doc.total / order.total * 100
         order.db_set("deposit_invoice", doc.name, update_modified=False)
         order.db_set("percent_deposit", percent, update_modified=False)
         order.reload()
+    
+    # Finally, erase link to so_detail, so it won't be used in the invoice
+    # This is strangely needed as it was provided during open_mapped_doc to transfer currency
+    if order_doctype == "Sales Order":
+        doc.items[0].so_detail = ""
+    else:
+        doc.items[0].po_detail = ""
 
 
 def validate_normal_invoice(doc, order_doctype, order_field):
@@ -152,6 +159,8 @@ def create_deposit_invoice(source_name, target_doc=None):
 
     order_doctype = frappe.flags.args.doctype
     doctype_field = "sales_order" if order_doctype == "Sales Order" else "purchase_order"
+    detail_field = "so_detail" if order_doctype == "Sales Order" else "po_detail"
+    tax_field = "Sales Taxes and Charges" if order_doctype == "Sales Order" else "Purchase Taxes and Charges"
     invoice_doctype = "Sales Invoice" if order_doctype == "Sales Order" else "Purchase Invoice"
     deposit_account_field = "sales_deposit_account" if order_doctype == "Sales Order" else "purchase_deposit_account"
     account_field = "income_account" if order_doctype == "Sales Order" else "expense_account"
@@ -176,6 +185,7 @@ def create_deposit_invoice(source_name, target_doc=None):
             account_field: deposit_item[deposit_account_field],
             "uom": deposit_item["uom"],
             doctype_field: source.name,
+            detail_field: source.items[0].name,  # This is required to get currency passed in
             "cost_center": frappe.db.get_value("Company", source.company, "cost_center")
         })
 
@@ -183,11 +193,15 @@ def create_deposit_invoice(source_name, target_doc=None):
     doc = get_mapped_doc(
         order_doctype,
         source_name,
-        {
+        { 
             order_doctype: {
                 "doctype": invoice_doctype,
                 "validation": {"docstatus": ["=", 1]}
-            }
+            },
+			tax_field: {
+				"doctype": tax_field,
+				"reset_value": True,
+			},
         },
         target_doc,
         set_missing_values
@@ -201,60 +215,73 @@ def get_deposits(doc):
     invoice = json.loads(doc)
     invoice_doctype = invoice["doctype"]
     order_doctype, order_field = get_invoice_order_type(invoice_doctype)
-    # From the invoice, loop through items and we can get all order.
-    orders = {item.get(order_field) for item in invoice.get("items", []) if item.get(order_field)}
+
+    # Collect all linked orders from the invoice items
+    orders = {
+        item.get(order_field)
+        for item in invoice.get("items", [])
+        if item.get(order_field)
+    }
+
     deductions = []
-    for order in orders:
-        order = frappe.get_cached_doc(order_doctype, order)
-        # Get all deposit invoices linked to the sales order
+    for order_name in orders:
+        order = frappe.get_cached_doc(order_doctype, order_name)
+
+        # Fetch all deposit invoices linked to the order
         deposit_invoices = frappe.get_all(
             invoice_doctype,
             filters={
                 "docstatus": 1,
                 "is_deposit_invoice": 1,
-                order_field: order.name
+                order_field: order.name,
             },
-            pluck="name"
+            pluck="name",
         )
-        for di in deposit_invoices:
-            di = frappe.get_cached_doc(invoice_doctype, di)
-            if not di.items:
+
+        for deposit_invoice_name in deposit_invoices:
+            deposit_invoice = frappe.get_cached_doc(invoice_doctype, deposit_invoice_name)
+            if not deposit_invoice.items:
                 continue
 
-            initial_amount = di.items[0].amount
-            # Get the total allocated amount from the deductions line with same reference_row
-            prev_deducts = frappe.get_all(
+            deposit_item = deposit_invoice.items[0]
+            initial_amount = deposit_item.amount
+
+            # Calculate the total allocated amount from previous deductions
+            previous_deductions = frappe.get_all(
                 invoice_doctype,
                 filters=[
                     [invoice_doctype, "docstatus", "=", 1],
                     [invoice_doctype, "is_deposit_invoice", "=", 0],
-                    [f"{invoice_doctype} Deposit", "reference_row", "=", di.items[0].name],
+                    [f"{invoice_doctype} Deposit", "reference_row", "=", deposit_item.name],
                 ],
-                fields=["name", f"`tab{invoice_doctype} Deposit`.allocated_amount"],
+                fields=[f"`tab{invoice_doctype} Deposit`.allocated_amount"],
             )
-            deducted_amount = sum(d["allocated_amount"] for d in prev_deducts)
-            # Remaining Deposit
+            deducted_amount = sum(d["allocated_amount"] for d in previous_deductions)
+
+            # Calculate the remaining deposit balance
             balance = initial_amount - deducted_amount
-            # Allocation must not exceed amount of the same order
-            invoice_amount = sum([
+
+            # Calculate the invoice amount for the same order
+            invoice_amount = sum(
                 item.get("amount")
                 for item in invoice.get("items", [])
                 if item.get(order_field) == order.name and not item.get("is_deposit_item")
-            ])
-            # If deduction method is by Percent = invoice_amount / order_amount * percent/100 * initial_amount
+            )
+
+            # Determine the allocated amount based on the deduction method
             if order.deposit_deduction_method == "Percent":
-                percent_amount = invoice_amount/order.grand_total * initial_amount
+                percent_amount = (invoice_amount / order.total) * initial_amount
                 allocated_amount = min(percent_amount, invoice_amount, balance)
-            else:  # Else Full Amount
+            else:  # Full Amount
                 allocated_amount = min(invoice_amount, balance)
-            if allocated_amount <= 0:
-                continue
-            deductions.append({
-                "reference_name": di.name,
-                "reference_row": di.items[0].name,
-                "remarks": di.items[0].description,
-                "deposit_amount": balance,
-                "allocated_amount": allocated_amount,
-            })
+
+            if allocated_amount > 0:
+                deductions.append({
+                    "reference_name": deposit_invoice.name,
+                    "reference_row": deposit_item.name,
+                    "remarks": deposit_item.description,
+                    "deposit_amount": balance,
+                    "allocated_amount": allocated_amount,
+                })
 
     return deductions

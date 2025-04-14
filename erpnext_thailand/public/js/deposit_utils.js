@@ -68,7 +68,7 @@ erpnext_thailand.deposit_utils.add_create_deposit_button = function(frm) {
                         fieldname: "deposit_amount",
                         fieldtype: "Currency",
                         reqd: 1,
-                        default: (frm.doc.grand_total || 0) * frm.doc.percent_deposit / 100
+                        default: (frm.doc.total || 0) * frm.doc.percent_deposit / 100
                     }
                 ],
                 primary_action_label: __("Create"),
@@ -92,7 +92,7 @@ erpnext_thailand.deposit_utils.add_create_deposit_button = function(frm) {
                 is_updating = true;
 
                 const percent = parseFloat(dialog.get_value("deposit_percentage") || 0);
-                const total = frm.doc.grand_total || 0;
+                const total = frm.doc.total || 0;
 
                 if (percent > 100) {
                     frappe.msgprint({
@@ -113,7 +113,7 @@ erpnext_thailand.deposit_utils.add_create_deposit_button = function(frm) {
                 is_updating = true;
 
                 const amount = parseFloat(dialog.get_value("deposit_amount") || 0);
-                const total = frm.doc.grand_total || 0;
+                const total = frm.doc.total || 0;
                 const percent = total > 0 ? (amount / total) * 100 : 0;
 
                 if (percent > 100) {
