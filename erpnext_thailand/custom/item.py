@@ -41,7 +41,7 @@ def get_deposit_item(company):
     item_default = frappe.db.get_value(
         "Item Default",
         {"parent": deposit_item["name"], "company": company},
-        ["sales_deposit_account", "purchase_deposit_account"],
+        ["sales_deposit_account", "purchase_deposit_account", "selling_cost_center", "buying_cost_center"],
         as_dict=True
     )
     if not item_default or not item_default.get("sales_deposit_account") or not item_default.get("purchase_deposit_account"):
@@ -55,4 +55,6 @@ def get_deposit_item(company):
         "sales_deposit_account": item_default["sales_deposit_account"],
         "purchase_deposit_account": item_default["purchase_deposit_account"],
         "uom": deposit_item["stock_uom"],
+        "selling_cost_center": item_default["selling_cost_center"],
+        "buying_cost_center": item_default["buying_cost_center"],
     }

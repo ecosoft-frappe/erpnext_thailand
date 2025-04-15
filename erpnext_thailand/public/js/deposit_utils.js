@@ -73,6 +73,14 @@ erpnext_thailand.deposit_utils.add_create_deposit_button = function(frm) {
                 ],
                 primary_action_label: __("Create"),
                 primary_action: function(values) {
+                    if (!values.deposit_amount) {
+                        frappe.msgprint({
+                            title: __("Warning"),
+                            indicator: "orange",
+                            message: __("Deposit Percentage/Amount are required")
+                        });
+                        return;
+                    }
                     // Use frappe.model.open_mapped_doc to create the Purchase Invoice
                     frappe.model.open_mapped_doc({
                         method: "erpnext_thailand.custom.deposit_utils.create_deposit_invoice",

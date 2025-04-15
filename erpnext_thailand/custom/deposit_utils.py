@@ -163,6 +163,7 @@ def create_deposit_invoice(source_name, target_doc=None):
     tax_field = "Sales Taxes and Charges" if order_doctype == "Sales Order" else "Purchase Taxes and Charges"
     invoice_doctype = "Sales Invoice" if order_doctype == "Sales Order" else "Purchase Invoice"
     deposit_account_field = "sales_deposit_account" if order_doctype == "Sales Order" else "purchase_deposit_account"
+    cost_center_field = "selling_cost_center" if order_doctype == "Sales Order" else "buying_cost_center"
     account_field = "income_account" if order_doctype == "Sales Order" else "expense_account"
 
     def set_missing_values(source, target):
@@ -186,7 +187,7 @@ def create_deposit_invoice(source_name, target_doc=None):
             "uom": deposit_item["uom"],
             doctype_field: source.name,
             detail_field: source.items[0].name,  # This is required to get currency passed in
-            "cost_center": frappe.db.get_value("Company", source.company, "cost_center")
+            "cost_center": deposit_item[cost_center_field],
         })
 
     # Map the Order to a Invoice
