@@ -59,7 +59,15 @@ def get_withholding_tax_from_type(filters, doc):
 			debit = gl["debit"]
 			alloc_percent = ref["allocated_amount"] / ref["total_amount"]
 			report_type = frappe.get_cached_value("Account", gl["account"], "report_type")
-			if report_type == "Profit and Loss":
+			account_type = frappe.get_cached_value("Account", gl["account"], "account_type")
+			if report_type == "Profit and Loss" or \
+				account_type in (
+					"Income Account",
+					"Expense Account",
+					"Fixed Asset",
+					"Asset Received But Not Billed",
+					"Capital Work in Progress",
+					"Temporary"):
 				base_amount += alloc_percent * (credit - debit)
 	if not base_amount:
 		frappe.throw(_("There is nothing to withhold tax for"))
@@ -126,7 +134,7 @@ def get_wht_type(ref_doctype, pay, item):
 		else:
 			wht_type = item.withholding_tax_type_pay_supplier
 	if ref_doctype == "Sales Invoice":
-		wht_type = item.withholding_tax_type	
+		wht_type = item.withholding_tax_type
 	return wht_type
 
 
@@ -172,7 +180,7 @@ def reconcile_undue_tax(doc, method):
 def reconcile_undue_tax_gls(vouchers, company, unreconcile=False):
 	""" Only if bs_reconcile app is install, reconcile/unreconcile undue tax gl entries """
 	if "bs_reconcile" not in frappe.get_installed_apps():
-		return 
+		return
 	try:
 		from bs_reconcile.balance_sheet_reconciliation import utils
 	except ImportError:
