@@ -141,3 +141,39 @@ erpnext_thailand.deposit_utils.add_create_deposit_button = function(frm) {
         }).addClass(frm.doc.has_deposit ? "btn-primary" : "btn-secondary");;
     }
 };
+
+
+erpnext_thailand.deposit_utils.get_deposit_item = function(frm) {
+    // For deposit invoice, add 1 line itema as Deposit Item
+    if (frm.doc.is_deposit_invoice) {
+        frm.doc.items = [];
+        frappe.call({
+            method: "erpnext_thailand.custom.item.get_deposit_item",
+            args: {
+                company: frm.doc.company
+            },
+            callback: function(r) {
+                if (r.message) {
+                    cost_center = frm.doc.doctype == "Sales Invoice" ? r.message.selling_cost_center : r.message.buying_cost_center;
+                    frm.set_value("cost_center", cost_center);
+                    frm.add_child("items", {
+                        item_code: r.message.item_code,
+                        item_name: r.message.item_name,
+                        uom: r.message.uom,
+                        qty: 1,
+                        is_deposit_item: 1,
+                        income_account: r.message.sales_deposit_account,
+                        expense_account: r.message.purchase_deposit_account,
+                    });
+                    frm.refresh_field("items");
+                } else {
+                    frappe.msgprint(__("No deposit items found!"));
+                }
+            }
+        });
+    } else {
+        // Optional: Remove the deposit item if unchecked
+        frm.doc.items = frm.doc.items.filter(item => item.is_deposit_item !== 1);
+        frm.refresh_field("items");
+    }
+};

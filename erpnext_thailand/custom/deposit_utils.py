@@ -7,9 +7,9 @@ from frappe.model.mapper import get_mapped_doc
 
 def get_invoice_order_type(doctype):
     if doctype == "Sales Invoice":
-        return "Sales Order", "sales_order"
+        return "Sales Order", "sales_order", "customer"
     elif doctype == "Purchase Invoice":
-        return "Purchase Order", "purchase_order"
+        return "Purchase Order", "purchase_order", "supplier"
     else:
         frappe.throw(_("Not an invoice document!"))
 
@@ -18,7 +18,7 @@ def validate_invoice(doc, methods):
     if doc.doctype not in ("Sales Invoice", "Purchase Invoice"):
         frappe.throw(_("Not an invoice document!"))
     
-    order_doctype, order_field = get_invoice_order_type(doc.doctype)
+    order_doctype, order_field, _ = get_invoice_order_type(doc.doctype)
 
     if doc.is_deposit_invoice:
         validate_deposit_invoice(doc, order_doctype, order_field)
@@ -41,7 +41,9 @@ def validate_deposit_invoice(doc, order_doctype, order_field):
     # Condition 2: Validate link with SO/PO and amount
     linked_doc = doc.items[0].get(order_field)
     if not linked_doc:
-        frappe.throw(_("Deposit invoice must be linked to a {}.").format(order_doctype))
+        return
+    # if not linked_doc:
+    #     frappe.throw(_("Deposit invoice must be linked to a {}.").format(order_doctype))
     linked_doc_amount = frappe.db.get_value(order_doctype, linked_doc, "total")
     if doc.items[0].amount > linked_doc_amount:
         frappe.throw(_("Deposit invoice amount cannot exceed the {}'s amount.").format(order_doctype))
@@ -110,8 +112,10 @@ def validate_normal_invoice(doc, order_doctype, order_field):
 def cancel_deposit_invoice(doc, method):
     if not doc.is_deposit_invoice:
         return
-    order_doctype, order_field = get_invoice_order_type(doc.doctype)
+    order_doctype, order_field, _ = get_invoice_order_type(doc.doctype)
     linked_doc = doc.items[0].get(order_field)
+    if not linked_doc:
+        return
     order = frappe.get_cached_doc(order_doctype, linked_doc)
     order.db_set("deposit_invoice", "", update_modified=False)
     order.reload()
@@ -222,8 +226,16 @@ def create_deposit_invoice(source_name, target_doc=None):
 @frappe.whitelist()
 def get_deposits(doc):
     invoice = json.loads(doc)
+    deductions = get_tied_to_order_deposits(invoice)
+    if invoice.get("use_untied_deposit"):
+        deductions += get_untied_deposits(invoice)
+    return deductions
+
+
+def get_tied_to_order_deposits(invoice):
+    """ Find orders related to this invoice and their deposit invoices"""
     invoice_doctype = invoice["doctype"]
-    order_doctype, order_field = get_invoice_order_type(invoice_doctype)
+    order_doctype, order_field, _ = get_invoice_order_type(invoice_doctype)
 
     # Collect all linked orders from the invoice items
     orders = {
@@ -251,23 +263,7 @@ def get_deposits(doc):
             deposit_invoice = frappe.get_cached_doc(invoice_doctype, deposit_invoice_name)
             if not deposit_invoice.items:
                 continue
-
-            deposit_item = deposit_invoice.items[0]
-            initial_amount = deposit_item.amount
-
-            # Calculate the total allocated amount from previous deductions
-            previous_deductions = frappe.get_all(
-                invoice_doctype,
-                filters=[
-                    [invoice_doctype, "docstatus", "=", 1],
-                    [invoice_doctype, "is_deposit_invoice", "=", 0],
-                    [f"{invoice_doctype} Deposit", "reference_row", "=", deposit_item.name],
-                ],
-                fields=[f"`tab{invoice_doctype} Deposit`.allocated_amount"],
-            )
-            deducted_amount = sum(d["allocated_amount"] for d in previous_deductions)
-
-            # Calculate the remaining deposit balance
+            deposit_item, initial_amount, deducted_amount = get_deposit_invoice_details(deposit_invoice)
             balance = initial_amount - deducted_amount
 
             # Calculate the invoice amount for the same order
@@ -294,3 +290,61 @@ def get_deposits(doc):
                 })
 
     return deductions
+
+
+def get_untied_deposits(invoice):
+    """ Find deposit that is not related to any order but same customer/supplier and currency """
+    invoice_doctype = invoice["doctype"]
+    _, order_field, partner = get_invoice_order_type(invoice_doctype)
+
+    deductions = []
+    # Fetch all deposit invoices that is not tied to any order
+    deposit_invoices = frappe.get_all(
+        invoice_doctype,
+        filters={
+            partner: invoice.get(partner),
+            "docstatus": 1,
+            "is_deposit_invoice": 1,
+            order_field: ["in", ["", None]],
+            "currency": invoice.get("currency"),
+        },
+        pluck="name",
+    )
+
+    for deposit_invoice_name in deposit_invoices:
+        deposit_invoice = frappe.get_cached_doc(invoice_doctype, deposit_invoice_name)
+        if not deposit_invoice.items:
+            continue
+        deposit_item, initial_amount, deducted_amount = get_deposit_invoice_details(deposit_invoice)
+        balance = initial_amount - deducted_amount
+
+        if balance > 0:
+            deductions.append({
+                "reference_name": deposit_invoice.name,
+                "reference_row": deposit_item.name,
+                "remarks": deposit_item.description,
+                "deposit_amount": balance,
+                "allocated_amount": 0,
+            })
+
+    return deductions
+
+
+def get_deposit_invoice_details(doc):
+    deposit_item = doc.items[0]
+    initial_amount = deposit_item.amount
+
+    # Calculate the total allocated amount from previous deductions
+    previous_deductions = frappe.get_all(
+        doc.doctype,
+        filters=[
+            [doc.doctype, "docstatus", "=", 1],
+            [doc.doctype, "is_deposit_invoice", "=", 0],
+            [f"{doc.doctype} Deposit", "reference_row", "=", deposit_item.name],
+        ],
+        fields=[f"`tab{doc.doctype} Deposit`.allocated_amount"],
+    )
+    deducted_amount = sum(d["allocated_amount"] for d in previous_deductions)
+
+    # Calculate the remaining deposit balance
+    return deposit_item, initial_amount, deducted_amount

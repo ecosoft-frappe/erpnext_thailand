@@ -12,3 +12,4 @@ erpnext_thailand.patches.update_document_naming_settings
 erpnext_thailand.patches.add_custom_field_create_tax_invoice
 erpnext_thailand.patches.add_custom_field_exchange_client_id
 erpnext_thailand.patches.add_deposit_custom_fields
+erpnext_thailand.patches.rerun_deposit_custom_fields

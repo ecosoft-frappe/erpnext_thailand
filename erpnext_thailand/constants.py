@@ -662,12 +662,12 @@ DEPOSIT_CUSTOM_FIELDS =  {
 	],
     "Sales Invoice": [
 		{
-			"depends_on": "eval:doc.is_deposit_invoice",
+			"depends_on": "",
 			"fieldname": "is_deposit_invoice",
 			"fieldtype": "Check",
 			"insert_after": "company_tax_id",
 			"label": "Is Deposit Invoice",
-			"read_only": 1
+			"read_only": 0
 		},
 		{
 			"collapsible": 1,
@@ -679,11 +679,19 @@ DEPOSIT_CUSTOM_FIELDS =  {
 			"label": "Deposit Deductions"
 		},
 		{
-			"fieldname": "manual_deposit_allocation",
+			"fieldname": "use_untied_deposit",
 			"fieldtype": "Check",
 			"insert_after": "deposit_deductions",
+			"label": "Include Untied Deposits",
+			"description": "Untied Deposits are deposits that are not linked to any order.",
+		},
+		{
+			"fieldname": "manual_deposit_allocation",
+			"fieldtype": "Check",
+			"insert_after": "use_untied_deposit",
 			"label": "Manual Deposit Allocation",
 			"read_only": 0,
+			"description": "Allow user to manually allowcate deposit amount to deduct.",
 		},
 		{
 			"fieldname": "deposits",
@@ -706,12 +714,12 @@ DEPOSIT_CUSTOM_FIELDS =  {
 	],
     "Purchase Invoice": [
 		{
-			"depends_on": "eval:doc.is_deposit_invoice",
+			"depends_on": "",
 			"fieldname": "is_deposit_invoice",
 			"fieldtype": "Check",
 			"insert_after": "company",
 			"label": "Is Deposit Invoice",
-			"read_only": 1
+			"read_only": 0
 		},
 		{
 			"collapsible": 1,
@@ -723,11 +731,19 @@ DEPOSIT_CUSTOM_FIELDS =  {
 			"label": "Deposit Deductions"
 		},
 		{
-			"fieldname": "manual_deposit_allocation",
+			"fieldname": "use_untied_deposit",
 			"fieldtype": "Check",
 			"insert_after": "deposit_deductions",
+			"label": "Include Untied Deposits",
+			"description": "Untied Deposits are deposits that are not linked to any order.",
+		},
+		{
+			"fieldname": "manual_deposit_allocation",
+			"fieldtype": "Check",
+			"insert_after": "use_untied_deposit",
 			"label": "Manual Deposit Allocation",
 			"read_only": 0,
+			"description": "Allow user to manually allowcate deposit amount to deduct.",
 		},
 		{
 			"fieldname": "deposits",
