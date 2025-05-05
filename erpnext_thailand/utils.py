@@ -11,6 +11,10 @@ def amount_in_bahttext(amount):
 	return num2words(amount, to="currency", lang="th")
 
 
+def amount_in_dollartext(amount):
+    return num2words(amount, to="currency", lang='en', currency='USD').title()
+
+
 def full_thai_date(date_str):
 	if not date_str:
 		return ""
