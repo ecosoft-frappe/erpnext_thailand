@@ -107,7 +107,7 @@ doctype_js = {
 jinja = {
 	"methods": [
 		"erpnext_thailand.utils.amount_in_bahttext",
-        "erpnext_thailand.utils.amount_in_dollartext",
+        "erpnext_thailand.utils.amount_to_text",
 		"erpnext_thailand.utils.full_thai_date",
 	],
 }
