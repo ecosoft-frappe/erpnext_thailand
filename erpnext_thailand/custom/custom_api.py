@@ -516,3 +516,25 @@ def cancel_related_tax_invoice(doc, method):
 		if tinv:
 			tinv = frappe.get_doc(doctype, tinv[0])
 			tinv.cancel()
+
+
+@frappe.whitelist()
+def add_comment(
+	reference_doctype,
+	reference_name,
+	comment_type="Comment",
+	text=None,
+	comment_email=None,
+	comment_by=None,
+):
+	return frappe.get_doc(
+		{
+			"doctype": "Comment",
+			"comment_type": comment_type,
+			"comment_email": comment_email or frappe.session.user,
+			"comment_by": comment_by,
+			"reference_doctype": reference_doctype,
+			"reference_name": reference_name,
+			"content": text or comment_type,
+		}
+	).insert(ignore_permissions=True)

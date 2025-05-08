@@ -1,6 +1,7 @@
 frappe.provide("erpnext_thailand.print");
 
-erpnext_thailand.print.print_pdf = function(doc) {
+erpnext_thailand.print.print_pdf = function(frm, log=false) {
+	let doc = frm.doc
 	// Fetch default print formats for the given doctype and docname
 	frappe.call({
 		method: "erpnext_thailand.custom.print_format.get_print_formats",
@@ -48,6 +49,23 @@ erpnext_thailand.print.print_pdf = function(doc) {
 							frappe.msgprint(__("Please enable pop-ups"));
 						}
 						d.hide();
+						// Write Log
+						if (log) {
+							frappe.call({
+								method: "erpnext_thailand.custom.custom_api.add_comment",
+								args: {
+									reference_doctype: doc.doctype,
+									reference_name: doc.name,
+									comment_type: "Edit",
+									text: "Printed: " + print_format,
+								},
+								callback: function(r) {
+									if (!r.exc) {
+										frm.reload_doc();
+									}
+								}
+							})
+						}
 					}
 				});
 				d.show();
