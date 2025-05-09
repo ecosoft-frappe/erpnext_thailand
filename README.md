@@ -2,35 +2,44 @@
 
 Additional tax functionality to comply with Thailand Tax regulation.
 
-### 1. Tax Point on both Invoice and Payment
+1. **Tax (VAT)**:
+   - **Item Tax**: Tax point occur when deliver product and invoice document is issued
+   - **Service VAT**: Tax point occur on payment or whenever the tax invoice/receipt is issued  (on sales/purchase invioce, record GL as "Undued Tax" and move to "Tax" on payment / receipt of tax invoice)
 
-Tax Point determine when tax is recorded in general ledger. And on tax point, with Sales Tax Invoice or Purchase Tax Invoice will be created.
+2. **Withholding Tax and Withholding Tax Certificate**:
+   - **Withholding Tax on Payment**: I.e., Withhold 3% for services and etc.
+   - **Issue Withholding Tax Certificate**: Printout Withholding Tax Cert for the supplier being tax withheld
 
-Trading of stockable product, tax point occur when deliver product and invoice is issued. The selling party will issue out document called "Delivery Note / Tax Invoice". And so Tax Invoice doctype got created when submit sales/purchase invoice.
+3. **Tax Reports for Revenue Department**:
+   - **Purchase and Sales Tax Report**: Printout PDF or Excel for RD submission
+   - **Support Tax 0%**: I.e., for export case 
+   - **PND Report**: Printout PDF or Excel for RD submission
 
-For service, tax point occur when service is done and payment is made. When submit sales/purchase invoice, account ledger will record Undue Tax. Until when the seller get paid, it will then create Tax Invoice doctype on payment submission, in which account ledger will clear Undue Tax into Tax. The document issued from seller is called "Receipt / Tax Invoice"
+4. **Sales and Purchase Billing**:
+   - As optional process, in case the customer require Billing process (ขั้นตอนการวางบิล)
 
-### 2. Withholding Tax and Certificate
+5. **Deposit Invoicing**:
+   - **Deposit Invoice Creation**: Allow creation of 1st invoice as Deposit Invoice
+   - **Deposit Allocation**: Allow auto/manual deposit allocation on following invoices
 
-When a company purchase service from a supplier, when making payment, it is responsible to withhold (deduct) a tax amount (i.e., 3%) of invoice amount and issue out the Withholding Tax Certificate (pdf) to supplier.
+6. **Thai Tax Settings**:
+   - Setup Thai Tax in one place
+   - Setup Tax Address
 
-### 3. Reports that require for submission to RD,
+7. **Thai Language**:
+   - Amount to Words on printout
+   - Thai Date on printout
 
-- Purchase Tax Report, Sales Tax Report
-- Withholding Tax Report (PND or ภงด)
+9. **Currency Exchange from BOT**:
+   - An option to use BOT as source of currency exchange
 
-### TODO:
+9. **Print Format Enhancement**:
+    - Number of Copies
+    - Auto choose print format based on document context
 
-- Thailand e-Tax Invoice, e-Withholding Tax
-
-## Features
-
-- Sales Tax and Undue Sales Tax
-- Purchase Tax and Undue Purchase Tax
-- Sales and Purchase Tax Report
-- Withholding Tax on Payment (based on invoice amount before tax) and Withholding Tax Cert (pdf)
-- Withholding Tax Report (PND3, PND53)
-- Get Address by Tax ID, Zip Code
+10. **Thai Address Web Service**:
+    - Pull address from Postal Code
+    - Pull address from Company Tax ID
 
 ## Setup
 
@@ -47,8 +56,8 @@ $ bench install-app erpnext_thailand
 #### For Tax Invoice setup
 
 1. In chart of account, make sure to have with Rate, i.e, 7% for Thailand Tax (Tax)
-    - Sales Tax, Undue Sales Tax
-    - Purchase Tax, Undue Purchase Tax
+    - Sales Tax and Undue Sales Tax
+    - Purchase Tax and Undue Purchase Tax
 2. Open Thai Tax Settings, and setup above taxes
 3. Setup Sales / Purchase Taxes and Charges Template, we just want to make sure that,
     - When buy/sell product, Sales/Purchase Tax is record on invoice
