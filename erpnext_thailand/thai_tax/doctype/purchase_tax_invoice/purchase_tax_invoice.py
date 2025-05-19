@@ -30,9 +30,23 @@ class PurchaseTaxInvoice(Document):
 					origin_doc = frappe.get_doc(
 						"Journal Entry Tax Invoice Detail", gl.voucher_detail_no
 					)
-				origin_doc.tax_invoice_number = self.number
-				origin_doc.tax_invoice_date = self.date
-				origin_doc.save(ignore_permissions=True)
+				if not origin_doc.get("split_tax_invoice", False):
+					origin_doc.tax_invoice_number = self.number
+					origin_doc.tax_invoice_date = self.date
+					origin_doc.save(ignore_permissions=True)
+				else: # find in Purchase Invoice Detail Tax Invoice
+					dt = {
+						"Purchase Invoice": "Purchase Invoice Tax Invoice Detail",
+						"Expense Claim": "Expense Claim Tax Invoice Detail",
+					}
+					if self.voucher_type not in dt.keys():
+						return
+					row = frappe.get_doc(dt[self.voucher_type], self.splitted_tax_invoice)
+					row.tax_invoice_number = self.number
+					row.tax_invoice_date = self.date
+					row.supplier = self.party
+					row.save(ignore_permissions=True)
+
 
 	def compute_report_date(self):
 		if int(self.months_delayed) == 0:

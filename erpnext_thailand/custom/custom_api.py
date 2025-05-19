@@ -26,6 +26,17 @@ def create_tax_invoice_on_gl_tax(doc, method):
 	doctype = False
 	tax_amount = 0.0
 	voucher = frappe.get_doc(doc.voucher_type, doc.voucher_no)
+	
+	# Check if the voucher is a tax invoice related doctypes
+	if voucher.doctype not in [
+     	"Sales Invoice",
+      	"Purchase Invoice",
+       	"Payment Entry",
+        "Expense Claim",
+        "Journal Entry",
+    ]:
+		return
+ 
 	is_return = False
 	if doc.voucher_type in ["Sales Invoice", "Purchase Invoice"]:
 		is_return = voucher.is_return  # Case Debit/Credit Note
@@ -46,9 +57,17 @@ def create_tax_invoice_on_gl_tax(doc, method):
 		if tax_amount != 0:
 			# Base amount, use base amount from origin document
 			if voucher.doctype == "Expense Claim":
-				base_amount = voucher.base_amount_overwrite or voucher.total_sanctioned_amount
-			elif voucher.doctype in ["Purchase Invoice", "Sales Invoice"]:
+				if voucher.split_tax_invoice:
+					base_amount = sum([x.tax_base_amount for x in voucher.splitted_tax_invoices])
+				else:
+					base_amount = voucher.base_amount_overwrite or voucher.total_sanctioned_amount
+			elif voucher.doctype == "Sales Invoice":
 				base_amount = voucher.base_net_total
+			elif voucher.doctype == "Purchase Invoice":
+				if voucher.split_tax_invoice:
+					base_amount = sum([x.tax_base_amount for x in voucher.splitted_tax_invoices])
+				else:
+					base_amount = voucher.base_net_total
 			elif voucher.doctype == "Payment Entry":
 				base_amount = voucher.tax_base_amount
 			elif voucher.doctype == "Journal Entry":
@@ -64,18 +83,43 @@ def create_tax_invoice_on_gl_tax(doc, method):
 			if abs((base_amount * tax_rate / 100) - tax_amount) > 0.1:
 				frappe.throw(
 					_(
-						"Tax should be {}% of the base amount<br/>"
-						"<b>Note:</b> To correct base amount, fill in Base Amount Overwrite.".format(
-							tax_rate
-						)
+         				"Tax should be {}% of the base amount<br/>"
+					  	"<b>Note:</b> To correct base amount, fill in Tax Base Amount.".format(tax_rate)
 					)
 				)
-			tinv = create_tax_invoice(doc, doctype, base_amount, tax_amount, voucher)
-			tinv = update_voucher_tinv(doctype, voucher, tinv)
-			tinv.submit()
+			if voucher.get("split_tax_invoice", False):
+				# Use Split Tax Invoice Table
+				tinvs = create_tax_invoice(doc, doctype, base_amount, tax_amount, voucher, True)
+				validate_splitted_tax_invoices(voucher, setting.purchase_tax_account)
+				for tinv in tinvs:
+					tinv = update_voucher_tinv(doctype, voucher, tinv, True)
+					tinv.submit()
+			else:
+				[tinv] = create_tax_invoice(doc, doctype, base_amount, tax_amount, voucher)
+				tinv = update_voucher_tinv(doctype, voucher, tinv)
+				tinv.submit()
 
 
-def create_tax_invoice(doc, doctype, base_amount, tax_amount, voucher):
+def validate_splitted_tax_invoices(voucher, tax_account):
+	tax_amount = 0
+	for tax in voucher.taxes:
+		if tax.account_head == tax_account:
+			tax_amount += tax.get("base_tax_amount") or tax.tax_amount
+	splitted_tax_amount = 0
+	for tax in voucher.splitted_tax_invoices:
+		splitted_tax_amount += tax.tax_amount
+	# Check if tax amount in 2 tables are equal
+	if abs(tax_amount - splitted_tax_amount) > 0.1:
+		frappe.throw(
+			_(
+				"Document Tax amount and Splitted Tax Invoice are not equal<br/>"
+				"- Tax amount in Tax Invoice: {0}<br/>"
+				"- Tax amount in Splitted Tax Invoice: {1}"
+			).format(tax_amount, splitted_tax_amount)
+		)
+
+
+def create_tax_invoice(doc, doctype, base_amount, tax_amount, voucher, split_tax_invoice=False):
 	tinv_dict = {}
 	# For sales invoice / purchase invoice / payment and journal entry, we can get the party from GL
 	gl = frappe.db.get_all(
@@ -119,7 +163,7 @@ def create_tax_invoice(doc, doctype, base_amount, tax_amount, voucher):
 	if doc.voucher_type == "Payment Entry" and doc.party_type == "Employee":
 		party = voucher.supplier
 	# Case expense claim, partner should be supplier, not employee
-	if doc.voucher_type == "Expense Claim":
+	if doc.voucher_type == "Expense Claim" and not voucher.split_tax_invoice:
 		party = voucher.supplier
 	if not party:
 		frappe.throw(_("Please fill in Supplier for Purchase Tax Invoice"))
@@ -133,12 +177,30 @@ def create_tax_invoice(doc, doctype, base_amount, tax_amount, voucher):
 			"party": party,
 		}
 	)
-	tinv = frappe.get_doc(tinv_dict)
-	tinv.insert(ignore_permissions=True)
-	return tinv
+	if not split_tax_invoice:
+		tinv = frappe.get_doc(tinv_dict)
+		tinv.insert(ignore_permissions=True)
+		return [tinv]
+	else:
+		tinvs = []
+		for tax in voucher.splitted_tax_invoices:
+			if tax.tax_amount > 0:
+				tinv_dict.update(
+					{
+						"party": tax.supplier,
+						"tax_amount": tax.tax_amount,
+						"tax_base": tax.tax_base_amount,
+						"number": tax.tax_invoice_number,
+						"date": tax.tax_invoice_date,
+						"report_date": tax.tax_invoice_date,
+						"splitted_tax_invoice": tax.name
+					}
+				)
+				tinvs.append(frappe.get_doc(tinv_dict).insert(ignore_permissions=True))
+		return tinvs
 
 
-def update_voucher_tinv(doctype, voucher, tinv):
+def update_voucher_tinv(doctype, voucher, tinv, split_tax_invoice=False):
 	# Set company tax address
 	def update_company_tax_address(voucher, tinv):
 		# From Sales Invoice and Purchase Invoice, use voucher address
@@ -152,6 +214,10 @@ def update_voucher_tinv(doctype, voucher, tinv):
 			frappe.throw(_("No Company Billing/Tax Address"))
 
 	update_company_tax_address(voucher, tinv)
+ 
+	# Use data in tax detail table
+	if split_tax_invoice:
+		return tinv
 
 	# Sales Invoice - use Sales Tax Invoice as Tax Invoice
 	# Purchase Invoice - use Bill No as Tax Invoice
@@ -191,10 +257,16 @@ def validate_tax_invoice(doc, method):
 		if tax.account_head == tax_account:
 			has_vat = True
 			break
-	if has_vat and not doc.tax_invoice_number:
-		frappe.throw(_("This document require Tax Invoice Number"))
-	if not has_vat and doc.tax_invoice_number:
-		frappe.throw(_("This document has no due VAT, please remove Tax Invoice Number"))
+	if not doc.split_tax_invoice:
+		if has_vat and not doc.tax_invoice_number:
+			frappe.throw(_("This document require Tax Invoice Number"))
+		if not has_vat and doc.tax_invoice_number:
+			frappe.throw(_("This document has no due VAT, please remove Tax Invoice Number"))
+	else:
+		if has_vat and not doc.splitted_tax_invoices:
+			frappe.throw(_("This document require Tax Invoice Number(s)"))
+		if not has_vat and doc.splitted_tax_invoices:
+			frappe.throw(_("This document has no due VAT, please remove Tax Invoice Number(s)"))
 
 
 @frappe.whitelist()

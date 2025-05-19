@@ -272,20 +272,49 @@ ERP_CUSTOM_FIELDS = {
 			"label": "Tax Invoice",
 		},
 		{
+			"fieldname": "section_break_split_tax_invoice",
+			"fieldtype": "Section Break",
+			"insert_after": "tax_invoice",
+   			"label": ""
+		},
+		{
+			"fieldname": "split_tax_invoice",
+			"fieldtype": "Check",
+			"insert_after": "section_break_split_tax_invoice",
+			"label": "Split Tax Invoices",
+			"no_copy": 1,
+		},
+		{
+			"fieldname": "splitted_tax_invoices",
+			"fieldtype": "Table",
+			"insert_after": "split_tax_invoice",
+			"label": "Splitted Tax Invoices",
+			"options": "Purchase Invoice Tax Invoice Detail",
+			"depends_on": "eval:doc.split_tax_invoice",
+		},
+		{
+			"fieldname": "section_break_tax_invoice",
+			"fieldtype": "Section Break",
+			"insert_after": "splitted_tax_invoices",
+   			"label": ""
+		},
+		{
 			"allow_on_submit": 1,
 			"fieldname": "tax_invoice_number",
 			"fieldtype": "Data",
 			"in_list_view": 1,
 			"in_standard_filter": 1,
-			"insert_after": "tax_invoice",
+			"insert_after": "section_break_tax_invoice",
 			"label": "Tax Invoice Number",
 			"no_copy": 1,
 			"read_only_depends_on": "eval:doc.docstatus!=0",
+			"depends_on": "eval:!doc.split_tax_invoice",
 		},
 		{
 			"fieldname": "column_break_t0qgt",
 			"fieldtype": "Column Break",
 			"insert_after": "tax_invoice_number",
+			"depends_on": "eval:!doc.split_tax_invoice",
 		},
 		{
 			"allow_on_submit": 1,
@@ -295,6 +324,7 @@ ERP_CUSTOM_FIELDS = {
 			"label": "Tax Invoice Date",
 			"no_copy": 1,
 			"read_only_depends_on": "eval:doc.docstatus!=0",
+			"depends_on": "eval:!doc.split_tax_invoice",
 		},
 	],
  	"Purchase Invoice Item": [
@@ -438,11 +468,34 @@ HRMS_CUSTOM_FIELDS = {
 			"label": "Base Amount Overwrite",
 			"no_copy": 1,
 			"options": "Company:company:default_currency",
+			"depends_on": "eval:!doc.split_tax_invoice",
+		},
+		{
+			"fieldname": "section_break_split_tax_invoice",
+			"fieldtype": "Section Break",
+			"insert_after": "base_amount_overwrite",
+   			"label": ""
+		},
+		{
+			"fieldname": "split_tax_invoice",
+			"fieldtype": "Check",
+			"insert_after": "section_break_split_tax_invoice",
+			"label": "Split Tax Invoices",
+			"no_copy": 1,
+		},
+		{
+			"fieldname": "splitted_tax_invoices",
+			"fieldtype": "Table",
+			"insert_after": "split_tax_invoice",
+			"label": "Splitted Tax Invoices",
+			"options": "Expense Claim Tax Invoice Detail",
+			"depends_on": "eval:doc.split_tax_invoice",
 		},
 		{
 			"fieldname": "section_break_uodhb",
 			"fieldtype": "Section Break",
-			"insert_after": "base_amount_overwrite",
+			"insert_after": "splitted_tax_invoices",
+			"depends_on": "eval:!doc.split_tax_invoice",
 		},
 		{
 			"allow_on_submit": 1,
@@ -452,6 +505,7 @@ HRMS_CUSTOM_FIELDS = {
 			"insert_after": "section_break_uodhb",
 			"label": "Tax Invoice Number",
 			"read_only_depends_on": "eval:doc.docstatus!=0",
+			"depends_on": "eval:!doc.split_tax_invoice",
 		},
 		{
 			"allow_on_submit": 1,
@@ -461,11 +515,13 @@ HRMS_CUSTOM_FIELDS = {
 			"label": "Supplier",
 			"no_copy": 1,
 			"options": "Supplier",
+			"depends_on": "eval:!doc.split_tax_invoice",
 		},
 		{
 			"fieldname": "column_break_6atpw",
 			"fieldtype": "Column Break",
 			"insert_after": "supplier",
+			"depends_on": "eval:!doc.split_tax_invoice",
 		},
 		{
 			"allow_on_submit": 1,
@@ -475,6 +531,7 @@ HRMS_CUSTOM_FIELDS = {
 			"label": "Tax Invoice Date",
 			"no_copy": 1,
 			"read_only_depends_on": "eval:doc.docstatus!=0",
+			"depends_on": "eval:!doc.split_tax_invoice",
 		},
 		{
 			"allow_on_submit": 1,
@@ -484,6 +541,7 @@ HRMS_CUSTOM_FIELDS = {
 			"insert_after": "tax_invoice_date",
 			"label": "Supplier Name",
 			"no_copy": 1,
+			"depends_on": "eval:!doc.split_tax_invoice",
 		},
 	],
 }

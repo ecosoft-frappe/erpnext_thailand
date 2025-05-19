@@ -1,0 +1,92 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-05-19 12:16:21.583866",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "supplier",
+  "column_break_giyy",
+  "supplier_name",
+  "section_break_shqq",
+  "tax_invoice_number",
+  "tax_invoice_date",
+  "column_break_wwac",
+  "tax_base_amount",
+  "tax_amount"
+ ],
+ "fields": [
+  {
+   "allow_on_submit": 1,
+   "fieldname": "supplier",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Supplier",
+   "options": "Supplier",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_giyy",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "supplier.supplier_name",
+   "fieldname": "supplier_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Supplier Name",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_shqq",
+   "fieldtype": "Section Break"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "tax_invoice_number",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Tax Invoice Number",
+   "reqd": 1
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "tax_invoice_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Tax Invoice Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_wwac",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "tax_base_amount",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Tax Base Amount"
+  },
+  {
+   "fieldname": "tax_amount",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Tax Amount"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2025-05-19 15:36:39.105180",
+ "modified_by": "Administrator",
+ "module": "Thai Tax",
+ "name": "Purchase Invoice Tax Invoice Detail",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

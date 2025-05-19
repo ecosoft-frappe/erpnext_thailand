@@ -31,6 +31,7 @@
   "reference_section",
   "company",
   "gl_entry",
+  "splitted_tax_invoice",
   "column_break_13",
   "against_voucher_type",
   "against_voucher",
@@ -223,11 +224,18 @@
    "options": "Purchase Tax Invoice",
    "print_hide": 1,
    "read_only": 1
+  },
+  {
+   "fieldname": "splitted_tax_invoice",
+   "fieldtype": "Data",
+   "label": "Splitted Tax Invoice",
+   "read_only": 1,
+   "search_index": 1
   }
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2023-03-04 12:14:49.270413",
+ "modified": "2025-05-19 15:22:26.907679",
  "modified_by": "Administrator",
  "module": "Thai Tax",
  "name": "Purchase Tax Invoice",
@@ -262,6 +270,7 @@
    "write": 1
   }
  ],
+ "row_format": "Dynamic",
  "show_title_field_in_link": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
