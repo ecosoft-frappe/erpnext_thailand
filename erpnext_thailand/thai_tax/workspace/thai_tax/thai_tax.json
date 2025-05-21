@@ -79,7 +79,7 @@
   },
   {
    "hidden": 0,
-   "is_query_report": 0,
+   "is_query_report": 1,
    "label": "Sales Tax Report",
    "link_count": 0,
    "link_to": "Sales Tax Report",
@@ -90,7 +90,7 @@
   },
   {
    "hidden": 0,
-   "is_query_report": 0,
+   "is_query_report": 1,
    "label": "Purchase Tax Report",
    "link_count": 0,
    "link_to": "Purchase Tax Report",
@@ -101,7 +101,7 @@
   },
   {
    "hidden": 0,
-   "is_query_report": 0,
+   "is_query_report": 1,
    "label": "PND3",
    "link_count": 0,
    "link_to": "PND3",
@@ -112,7 +112,7 @@
   },
   {
    "hidden": 0,
-   "is_query_report": 0,
+   "is_query_report": 1,
    "label": "PND53",
    "link_count": 0,
    "link_to": "PND53",
