@@ -18,7 +18,7 @@ def amount_to_text(amount, currency=None, lang=None):
         return num2words(amount, to="currency", lang=lang, currency=currency).title()
     except:
         return ""
-	
+
 
 def full_thai_date(date_str):
 	if not date_str:
@@ -100,7 +100,7 @@ def get_address_by_tax_id(tax_id=False, branch=False):
 
 	if data.get("vmsgerr"):
 		frappe.throw(data.get("vmsgerr"))
-  
+
 	return finalize_address_dict(data)
 
 
@@ -189,3 +189,45 @@ def get_location_by_zip_code(zip_code):
 		}
 		for loc in locations
 	]
+
+@frappe.whitelist()
+def get_partner_address(customer_supplier: str, type: str) -> list:
+	"""
+	Get address data from a customer or supplier
+
+	Args:
+		customer_supplier (str): The name of the customer or supplier.
+		type (str): The type of the link, either "Customer" or "Supplier".
+	Returns:
+		list: A list of dictionaries containing address details.
+	"""
+	if not customer_supplier:
+		return []
+
+	# on Address doctype, there is a link to Customer or Supplier
+	reference = frappe.get_all(
+		"Dynamic Link",
+		filters={
+			"link_doctype": type,
+			"link_name": customer_supplier,
+			"parenttype": "Address"
+		},
+		fields=["parent", "parenttype"],
+	)
+
+	if reference:
+		address_list = frappe.get_all(
+			"Address",
+			filters={"name": ["in", [i.parent for i in reference]]},
+			fields=[
+				"address_line1",
+				"address_line2",
+				"city",
+				"county",
+				"state",
+				"country",
+				"pincode"
+			]
+		)
+		return address_list
+	return []
