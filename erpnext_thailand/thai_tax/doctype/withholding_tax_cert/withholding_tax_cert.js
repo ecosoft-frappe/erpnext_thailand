@@ -27,6 +27,13 @@ frappe.ui.form.on("Withholding Tax Cert", {
 				},
 			};
 		});
+		frm.set_query("voucher_no", function () {
+			return {
+				filters: {
+					docstatus: ["!=", 2],
+				}
+			};
+		})
 	},
 });
 

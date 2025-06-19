@@ -14,13 +14,23 @@ frappe.ui.form.on("Payment Entry", {
 			frm.trigger("add_withholding_tax_deduction_buttons");
 		}
 		// Add button to create withholding tax cert
-		if (
-			frm.doc.docstatus == 1 &&
-			frm.doc.payment_type == "Pay" &&
-			frm.doc.deductions.length > 0
-		) {
-			frm.trigger("add_create_withholding_tax_cert_button");
-		}
+		frappe.db.get_single_value("Withholding Tax Setting", "allow_wht_cert_in_draft_payment").then((allow_draft) => {
+			frappe.db.get_list(
+				"Withholding Tax Cert", {
+					filters: [
+						["voucher_type", "=", "Payment Entry"],
+						["voucher_no", "=", frm.doc.name],
+						["docstatus", "!=", 2]]}).then((wht_cert) => {
+				if (
+					(frm.doc.docstatus == 1 || (frm.doc.docstatus == 0 && allow_draft == 1)) &&
+					wht_cert.length == 0 &&
+					frm.doc.payment_type == "Pay" &&
+					frm.doc.deductions.length > 0
+				) {
+					frm.trigger("add_create_withholding_tax_cert_button");
+				}
+			});
+		})
 		// Create Clear Undue VAT Journal Entry
 		if (frm.doc.docstatus == 1) {
 			frm.trigger("add_create_undue_vat_journal_entry_button");

@@ -7,20 +7,33 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "wht_cert_image"
+  "wht_cert_image",
+  "column_break_zxsv",
+  "allow_wht_cert_in_draft_payment"
  ],
  "fields": [
   {
    "fieldname": "wht_cert_image",
    "fieldtype": "Attach Image",
    "label": "WHT Cert Image"
+  },
+  {
+   "default": "0",
+   "fieldname": "allow_wht_cert_in_draft_payment",
+   "fieldtype": "Check",
+   "label": "Allow WHT Cert in Draft Payment"
+  },
+  {
+   "fieldname": "column_break_zxsv",
+   "fieldtype": "Column Break"
   }
  ],
+ "grid_page_length": 50,
  "image_field": "wht_cert_image",
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2023-03-04 12:14:13.207499",
+ "modified": "2025-06-18 23:32:21.379374",
  "modified_by": "Administrator",
  "module": "Thai Tax",
  "name": "Withholding Tax Setting",
@@ -37,6 +50,7 @@
    "write": 1
   }
  ],
+ "row_format": "Dynamic",
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": []

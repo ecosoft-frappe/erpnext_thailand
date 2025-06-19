@@ -32,7 +32,11 @@ def get_dashboard_data_for_expense_claim(data):
 
 
 def get_dashboard_data_for_payment_entry(data):
-	data["transactions"].append(
-		{"items": ["Payment Receipt"]}
+	data["non_standard_fieldnames"].update({"Withholding Tax Cert": "voucher_no"})
+	data["transactions"].extend(
+		[
+			{"items": ["Payment Receipt"]},
+			{"items": ["Withholding Tax Cert"]}
+		]
 	)
 	return data
