@@ -81,7 +81,7 @@ def get_withholding_tax_from_type(filters, doc):
 			if root_type in ["Asset", "Income", "Expense"] and account_type in valid_types:
 				base_amount += alloc_percent * (credit - debit)
 	if not base_amount:
-		frappe.throw(_("There is nothing to withhold tax for"))
+		frappe.throw(_("The accounts eligible for withholding tax deduction were not found."))
 	sign = -1 if pay.party_type == "Receive" else 1
 	return {
 		"withholding_tax_type": wht.name,
