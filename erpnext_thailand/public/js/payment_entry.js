@@ -15,7 +15,7 @@ frappe.ui.form.on("Payment Entry", {
 		}
 		// Add button to create withholding tax cert
 		if (
-			frm.doc.docstatus == 1 &&
+			frm.doc.docstatus != 2 &&
 			frm.doc.payment_type == "Pay" &&
 			frm.doc.deductions.length > 0
 		) {
