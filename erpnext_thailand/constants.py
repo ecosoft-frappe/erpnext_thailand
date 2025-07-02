@@ -40,7 +40,7 @@ ERP_CUSTOM_FIELDS = {
 			"fieldname": "add_comment_info",
 			"fieldtype": "Check",
 			"label": "Add Comment",
-			"description": "Add comment to document",
+			"description": "Add printed as comment in document activity",
 			"insert_after": "hide_if_not_default"
 		},
 		{
