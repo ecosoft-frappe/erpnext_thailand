@@ -37,12 +37,19 @@ ERP_CUSTOM_FIELDS = {
 			"insert_after": "default_condition"
 		},
 		{
+			"fieldname": "add_comment_info",
+			"fieldtype": "Check",
+			"label": "Add Comment",
+			"description": "Add comment to document",
+			"insert_after": "hide_if_not_default"
+		},
+		{
 			"fieldname": "add_copies",
 			"fieldtype": "Select",
 			"label": "Additional Copies",
 			"options": "\n1\n2\n3\n4",
 			"description": "2 additional copies will print 3 copies, 1 original and 2 copies. For jinja template, doc.copy = 0 is original, else copies.",
-			"insert_after": "hide_if_not_default",
+			"insert_after": "add_comment_info",
 		}
 	],
 	"Payment Entry": [
