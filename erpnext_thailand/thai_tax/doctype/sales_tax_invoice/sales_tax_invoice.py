@@ -1,3 +1,5 @@
+import frappe
+from frappe import _
 from frappe.model.document import Document
 from frappe.utils import add_months
 from erpnext_thailand.custom.custom_api import get_thai_tax_settings
@@ -11,6 +13,7 @@ class SalesTaxInvoice(Document):
             self.name = self.voucher_no
 
     def validate(self):
+        self.validate_account()
         self.compute_report_date()
         self.compute_tax_percent()
 
@@ -30,3 +33,13 @@ class SalesTaxInvoice(Document):
             self.db_set("tax_percent", round((self.tax_amount / self.tax_base * 100), 0))
         else:
             self.db_set("tax_percent", 0)
+
+    def validate_account(self):
+        """ Get sales tax account from thai tax settings, make sure the account is correct """
+        setting = get_thai_tax_settings(self.company)
+        if self.account != setting.sales_tax_account:
+            frappe.throw(_(
+                "Tax Invoice creation failed,<br/>"
+                "- Invalid account is being assigned to Tax Invoice<br/>"
+                "- Returning Invoice with both negative rate and quantity is incorrect"
+            ))

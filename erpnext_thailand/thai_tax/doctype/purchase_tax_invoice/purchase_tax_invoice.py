@@ -1,8 +1,10 @@
 # Copyright (c) 2023, Kitti U. and contributors
 # For license information, please see license.txt
 import frappe
+from frappe import _
 from frappe.model.document import Document
 from frappe.utils import add_months
+from erpnext_thailand.custom.custom_api import get_thai_tax_settings
 
 
 class PurchaseTaxInvoice(Document):
@@ -18,6 +20,7 @@ class PurchaseTaxInvoice(Document):
 		super().cancel()
 
 	def validate(self):
+		self.validate_account()
 		self.compute_report_date()
 
 	def on_update_after_submit(self):
@@ -53,3 +56,13 @@ class PurchaseTaxInvoice(Document):
 			self.db_set("report_date", self.date)
 		else:
 			self.db_set("report_date", add_months(self.date, int(self.months_delayed)))
+
+	def validate_account(self):
+		""" Get purchase tax account from thai tax settings, make sure the account is correct """
+		setting = get_thai_tax_settings(self.company)
+		if self.account != setting.purchase_tax_account:
+			frappe.throw(_(
+				"Tax Invoice creation failed,<br/>"
+				"- Invalid account is being assigned to Tax Invoice<br/>"
+				"- Returning Invoice with both negative rate and quantity is incorrect"
+			))
