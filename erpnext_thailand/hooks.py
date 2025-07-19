@@ -310,3 +310,5 @@ auto_cancel_exempted_doctypes = ["Sales Tax Invoice", "Purchase Tax Invoice"]
 # auth_hooks = [
 #     "erpnext_thailand.auth.validate"
 # ]
+on_print_pdf = "erpnext_thailand.custom.print_utils.add_comment_on_print_pdf"
+on_gle_rename = "erpnext_thailand.custom.gl_entry.rename_gl_entry_in_tax_invoice"
