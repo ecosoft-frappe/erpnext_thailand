@@ -96,6 +96,14 @@ frappe.ui.form.on("Address", {
 			callback: function (r) {
 				cur_frm.set_value("address_title", r.message["name"]);
 				cur_frm.set_value("address_line1", r.message["address_line1"]);
+				cur_frm.set_value("building_name", r.message["building_name"]);
+				cur_frm.set_value("room_no", r.message["room_no"]);
+				cur_frm.set_value("floor", r.message["floor"]);
+				cur_frm.set_value("village", r.message["village"]);
+				cur_frm.set_value("house_number", r.message["house_number"]);
+				cur_frm.set_value("moo", r.message["moo"]);
+				cur_frm.set_value("alley_lane", r.message["alley_lane"]);
+				cur_frm.set_value("road", r.message["road"]);
 				cur_frm.set_value("city", r.message["city"]);
 				cur_frm.set_value("county", r.message["county"]);
 				cur_frm.set_value("state", r.message["state"]);
