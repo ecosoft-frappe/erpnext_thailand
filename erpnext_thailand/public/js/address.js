@@ -87,32 +87,40 @@ frappe.ui.form.on("Address", {
 	},
 
 	get_address_by_tax_id: function (frm, filters) {
-		return frappe.call({
-			method: "erpnext_thailand.utils.get_address_by_tax_id",
-			args: {
-				tax_id: filters.tax_id,
-				branch: filters.branch,
-			},
-			callback: function (r) {
-				cur_frm.set_value("address_title", r.message["name"]);
-				cur_frm.set_value("address_line1", r.message["address_line1"]);
-				cur_frm.set_value("building_name", r.message["building_name"]);
-				cur_frm.set_value("room_no", r.message["room_no"]);
-				cur_frm.set_value("floor", r.message["floor"]);
-				cur_frm.set_value("village", r.message["village"]);
-				cur_frm.set_value("house_number", r.message["house_number"]);
-				cur_frm.set_value("moo", r.message["moo"]);
-				cur_frm.set_value("alley_lane", r.message["alley_lane"]);
-				cur_frm.set_value("road", r.message["road"]);
-				cur_frm.set_value("city", r.message["city"]);
-				cur_frm.set_value("county", r.message["county"]);
-				cur_frm.set_value("state", r.message["state"]);
-				cur_frm.set_value("pincode", r.message["pincode"]);
-				cur_frm.set_value("tax_id", filters.tax_id);
-				cur_frm.set_value("branch_code", filters.branch);
-				cur_frm.set_value("update_tax_branch", 1);
-			},
-		});
-	},
+        return frappe.call({
+            method: "erpnext_thailand.utils.get_address_by_tax_id",
+            args: {
+                tax_id: filters.tax_id,
+                branch: filters.branch,
+            },
+            callback: function (r) {
+                const fields_to_set = {
+                    "address_title": r.message["name"],
+                    "address_line1": r.message["address_line1"],
+                    "building_name": r.message["building_name"],
+                    "room_no": r.message["room_no"],
+                    "floor": r.message["floor"],
+                    "village": r.message["village"],
+                    "house_number": r.message["house_number"],
+                    "moo": r.message["moo"],
+                    "alley_lane": r.message["alley_lane"],
+                    "road": r.message["road"],
+                    "city": r.message["city"],
+                    "county": r.message["county"],
+                    "state": r.message["state"],
+                    "pincode": r.message["pincode"],
+                    "tax_id": filters.tax_id,
+                    "branch_code": filters.branch,
+                    "update_tax_branch": 1
+                };
+
+                Object.keys(fields_to_set).forEach(field => {
+                    if (frm.fields_dict[field]) {
+                        frm.set_value(field, fields_to_set[field]);
+                    }
+                });
+            },
+        });
+    },
 });
 
