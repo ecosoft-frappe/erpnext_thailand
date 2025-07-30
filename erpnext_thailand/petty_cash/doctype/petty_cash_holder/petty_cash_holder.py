@@ -14,6 +14,7 @@ class PettyCashHolder(Document):
 		if petty_cash_float < petty_cash_balance:
 			frappe.throw(_("The petty cash balance ({:,.2f}) must not exceed the petty cash float ({:,.2f}).").format(self.petty_cash_balance, self.petty_cash_float))
 
+
 @frappe.whitelist()
 def create_journal_entry(posting_date, petty_cash_holder, from_account, to_account, amount:float, type):
 	journal_entry = frappe.new_doc("Journal Entry")

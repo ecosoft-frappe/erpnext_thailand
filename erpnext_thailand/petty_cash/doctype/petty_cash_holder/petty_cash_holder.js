@@ -26,7 +26,7 @@ frappe.ui.form.on("Petty Cash Holder", {
                     ], function(value) {
                         frappe.confirm(
                             `
-                            <table style="width: 60%;">
+                            <table style="width: 100%;">
                                 <tr>
                                     <td style="width: 150px;vertical-align:top;padding-left: 5px;padding-right: 5px;border-left: 1px solid;border-right: 1px solid;border-top: 1px solid;"><b>Date</b></td>
                                     <td style="vertical-align:top;padding-left: 5px;padding-right: 5px;border-right: 1px solid;border-top: 1px solid;">${value.posting_date.split("-").reverse().join("-")}</td>
@@ -102,7 +102,7 @@ frappe.ui.form.on("Petty Cash Holder", {
                     ], function(value) {
                         frappe.confirm(
                             `
-                            <table style="width: 60%;">
+                            <table style="width: 100%;">
                                 <tr>
                                     <td style="width: 150px;vertical-align:top;padding-left: 5px;padding-right: 5px;border-left: 1px solid;border-right: 1px solid;border-top: 1px solid;"><b>Date</b></td>
                                     <td style="vertical-align:top;padding-left: 5px;padding-right: 5px;border-right: 1px solid;border-top: 1px solid;">${value.posting_date.split("-").reverse().join("-")}</td>
