@@ -554,18 +554,18 @@ def create_sales_tax_invoice_on_zero_tax(doc, method):
     if not setting.create_sales_taxinv_on_zero_tax:
         return
     doctype = "Sales Tax Invoice"
-    zero_taxes = filter(lambda t: (
-        t.account_head == setting.sales_tax_account
-        and t.tax_amount == 0
-    ), doc.taxes)
+    zero_taxes = list(filter(lambda t: (
+    t.account_head == setting.sales_tax_account
+    and t.tax_amount == 0
+	), doc.taxes))
     base_amount = sum(tax.base_total for tax in zero_taxes)
     if base_amount:
-        tinv = create_sales_tax_invoice_zero_tax(doc, doctype, base_amount)
+        tinv = create_sales_tax_invoice_zero_tax(doc, doctype, base_amount, zero_taxes[0].account_head)
         tinv = update_voucher_tinv(doctype, doc, tinv)
         tinv.submit()
 
 
-def create_sales_tax_invoice_zero_tax(doc, doctype, base_amount):
+def create_sales_tax_invoice_zero_tax(doc, doctype, base_amount, account):
     tinv_dict = {
         "date": doc.posting_date,
         "doctype": doctype,
@@ -573,7 +573,8 @@ def create_sales_tax_invoice_zero_tax(doc, doctype, base_amount):
         "tax_base": base_amount,
         "party": doc.customer,
         "voucher_type": doc.doctype,
-        "voucher_no": doc.name
+        "voucher_no": doc.name,
+        "account": account,
     }
     tinv = frappe.get_doc(tinv_dict)
     tinv.insert(ignore_permissions=True)
