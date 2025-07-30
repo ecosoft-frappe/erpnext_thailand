@@ -150,6 +150,8 @@ before_app_uninstall = "erpnext_thailand.uninstall.before_app_uninstall"
 override_doctype_class = {
 	"Employee Advance": "erpnext_thailand.custom.employee_advance.ThaiTaxEmployeeAdvance",
 	"Currency Exchange Settings": "erpnext_thailand.custom.currency_exchange_settings.CurrencyExchangeSettings",
+	"Journal Entry": "erpnext_thailand.custom.journal_entry.JournalEntry",
+	"GL Entry": "erpnext_thailand.custom.gl_entry.GLEntry",
 }
 
 # Document Events

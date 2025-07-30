@@ -432,6 +432,33 @@ ERP_CUSTOM_FIELDS = {
 			"insert_after": "customer",
 			"label": "Tax Base Amount",
 		},
+		{
+			"fetch_from": "account.is_petty_cash_account",
+			"fieldname": "is_petty_cash_account",
+			"fieldtype": "Check",
+			"insert_after": "party",
+			"label": "Is Petty Cash Account",
+			"read_only": 1,
+			"hidden": 1,
+		},
+		{
+			"fieldname": "petty_cash_holder",
+			"fieldtype": "Link",
+			"insert_after": "is_petty_cash_account",
+			"label": "Petty Cash Holder",
+			"options": "Petty Cash Holder",
+			"depends_on": "eval:doc.is_petty_cash_account == 1;",
+			"mandatory_depends_on": "eval:doc.is_petty_cash_account == 1;",
+		},
+		{
+			"fetch_from": "petty_cash_holder.petty_cash_holder",
+			"fieldname": "petty_cash_holder_name",
+			"fieldtype": "Data",
+			"insert_after": "petty_cash_holder",
+			"label": "Petty Cash Holder Name",
+			"read_only": 1,
+			"depends_on": "eval:doc.is_petty_cash_account == 1;",
+		},
 	],
     "Currency Exchange Settings": [
 		{
@@ -442,6 +469,29 @@ ERP_CUSTOM_FIELDS = {
 			"label": "Client ID",
 			"mandatory_depends_on": "eval:doc.service_provider == 'Bank of Thailand';",
 			"module": "Thai Tax"
+		},
+	],
+	"Account": [
+		{
+			"fieldname": "is_petty_cash_account",
+			"fieldtype": "Check",
+			"label": "Is Petty Cash Account",
+			"insert_after": "balance_must_be",
+		},
+	],
+	"GL Entry": [
+		{
+			"fieldname": "petty_cash_holder",
+			"fieldtype": "Link",
+			"insert_after": "party",
+			"label": "Petty Cash Holder",
+			"options": "Petty Cash Holder",
+		},
+		{
+			"fieldname": "petty_cash_holder_name",
+			"fieldtype": "Data",
+			"insert_after": "petty_cash_holder",
+			"label": "Petty Cash Holder Name",
 		},
 	]
 }

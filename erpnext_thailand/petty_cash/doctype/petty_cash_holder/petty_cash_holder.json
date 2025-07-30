@@ -1,0 +1,158 @@
+{
+ "actions": [],
+ "autoname": "naming_series:",
+ "creation": "2025-07-18 10:53:08.198145",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "section_break_hamw",
+  "petty_cash_holder",
+  "petty_cash_float",
+  "petty_cash_limit",
+  "petty_cash_balance",
+  "column_break_dmaq",
+  "petty_cash_account",
+  "cash_bank_account_for_petty_cash_top_up",
+  "cash_bank_account_for_petty_cash_withdraw",
+  "naming_series",
+  "disabled",
+  "connections_tab"
+ ],
+ "fields": [
+  {
+   "description": "\u0e1c\u0e39\u0e49\u0e16\u0e37\u0e2d\u0e27\u0e07\u0e40\u0e07\u0e34\u0e19\u0e2a\u0e14\u0e22\u0e48\u0e2d\u0e22",
+   "fieldname": "petty_cash_holder",
+   "fieldtype": "Data",
+   "in_standard_filter": 1,
+   "label": "Petty Cash Holder",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_dmaq",
+   "fieldtype": "Column Break"
+  },
+  {
+   "description": "\u0e27\u0e07\u0e40\u0e07\u0e34\u0e19\u0e2a\u0e14\u0e22\u0e48\u0e2d\u0e22\u0e15\u0e31\u0e49\u0e07\u0e15\u0e49\u0e19",
+   "fieldname": "petty_cash_float",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Petty Cash Float",
+   "non_negative": 1,
+   "precision": "2",
+   "reqd": 1
+  },
+  {
+   "description": "\u0e08\u0e33\u0e19\u0e27\u0e19\u0e17\u0e35\u0e48\u0e40\u0e1a\u0e34\u0e01\u0e40\u0e07\u0e34\u0e19\u0e2a\u0e14\u0e22\u0e48\u0e2d\u0e22\u0e44\u0e14\u0e49\u0e2a\u0e39\u0e07\u0e2a\u0e38\u0e14\u0e15\u0e48\u0e2d 1 \u0e23\u0e32\u0e22\u0e01\u0e32\u0e23 (0 = Unlimited)",
+   "fieldname": "petty_cash_limit",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Petty Cash Limit",
+   "non_negative": 1,
+   "precision": "2"
+  },
+  {
+   "description": "\u0e27\u0e07\u0e40\u0e07\u0e34\u0e19\u0e2a\u0e14\u0e22\u0e48\u0e2d\u0e22\u0e04\u0e07\u0e40\u0e2b\u0e25\u0e37\u0e2d",
+   "fieldname": "petty_cash_balance",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Petty Cash Balance",
+   "non_negative": 1,
+   "precision": "2",
+   "read_only": 1
+  },
+  {
+   "description": "\u0e1a\u0e31\u0e0d\u0e0a\u0e35\u0e40\u0e07\u0e34\u0e19\u0e2a\u0e14\u0e22\u0e48\u0e2d\u0e22",
+   "fieldname": "petty_cash_account",
+   "fieldtype": "Link",
+   "label": "Petty Cash Account",
+   "link_filters": "[[\"Account\",\"is_petty_cash_account\",\"=\",1]]",
+   "options": "Account",
+   "reqd": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "disabled",
+   "fieldtype": "Check",
+   "hidden": 1,
+   "label": "Disabled"
+  },
+  {
+   "fieldname": "section_break_hamw",
+   "fieldtype": "Section Break"
+  },
+  {
+   "description": "\u0e1a\u0e31\u0e0d\u0e0a\u0e35\u0e40\u0e07\u0e34\u0e19\u0e2a\u0e14/\u0e18\u0e19\u0e32\u0e04\u0e32\u0e23\u0e2a\u0e33\u0e2b\u0e23\u0e31\u0e1a\u0e40\u0e15\u0e34\u0e21\u0e40\u0e07\u0e34\u0e19\u0e40\u0e02\u0e49\u0e32\u0e27\u0e07\u0e40\u0e07\u0e34\u0e19\u0e2a\u0e14\u0e22\u0e48\u0e2d\u0e22",
+   "fieldname": "cash_bank_account_for_petty_cash_top_up",
+   "fieldtype": "Link",
+   "label": "Cash / Bank Account for Petty Cash Top Up",
+   "link_filters": "[[\"Account\",\"account_type\",\"in\",[\"Cash\",\"Bank\"]]]",
+   "options": "Account",
+   "reqd": 1
+  },
+  {
+   "description": "\u0e1a\u0e31\u0e0d\u0e0a\u0e35\u0e40\u0e07\u0e34\u0e19\u0e2a\u0e14/\u0e18\u0e19\u0e32\u0e04\u0e32\u0e23\u0e2a\u0e33\u0e2b\u0e23\u0e31\u0e1a\u0e16\u0e2d\u0e19\u0e40\u0e07\u0e34\u0e19\u0e2d\u0e2d\u0e01\u0e08\u0e32\u0e01\u0e27\u0e07\u0e40\u0e07\u0e34\u0e19\u0e2a\u0e14\u0e22\u0e48\u0e2d\u0e22",
+   "fieldname": "cash_bank_account_for_petty_cash_withdraw",
+   "fieldtype": "Link",
+   "label": "Cash / Bank Account for Petty Cash Withdraw",
+   "link_filters": "[[\"Account\",\"account_type\",\"in\",[\"Cash\",\"Bank\"]]]",
+   "options": "Account",
+   "reqd": 1
+  },
+  {
+   "fieldname": "connections_tab",
+   "fieldtype": "Tab Break",
+   "label": "Connections",
+   "show_dashboard": 1
+  },
+  {
+   "default": "PCH-.####",
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "hidden": 1,
+   "label": "Series",
+   "options": "PCH-.####"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-07-25 16:36:31.038711",
+ "modified_by": "Administrator",
+ "module": "Petty Cash",
+ "name": "Petty Cash Holder",
+ "naming_rule": "By \"Naming Series\" field",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts User",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "search_fields": "petty_cash_account",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "petty_cash_holder",
+ "track_changes": 1
+}
