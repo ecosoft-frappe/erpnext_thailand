@@ -181,7 +181,6 @@ def create_deposit_invoice(source_name, target_doc=None):
     def set_missing_values(source, target):
         # Set additional fields on the target document
         target.is_deposit_invoice = 1
-        target.due_date = frappe.utils.nowdate()
 
         # Add the deposit item
         deposit_item = frappe.call(
