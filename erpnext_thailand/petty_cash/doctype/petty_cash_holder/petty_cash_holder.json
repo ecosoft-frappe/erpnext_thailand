@@ -25,7 +25,8 @@
    "fieldtype": "Data",
    "in_standard_filter": 1,
    "label": "Petty Cash Holder",
-   "reqd": 1
+   "reqd": 1,
+   "unique": 1
   },
   {
    "fieldname": "column_break_dmaq",
@@ -45,7 +46,6 @@
    "description": "\u0e08\u0e33\u0e19\u0e27\u0e19\u0e17\u0e35\u0e48\u0e40\u0e1a\u0e34\u0e01\u0e40\u0e07\u0e34\u0e19\u0e2a\u0e14\u0e22\u0e48\u0e2d\u0e22\u0e44\u0e14\u0e49\u0e2a\u0e39\u0e07\u0e2a\u0e38\u0e14\u0e15\u0e48\u0e2d 1 \u0e23\u0e32\u0e22\u0e01\u0e32\u0e23 (0 = Unlimited)",
    "fieldname": "petty_cash_limit",
    "fieldtype": "Float",
-   "in_list_view": 1,
    "label": "Petty Cash Limit",
    "non_negative": 1,
    "precision": "2"
@@ -56,6 +56,7 @@
    "fieldtype": "Float",
    "in_list_view": 1,
    "label": "Petty Cash Balance",
+   "no_copy": 1,
    "non_negative": 1,
    "precision": "2",
    "read_only": 1
@@ -65,7 +66,7 @@
    "fieldname": "petty_cash_account",
    "fieldtype": "Link",
    "label": "Petty Cash Account",
-   "link_filters": "[[\"Account\",\"is_petty_cash_account\",\"=\",1]]",
+   "link_filters": "[[\"Account\",\"account_type\",\"=\",\"Cash\"],[\"Account\",\"is_petty_cash_account\",\"=\",1]]",
    "options": "Account",
    "reqd": 1
   },
@@ -116,7 +117,7 @@
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-07-25 16:36:31.038711",
+ "modified": "2025-09-26 10:26:37.994445",
  "modified_by": "Administrator",
  "module": "Petty Cash",
  "name": "Petty Cash Holder",

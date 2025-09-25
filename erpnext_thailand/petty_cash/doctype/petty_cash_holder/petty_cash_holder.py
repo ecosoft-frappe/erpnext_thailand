@@ -13,7 +13,10 @@ class PettyCashHolder(Document):
 		petty_cash_balance = self.petty_cash_balance or 0
 		if petty_cash_float < petty_cash_balance:
 			frappe.throw(_("The petty cash balance ({:,.2f}) must not exceed the petty cash float ({:,.2f}).").format(self.petty_cash_balance, self.petty_cash_float))
-
+		gl_count = frappe.db.count("GL Entry", {"petty_cash_holder": self.name})
+		gl_acc_count = frappe.db.count("GL Entry", {"petty_cash_holder": self.name, "account": self.petty_cash_account})
+		if gl_acc_count != gl_count:
+			frappe.throw(_("You cannot edit the petty cash account because transactions have already been recorded. Please disable it and create a new petty cash holder instead."))
 
 @frappe.whitelist()
 def create_journal_entry(posting_date, petty_cash_holder, from_account, to_account, amount:float, type):

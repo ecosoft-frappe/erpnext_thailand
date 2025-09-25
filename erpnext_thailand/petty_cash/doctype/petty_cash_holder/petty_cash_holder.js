@@ -70,7 +70,7 @@ frappe.ui.form.on("Petty Cash Holder", {
                                         if (r.message) {
                                             frappe.msgprint({
                                                 title: __("Success"),
-                                                message: __(`The petty cash holder has received the top up successfully.<br><br>Journal Entry Reference: <a href="/app/journal-entry/` + r.message.name + `" target="_blank"><b>` + r.message.name + `</b></a>`),
+                                                message: __(`The petty cash holder has received the top up successfully.<br><br>Journal Entry Reference: <a href="/app/journal-entry/` + r.message.name + `" "><b>` + r.message.name + `</b></a>`),
                                                 indicator: "green",
                                             });
                                             frm.reload_doc();
@@ -146,7 +146,7 @@ frappe.ui.form.on("Petty Cash Holder", {
                                         if (r.message) {
                                             frappe.msgprint({
                                                 title: __("Success"),
-                                                message: __(`The petty cash holder has completed the withdrawal successfully.<br><br>Journal Entry Reference: <a href="/app/journal-entry/` + r.message.name + `" target="_blank"><b>` + r.message.name + `</b></a>`),
+                                                message: __(`The petty cash holder has completed the withdrawal successfully.<br><br>Journal Entry Reference: <a href="/app/journal-entry/` + r.message.name + `" "><b>` + r.message.name + `</b></a>`),
                                                 indicator: "green",
                                             });
                                             frm.reload_doc();
@@ -160,7 +160,10 @@ frappe.ui.form.on("Petty Cash Holder", {
             }
             // History
             frm.add_custom_button(__("History"), function() {
-                frappe.set_route("List", "GL Entry", {petty_cash_holder: frm.doc.name});
+                frappe.route_options = {
+                    petty_cash_holder: frm.doc.name,
+                };
+                frappe.set_route("query-report", "Petty Cash Report");
             });
             // Enable, Disable
             if (!frm.doc.disabled) {

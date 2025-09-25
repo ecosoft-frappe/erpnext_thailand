@@ -486,6 +486,7 @@ ERP_CUSTOM_FIELDS = {
 			"insert_after": "party",
 			"label": "Petty Cash Holder",
 			"options": "Petty Cash Holder",
+			"in_standard_filter": 1,
 		},
 		{
 			"fieldname": "petty_cash_holder_name",
