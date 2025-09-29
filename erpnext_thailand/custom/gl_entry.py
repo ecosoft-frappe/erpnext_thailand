@@ -6,14 +6,29 @@ from erpnext.accounts.doctype.gl_entry.gl_entry import GLEntry
 class GLEntry(GLEntry):
 
 	def after_insert(self):
-		if self.petty_cash_holder and self.account:
+		is_petty_cash_account = frappe.get_value(
+			"Account",
+			self.account,
+			"is_petty_cash_account",
+		)
+		if is_petty_cash_account:
+
+			if not self.petty_cash_holder or not self.petty_cash_holder_name:
+				frappe.throw(_("The account is set as petty cash, but the petty cash holder is missing. Please provide it."))
+
 			petty_cash_holder = frappe.get_value("Petty Cash Holder", {"name": self.petty_cash_holder, "petty_cash_account": self.account})
 			if not petty_cash_holder:
-				frappe.throw(_("Petty Cash Holder doesn't exist."))
+				frappe.throw(_("Petty Cash Holder is missing or invalid."))
+
 			# Check petty cash holder enabled
-			disabled = frappe.get_value("Petty Cash Holder", petty_cash_holder, "disabled")
+			disabled = frappe.get_value(
+				"Petty Cash Holder",
+				petty_cash_holder,
+				"disabled",
+			)
 			if disabled == 1:
 				frappe.throw(_("The petty cash holder ({}: {}) is currently disabled. Please enable it before proceeding with this transaction.").format(self.petty_cash_holder, self.petty_cash_holder_name))
+			
 			# Check amount
 			gl_entries = frappe.get_all(
 				"GL Entry",
@@ -28,7 +43,14 @@ class GLEntry(GLEntry):
 			petty_cash_float = frappe.get_value("Petty Cash Holder", petty_cash_holder, "petty_cash_float")
 			if petty_cash_balance > petty_cash_float:
 				frappe.throw(_("The petty cash balance ({:,.2f}) must not exceed the petty cash float ({:,.2f}).").format(petty_cash_balance, petty_cash_float))
+			if petty_cash_balance < 0:
+				frappe.throw(_("The petty cash holder does not have enough balance."))
+
 			frappe.set_value("Petty Cash Holder", petty_cash_holder, "petty_cash_balance", petty_cash_balance)
+		else:
+			
+			if self.petty_cash_holder or self.petty_cash_holder_name:
+				frappe.throw(_("Please validate petty cash holder."))
 
 
 def rename_gl_entry_in_tax_invoice(newname, oldname):

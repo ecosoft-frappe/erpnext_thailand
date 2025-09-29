@@ -447,6 +447,7 @@ ERP_CUSTOM_FIELDS = {
 			"insert_after": "is_petty_cash_account",
 			"label": "Petty Cash Holder",
 			"options": "Petty Cash Holder",
+			"link_filters": "[[\"Petty Cash Holder\",\"petty_cash_account\",\"=\",\"eval: doc.account\"]]",
 			"depends_on": "eval:doc.is_petty_cash_account == 1;",
 			"mandatory_depends_on": "eval:doc.is_petty_cash_account == 1;",
 		},
@@ -601,6 +602,30 @@ HRMS_CUSTOM_FIELDS = {
 			"no_copy": 1,
 			"depends_on": "eval:!doc.split_tax_invoice",
 		},
+		{
+			"fieldname": "is_petty_cash",
+			"fieldtype": "Check",
+			"insert_after": "department",
+			"label": "Is Petty Cash",
+		},
+		{
+			"fieldname": "petty_cash_holder",
+			"fieldtype": "Link",
+			"insert_after": "is_petty_cash",
+			"label": "Petty Cash Holder",
+			"options": "Petty Cash Holder",
+			"depends_on": "eval:doc.is_petty_cash == 1;",
+			"mandatory_depends_on": "eval:doc.is_petty_cash == 1;",
+		},
+		{
+			"fetch_from": "petty_cash_holder.petty_cash_holder",
+			"fieldname": "petty_cash_holder_name",
+			"fieldtype": "Data",
+			"insert_after": "petty_cash_holder",
+			"label": "Petty Cash Holder Name",
+			"read_only": 1,
+			"depends_on": "eval:doc.is_petty_cash == 1;",
+		},
 	],
 }
 
@@ -661,7 +686,32 @@ BILLING_CUSTOM_FIELDS =  {
             "insert_after": "get_invoices_from_purchase_billing",
             "label": "Purchase Billing",
             "options": "Purchase Billing",
-        }
+        },
+		{
+			"fieldname": "is_petty_cash",
+			"fieldtype": "Check",
+			"insert_after": "mode_of_payment",
+			"label": "Is Petty Cash",
+		},
+		{
+			"fieldname": "petty_cash_holder",
+			"fieldtype": "Link",
+			"insert_after": "is_petty_cash",
+			"label": "Petty Cash Holder",
+			"options": "Petty Cash Holder",
+			"link_filters": "[[\"Petty Cash Holder\",\"petty_cash_account\",\"in\",\"eval: [doc.paid_from, doc.paid_to]\"]]",
+			"depends_on": "eval:doc.is_petty_cash == 1;",
+			"mandatory_depends_on": "eval:doc.is_petty_cash == 1;",
+		},
+		{
+			"fetch_from": "petty_cash_holder.petty_cash_holder",
+			"fieldname": "petty_cash_holder_name",
+			"fieldtype": "Data",
+			"insert_after": "petty_cash_holder",
+			"label": "Petty Cash Holder Name",
+			"read_only": 1,
+			"depends_on": "eval:doc.is_petty_cash == 1;",
+		},
     ],
 }
 
