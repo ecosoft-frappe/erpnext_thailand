@@ -171,6 +171,7 @@ def create_tax_invoice(doc, doctype, base_amount, tax_amount, voucher, split_tax
 	tinv_dict.update(
 		{
 			"doctype": doctype,
+			"company": doc.company,
 			"gl_entry": doc.name,
 			"tax_amount": tax_amount,
 			"tax_base": base_amount,

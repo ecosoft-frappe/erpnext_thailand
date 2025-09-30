@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 
 @frappe.whitelist(allow_guest=True)
 def get_api_currency_exchange(
-	from_currency, to_currency, transaction_date, client_id=None):
+	from_currency, to_currency, transaction_date, token=None):
 	# Convert the transaction_date string to a datetime object
 	trans_start_date = datetime.strptime(transaction_date, "%Y-%m-%d")
 	trans_start_date = trans_start_date - timedelta(days=5)
@@ -20,18 +20,19 @@ def get_api_currency_exchange(
 	end_date = trans_end_date
 	currency = from_currency
 
-	if not client_id:
+	if not token:
 		currency_exchange_settings = frappe.get_single("Currency Exchange Settings")
-		client_id = currency_exchange_settings.get_password("client_id")
+		token = currency_exchange_settings.get_password("token")
 
-	conn = http.client.HTTPSConnection("apigw1.bot.or.th")
+	conn = http.client.HTTPSConnection("gateway.api.bot.or.th")
 	headers = {
-		"X-IBM-Client-Id": client_id,
-		"accept": "application/json"
+		"Authorization": token,
+		"accept": "application/json",
+        "Content-Type": "application/json",
 	}
 
 	# Properly formatted URL with dynamic date parameters
-	url_path = f"/bot/public/Stat-ExchangeRate/v2/DAILY_AVG_EXG_RATE/?start_period={start_date}&end_period={end_date}&currency={currency}"
+	url_path = f"/Stat-ExchangeRate/v2/DAILY_AVG_EXG_RATE/?start_period={start_date}&end_period={end_date}&currency={currency}"
 	conn.request("GET", url_path, headers=headers)
 
 	# Respose

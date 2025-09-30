@@ -464,10 +464,10 @@ ERP_CUSTOM_FIELDS = {
     "Currency Exchange Settings": [
 		{
 			"depends_on": "eval:doc.service_provider == 'Bank of Thailand';",
-			"fieldname": "client_id",
+			"fieldname": "token",
 			"fieldtype": "Password",
 			"insert_after": "access_key",
-			"label": "Client ID",
+			"label": "Token",
 			"mandatory_depends_on": "eval:doc.service_provider == 'Bank of Thailand';",
 			"module": "Thai Tax"
 		},

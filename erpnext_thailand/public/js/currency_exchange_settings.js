@@ -57,7 +57,7 @@ frappe.ui.form.on("Currency Exchange Settings", {
 			frm.events.set_table_parameters(frm);
 			frm.events.set_table_result_key(frm);
         } else {
-			frm.set_value("client_id", null);
+			frm.set_value("token", null);
             frm.toggle_display("use_http", true);
         }
     }
