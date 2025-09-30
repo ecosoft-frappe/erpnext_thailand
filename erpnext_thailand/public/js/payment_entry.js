@@ -327,6 +327,11 @@ frappe.ui.form.on("Payment Entry", {
 
 	// --------------- END Thai Billing -----------
 
+	is_petty_cash: function (frm) {
+		frm.set_value("petty_cash_holder", "");
+		frm.set_value("petty_cash_holder_name", "");
+	}
+
 });
 
 frappe.ui.form.on("Payment Entry Deduction", {

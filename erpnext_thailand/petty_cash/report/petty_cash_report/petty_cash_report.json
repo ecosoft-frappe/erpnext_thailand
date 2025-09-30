@@ -1,0 +1,98 @@
+{
+ "add_total_row": 1,
+ "add_translate_data": 0,
+ "columns": [
+  {
+   "fieldname": "posting_date",
+   "fieldtype": "Date",
+   "label": "Posting Date",
+   "width": 110
+  },
+  {
+   "fieldname": "account",
+   "fieldtype": "Link",
+   "label": "Account",
+   "options": "Account",
+   "width": 200
+  },
+  {
+   "fieldname": "voucher_type",
+   "fieldtype": "Link",
+   "label": "Voucher Type",
+   "options": "Doctype",
+   "width": 120
+  },
+  {
+   "fieldname": "voucher_no",
+   "fieldtype": "Dynamic Link",
+   "label": "Voucher No",
+   "options": "voucher_type",
+   "width": 180
+  },
+  {
+   "fieldname": "petty_cash_holder",
+   "fieldtype": "Data",
+   "label": "Petty Cash Holder",
+   "width": 155
+  },
+  {
+   "fieldname": "debit",
+   "fieldtype": "Float",
+   "label": "Debit",
+   "options": "",
+   "width": 140
+  },
+  {
+   "fieldname": "credit",
+   "fieldtype": "Float",
+   "label": "Credit",
+   "options": "",
+   "width": 140
+  },
+  {
+   "fieldname": "balance",
+   "fieldtype": "Float",
+   "label": "Balance",
+   "width": 140
+  }
+ ],
+ "creation": "2025-09-25 13:48:47.644510",
+ "disabled": 0,
+ "docstatus": 0,
+ "doctype": "Report",
+ "filters": [
+  {
+   "fieldname": "petty_cash_holder",
+   "fieldtype": "Link",
+   "label": "Petty Cash Holder",
+   "mandatory": 1,
+   "options": "Petty Cash Holder",
+   "wildcard_filter": 0
+  }
+ ],
+ "idx": 0,
+ "is_standard": "Yes",
+ "letterhead": null,
+ "modified": "2025-09-26 11:19:12.779006",
+ "modified_by": "Administrator",
+ "module": "Petty Cash",
+ "name": "Petty Cash Report",
+ "owner": "Administrator",
+ "prepared_report": 0,
+ "query": "select\n    posting_date,\n    account,\n    voucher_type,\n    voucher_no,\n    petty_cash_holder_name as petty_cash_holder,\n    coalesce(debit, 0) as debit,\n    coalesce(credit, 0) as credit,\n    coalesce(debit, 0) - coalesce(credit, 0) as balance\nfrom `tabGL Entry`\nwhere petty_cash_holder = %(petty_cash_holder)s\norder by posting_date, creation",
+ "ref_doctype": "GL Entry",
+ "report_name": "Petty Cash Report",
+ "report_type": "Query Report",
+ "roles": [
+  {
+   "role": "Accounts User"
+  },
+  {
+   "role": "Accounts Manager"
+  },
+  {
+   "role": "Auditor"
+  }
+ ],
+ "timeout": 0
+}
