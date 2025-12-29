@@ -32,6 +32,7 @@ def validate_deposit_invoice(doc, order_doctype, order_field):
     1. Ensure only one line item and it is a deposit
     2. Validate link with SO/PO and amount
     3. Deposit invoice must be the first invoice being created for the same order
+    4. For return invoices, ensure no subsequent invoices exist
     If all the above constraints are passed, and it has docstatus 0 or 1, update deposit invoice back to SO/PO.
     """
     # Condition 1: Ensure only one line item and it is a deposit
@@ -42,23 +43,77 @@ def validate_deposit_invoice(doc, order_doctype, order_field):
     linked_doc = doc.items[0].get(order_field)
     if not linked_doc:
         return
-    # if not linked_doc:
-    #     frappe.throw(_("Deposit invoice must be linked to a {}.").format(order_doctype))
+    
     linked_doc_amount = frappe.db.get_value(order_doctype, linked_doc, "total")
     if doc.items[0].amount > linked_doc_amount:
         frappe.throw(_("Deposit invoice amount cannot exceed the {}'s amount.").format(order_doctype))
 
-    # Condition 3: Deposit invoice must be the first invoice being created for the same order
+    # Condition 3: For return invoices, check if subsequent invoices exist
+    if doc.is_return:
+        subsequent_invoices = frappe.get_all(
+            doc.doctype,
+            filters=[
+                [doc.doctype, "name", "!=", doc.name],
+                [doc.doctype, "docstatus", "=", 1],
+                [doc.doctype, "is_deposit_invoice", "=", 0],
+                [doc.doctype, "is_return", "=", 0],
+                [f"{doc.doctype} Item", order_field, "=", linked_doc],
+            ],
+            limit=1,
+        )
+        if subsequent_invoices:
+            link = get_link_to_form(order_doctype, linked_doc)
+            frappe.throw(_("Cannot return the first deposit invoice for order {} because there are subsequent invoices already.").format(link))
+        
+        # When submitting return, clear the deposit reference from order
+        if doc.docstatus == 1:
+            order = frappe.get_cached_doc(order_doctype, linked_doc)
+            order.db_set("deposit_invoice", "", update_modified=False)
+            order.db_set("percent_deposit", 0, update_modified=False)
+            order.reload()
+        
+        return
+
+    # Condition 4: Deposit invoice must be the first invoice being created for the same order
     existing_invoices = frappe.get_all(
-		doc.doctype,
-		filters=[
-			[doc.doctype, "name", "!=", doc.name],
-			[doc.doctype, "docstatus", "<", 2],
-			[f"{doc.doctype} Item", order_field, "=", linked_doc],
-		],
-		limit=1,
-	)
-    if existing_invoices:
+        doc.doctype,
+        filters=[
+            [doc.doctype, "name", "!=", doc.name],
+            [doc.doctype, "docstatus", "<", 2],
+            [doc.doctype, "is_return", "=", 0],
+            [doc.doctype, "is_deposit_invoice", "=", 0],
+            [f"{doc.doctype} Item", order_field, "=", linked_doc],
+        ],
+        limit=1,
+    )
+    
+    existing_deposits = frappe.get_all(
+        doc.doctype,
+        filters=[
+            [doc.doctype, "name", "!=", doc.name],
+            [doc.doctype, "docstatus", "=", 1],
+            [doc.doctype, "is_deposit_invoice", "=", 1],
+            [doc.doctype, "is_return", "=", 0],
+            [f"{doc.doctype} Item", order_field, "=", linked_doc],
+        ],
+        pluck="name"
+    )
+    
+    active_deposits = []
+    for deposit_name in existing_deposits:
+        has_return = frappe.db.exists(
+            doc.doctype,
+            {
+                "return_against": deposit_name,
+                "is_return": 1,
+                "is_deposit_invoice": 1,
+                "docstatus": 1
+            }
+        )
+        if not has_return:
+            active_deposits.append(deposit_name)
+    
+    if existing_invoices or active_deposits:
         link = get_link_to_form(order_doctype, linked_doc)
         frappe.throw(_("Cannot create deposit invoice for order {}.<br/>Deposit invoice must be the 1st invoice").format(link))
 
@@ -90,8 +145,19 @@ def validate_normal_invoice(doc, order_doctype, order_field):
         order = frappe.get_value(order_doctype, linked_doc, ["has_deposit", "deposit_invoice"], as_dict=True)
         # If the linked order must 1st invoice deposit, but it not yet has it.
         if order["has_deposit"] and not order["deposit_invoice"]:
-            link = get_link_to_form(order_doctype, linked_doc)
-            frappe.throw(_("The 1st invoice of {} should be a deposit invoice.").format(link))
+            active_deposit = frappe.get_all(
+                doc.doctype,
+                filters=[
+                    [doc.doctype, "docstatus", "=", 1],
+                    [doc.doctype, "is_deposit_invoice", "=", 1],
+                    [doc.doctype, "is_return", "=", 0],
+                    [f"{doc.doctype} Item", order_field, "=", linked_doc],
+                ],
+                limit=1,
+            )
+            if not active_deposit:
+                link = get_link_to_form(order_doctype, linked_doc)
+                frappe.throw(_("The 1st invoice of {} should be a deposit invoice.").format(link))
 
     # Ensure allocation amount must not exceed the deposit amount
     for d in doc.deposits:
@@ -332,6 +398,19 @@ def get_untied_deposits(invoice):
 def get_deposit_invoice_details(doc):
     deposit_item = doc.items[0]
     initial_amount = deposit_item.amount
+    return_invoices = frappe.get_all(
+        doc.doctype,
+        filters=[
+            [doc.doctype, "docstatus", "=", 1],
+            [doc.doctype, "is_deposit_invoice", "=", 1],
+            [doc.doctype, "is_return", "=", 1],
+            [doc.doctype, "return_against", "=", doc.name],
+        ],
+        limit=1,
+    )
+    
+    if return_invoices:
+        return deposit_item, initial_amount, initial_amount
 
     # Calculate the total allocated amount from previous deductions
     previous_deductions = frappe.get_all(
