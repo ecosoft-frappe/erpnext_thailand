@@ -187,6 +187,7 @@ doc_events = {
 	"Purchase Invoice": {
 		"after_insert": "erpnext_thailand.custom.custom_api.validate_tax_invoice",
 		"on_update": "erpnext_thailand.custom.custom_api.validate_tax_invoice",
+        "before_cancel": "erpnext_thailand.custom.custom_api.cancel_related_tax_invoice",
         "before_validate": [
             "erpnext_thailand.custom.deposit_utils.validate_invoice",
             "erpnext_thailand.custom.deposit_utils.apply_deposit_deduction"

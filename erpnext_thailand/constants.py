@@ -636,7 +636,7 @@ DEPOSIT_CUSTOM_FIELDS =  {
 			"fieldname": "has_deposit",
 			"fieldtype": "Check",
 			"insert_after": "section_break_o8q38",
-			"label": "Desposit on 1st Invoice",
+			"label": "Deposit on 1st Invoice",
 			"allow_on_submit": 1
 		},
 		{
@@ -679,7 +679,7 @@ DEPOSIT_CUSTOM_FIELDS =  {
 			"fieldname": "has_deposit",
 			"fieldtype": "Check",
 			"insert_after": "section_break_o8q38",
-			"label": "Desposit on 1st Invoice",
+			"label": "Deposit on 1st Invoice",
 			"allow_on_submit": 1
 		},
 		{
