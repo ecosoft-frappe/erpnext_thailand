@@ -846,3 +846,85 @@ DEPOSIT_CUSTOM_FIELDS =  {
 		},
 	],
 }
+
+ADDRESS_CUSTOM_FIELDS =  {
+    "Address": [
+		{
+			"description": "ชื่ออาคาร",
+			"fieldname": "building_name",
+			"fieldtype": "Data",
+			"insert_after": "address_type",
+            "label": "Building Name",
+		}, 
+        {
+			"description": "ห้องเลขที่",
+			"fieldname": "room_no",
+			"fieldtype": "Data",
+			"insert_after": "building_name",
+            "label": "Room No.",
+		},
+        {
+			"description": "ชั้นที่",
+			"fieldname": "floor",
+			"fieldtype": "Data",
+			"insert_after": "room_no",
+            "label": "Floor",
+		},
+        {
+			"description": "หมู่บ้าน",
+			"fieldname": "village",
+			"fieldtype": "Data",
+			"insert_after": "floor",
+            "label": "Village",
+		},
+        {
+			"description": "เลขที่บ้าน",
+			"fieldname": "house_number",
+			"fieldtype": "Data",
+			"insert_after": "village",
+            "label": "House Number",
+		},
+        {
+			"description": "หมู่ที่",
+			"fieldname": "moo",
+			"fieldtype": "Data",
+			"insert_after": "house_number",
+            "label": "Moo",
+		},
+        {
+			"description": "ตรอก/ซอย",
+			"fieldname": "alley_lane",
+			"fieldtype": "Data",
+			"insert_after": "moo",
+            "label": "Alley/Lane",
+		},
+        {
+			"description": "แยก",
+			"fieldname": "intersection",
+			"fieldtype": "Data",
+			"insert_after": "alley_lane",
+            "label": "Intersection",
+		},
+        {
+			"description": "ถนน",
+			"fieldname": "road",
+			"fieldtype": "Data",
+			"insert_after": "intersection",
+            "label": "Road",
+		},
+	]
+}
+
+ADDRESS_PROPERTY_SETTERS = {	
+    "Address": [
+		("address_line1", "reqd", 0, "Check"),
+    	("address_line1", "hidden", 1, "Check"),
+    	("address_line2", "hidden", 1, "Check"),
+        ("city", "label", "Subdistrict", "Data"),
+        ("city", "reqd", 1, "Check"),
+        ("county", "label", "District", "Data"),
+        ("county", "reqd", 1, "Check"),
+        ("state", "label", "Province", "Data"),
+        ("state", "reqd", 1, "Check"),
+	],
+}
