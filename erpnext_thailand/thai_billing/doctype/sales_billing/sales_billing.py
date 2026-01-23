@@ -5,6 +5,7 @@ import frappe
 from frappe import _
 from frappe.model.document import Document
 from frappe.query_builder import DocType
+from frappe.utils import cint
 
 
 class SalesBilling(Document):
@@ -23,6 +24,7 @@ class SalesBilling(Document):
 def get_due_billing(customer=None, currency=None, tax_type=None, threshold_type=None, threshold_date=None, include_draft_invoices=None):
     if not (customer, currency, tax_type, threshold_date):
         return {}
+    include_draft_invoices = cint(include_draft_invoices)
     docstatus = [1]
     if include_draft_invoices:
         docstatus = [0, 1]
@@ -30,7 +32,7 @@ def get_due_billing(customer=None, currency=None, tax_type=None, threshold_type=
         "customer": customer,
         "currency": currency,
         "docstatus": ["in", docstatus],
-        "outstanding_amount": [">", 0],
+        "outstanding_amount": ["!=", 0]
     }
     if tax_type:
         filters["taxes_and_charges"] = tax_type
@@ -41,7 +43,7 @@ def get_due_billing(customer=None, currency=None, tax_type=None, threshold_type=
     invoices = frappe.get_list(
         "Sales Invoice",
         filters=filters,
-        pluck="name"
+        fields=["name", "due_date", "grand_total", "outstanding_amount"]
     )
     # Exclude invoices which are in other submitted sales billing
     # use frappe query builder to joinb Sales Billing and Sales Billing Line

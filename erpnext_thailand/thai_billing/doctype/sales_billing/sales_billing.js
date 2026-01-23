@@ -46,7 +46,12 @@ frappe.ui.form.on("Sales Billing", {
                     console.log(r.message)
                     let invoices = []
                     for (let i of r.message) {
-                        invoices.push({sales_invoice: i})
+                        invoices.push({
+                            sales_invoice: i.name,
+                            due_date: i.due_date,
+                            grand_total: i.grand_total,
+                            outstanding_amount: i.outstanding_amount
+                        });
                     }
                     frm.set_value("sales_billing_line", invoices)
                     frm.set_value("invoice_count", invoices.length)
