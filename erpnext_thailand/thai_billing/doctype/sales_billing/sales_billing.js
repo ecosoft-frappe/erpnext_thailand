@@ -48,9 +48,12 @@ frappe.ui.form.on("Sales Billing", {
                     for (let i of r.message) {
                         invoices.push({
                             sales_invoice: i.name,
+                            invoice_date: i.posting_date,
                             due_date: i.due_date,
+                            reference: i.po_no,
+                            outstanding_amount: i.outstanding_amount,
                             grand_total: i.grand_total,
-                            outstanding_amount: i.outstanding_amount
+                            payment_term: i.payment_terms_template,
                         });
                     }
                     frm.set_value("sales_billing_line", invoices)

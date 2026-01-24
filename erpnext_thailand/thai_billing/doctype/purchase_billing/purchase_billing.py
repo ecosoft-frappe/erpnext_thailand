@@ -4,6 +4,7 @@
 import frappe
 from frappe import _
 from frappe.model.document import Document
+from frappe.query_builder import DocType
 
 
 class PurchaseBilling(Document):
@@ -25,7 +26,7 @@ def get_due_billing(supplier=None, currency=None, tax_type=None, threshold_type=
 		"supplier": supplier,
 		"currency": currency,
 		"docstatus": 1,
-		"outstanding_amount": [">", 0],
+		"outstanding_amount": ["!=", 0]
 	}
 	# ปิดเงื่อนไข outstanding_amount
 
@@ -38,10 +39,22 @@ def get_due_billing(supplier=None, currency=None, tax_type=None, threshold_type=
 	invoices = frappe.get_list(
 		"Purchase Invoice",
 		filters=filters,
-		pluck="name",
-	
+		fields=["name", "posting_date", "due_date", "po_no", "grand_total", "outstanding_amount", "payment_terms_template"]
 	)
 
+	PurchaseBilling = DocType("Purchase Billing")
+	PurchaseBillingLine = DocType("Purchase Billing Line")
+
+	excluded_invoices = (
+		frappe.qb.from_(PurchaseBilling)
+		.join(PurchaseBillingLine)
+		.on(PurchaseBilling.name == PurchaseBillingLine.parent)
+		.where(PurchaseBilling.docstatus == 1)
+		.select(PurchaseBillingLine.purchase_invoice)
+	).run()
+
+	excluded_invoices = [d[0] for d in excluded_invoices]
+	invoices = [inv for inv in invoices if inv["name"] not in excluded_invoices]
 	return invoices
 
 
