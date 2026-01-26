@@ -100,14 +100,14 @@ def create_multi_payment_entries(payment_details, sales_billing_name, posting_da
             "reference_date": detail.chequereference_date,
         })
         for line in sales_billing.sales_billing_line:
-            if not line.outstanding_amount:
+            if not line.sales_invoice or not line.outstanding_amount:
                 continue
-            if line.sales_invoice:
-                payment_entry.append("references", {
-                    "reference_doctype": "Sales Invoice",
-                    "reference_name": line.sales_invoice,
-                    "allocated_amount": 1  # Need an amount to avoid this ref line being removed
-                })
+            allocated = 1 if line.outstanding_amount > 0 else -1
+            payment_entry.append("references", {
+                "reference_doctype": "Sales Invoice",
+                "reference_name": line.sales_invoice,
+                "allocated_amount": allocated
+            })
         payment_entry.validate()  # Validate to get the total outstanding
         if int(allocate_amount):
             payment_entry.allocate_amount_to_references(payment_entry.paid_amount, False, True)
