@@ -43,7 +43,6 @@ frappe.ui.form.on("Sales Billing", {
 					include_draft_invoices: frm.doc.include_draft_invoices
                 },
                 callback: function(r) {
-                    console.log(r.message)
                     let invoices = []
                     for (let i of r.message) {
                         invoices.push({

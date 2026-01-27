@@ -28,7 +28,6 @@ def get_due_billing(supplier=None, currency=None, tax_type=None, threshold_type=
 		"docstatus": 1,
 		"outstanding_amount": ["!=", 0]
 	}
-	# ปิดเงื่อนไข outstanding_amount
 
 	if tax_type:
 		filters["taxes_and_charges"] = tax_type

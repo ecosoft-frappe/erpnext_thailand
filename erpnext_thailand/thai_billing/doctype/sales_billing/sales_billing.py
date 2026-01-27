@@ -5,7 +5,6 @@ import frappe
 from frappe import _
 from frappe.model.document import Document
 from frappe.query_builder import DocType
-from frappe.utils import cint
 
 
 class SalesBilling(Document):
@@ -25,7 +24,7 @@ def get_due_billing(customer=None, currency=None, tax_type=None, threshold_type=
     if not (customer, currency, tax_type, threshold_date):
         return {}
     docstatus = [1]
-    if cint(include_draft_invoices):
+    if int(include_draft_invoices):
         docstatus = [0, 1]
     filters = {
         "customer": customer,
