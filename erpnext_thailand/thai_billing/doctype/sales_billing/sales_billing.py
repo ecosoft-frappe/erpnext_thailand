@@ -24,13 +24,13 @@ def get_due_billing(customer=None, currency=None, tax_type=None, threshold_type=
     if not (customer, currency, tax_type, threshold_date):
         return {}
     docstatus = [1]
-    if include_draft_invoices:
+    if int(include_draft_invoices):
         docstatus = [0, 1]
     filters = {
         "customer": customer,
         "currency": currency,
         "docstatus": ["in", docstatus],
-        "outstanding_amount": [">", 0],
+        "outstanding_amount": ["!=", 0]
     }
     if tax_type:
         filters["taxes_and_charges"] = tax_type
@@ -41,7 +41,7 @@ def get_due_billing(customer=None, currency=None, tax_type=None, threshold_type=
     invoices = frappe.get_list(
         "Sales Invoice",
         filters=filters,
-        pluck="name"
+        fields=["name", "posting_date", "due_date", "po_no", "grand_total", "outstanding_amount", "payment_terms_template"]
     )
     # Exclude invoices which are in other submitted sales billing
     # use frappe query builder to joinb Sales Billing and Sales Billing Line
@@ -58,7 +58,7 @@ def get_due_billing(customer=None, currency=None, tax_type=None, threshold_type=
     ).run()
 
     excluded_invoices = [d[0] for d in excluded_invoices]
-    invoices = [inv for inv in invoices if inv not in excluded_invoices]
+    invoices = [inv for inv in invoices if inv["name"] not in excluded_invoices]
     return invoices
 
 
@@ -99,14 +99,14 @@ def create_multi_payment_entries(payment_details, sales_billing_name, posting_da
             "reference_date": detail.chequereference_date,
         })
         for line in sales_billing.sales_billing_line:
-            if not line.outstanding_amount:
+            if not line.sales_invoice or not line.outstanding_amount:
                 continue
-            if line.sales_invoice:
-                payment_entry.append("references", {
-                    "reference_doctype": "Sales Invoice",
-                    "reference_name": line.sales_invoice,
-                    "allocated_amount": 1  # Need an amount to avoid this ref line being removed
-                })
+            allocated = 1 if line.outstanding_amount > 0 else -1
+            payment_entry.append("references", {
+                "reference_doctype": "Sales Invoice",
+                "reference_name": line.sales_invoice,
+                "allocated_amount": allocated
+            })
         payment_entry.validate()  # Validate to get the total outstanding
         if int(allocate_amount):
             payment_entry.allocate_amount_to_references(payment_entry.paid_amount, False, True)

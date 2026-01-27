@@ -43,10 +43,17 @@ frappe.ui.form.on("Sales Billing", {
 					include_draft_invoices: frm.doc.include_draft_invoices
                 },
                 callback: function(r) {
-                    console.log(r.message)
                     let invoices = []
                     for (let i of r.message) {
-                        invoices.push({sales_invoice: i})
+                        invoices.push({
+                            sales_invoice: i.name,
+                            invoice_date: i.posting_date,
+                            due_date: i.due_date,
+                            reference: i.po_no,
+                            outstanding_amount: i.outstanding_amount,
+                            grand_total: i.grand_total,
+                            payment_term: i.payment_terms_template,
+                        });
                     }
                     frm.set_value("sales_billing_line", invoices)
                     frm.set_value("invoice_count", invoices.length)
