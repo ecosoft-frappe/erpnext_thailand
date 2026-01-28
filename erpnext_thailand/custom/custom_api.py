@@ -242,7 +242,8 @@ def validate_company_address(doc, method):
 		addresses = frappe.db.get_all(
 			"Address",
 			filters={"is_your_company_address": 1, "address_type": "Billing"},
-			fields=["name", "address_type"],
+			fields=["name"],
+			limit=1,
 		)
 		if len(addresses) == 1:
 			doc.company_tax_address = addresses[0]["name"]
