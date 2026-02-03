@@ -25,10 +25,9 @@ def create_tax_invoice_on_gl_tax(doc, method):
 	setting = get_thai_tax_settings(doc.company)
 	doctype = False
 	tax_amount = 0.0
-	voucher = frappe.get_doc(doc.voucher_type, doc.voucher_no)
 	
 	# Check if the voucher is a tax invoice related doctypes
-	if voucher.doctype not in [
+	if doc.voucher_type not in [
      	"Sales Invoice",
       	"Purchase Invoice",
        	"Payment Entry",
@@ -36,6 +35,8 @@ def create_tax_invoice_on_gl_tax(doc, method):
         "Journal Entry",
     ]:
 		return
+	
+	voucher = frappe.get_doc(doc.voucher_type, doc.voucher_no)
  
 	is_return = False
 	if doc.voucher_type in ["Sales Invoice", "Purchase Invoice"]:
