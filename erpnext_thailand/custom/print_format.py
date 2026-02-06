@@ -3,6 +3,7 @@ from io import BytesIO
 from pypdf import PdfWriter
 
 import frappe
+from frappe.tests.utils import toggle_test_mode
 from frappe.utils.safe_exec import get_safe_globals
 
 
@@ -50,7 +51,7 @@ def allow_update_standard(doc, method):
       			prev_doc.default_condition != doc.default_condition or
       			prev_doc.hide_if_not_default != doc.hide_if_not_default
          	):
-			frappe.flags.in_test = 1
+			toggle_test_mode(True)
 
 
 @frappe.whitelist()
