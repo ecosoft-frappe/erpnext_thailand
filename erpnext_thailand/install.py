@@ -9,7 +9,8 @@ from erpnext_thailand.utils import import_thai_zip_code_data
 from erpnext_thailand.constants import (
     ERP_CUSTOM_FIELDS, ERP_PROPERTY_SETTERS,
     HRMS_CUSTOM_FIELDS, BILLING_CUSTOM_FIELDS,
-	DEPOSIT_CUSTOM_FIELDS
+	DEPOSIT_CUSTOM_FIELDS, ADDRESS_CUSTOM_FIELDS, 
+	ADDRESS_PROPERTY_SETTERS
 )
 
 
@@ -37,6 +38,7 @@ def make_custom_fields():
 	create_custom_fields(ERP_CUSTOM_FIELDS, ignore_validate=True)
 	create_custom_fields(BILLING_CUSTOM_FIELDS, ignore_validate=True)
 	create_custom_fields(DEPOSIT_CUSTOM_FIELDS, ignore_validate=True)
+	create_custom_fields(ADDRESS_CUSTOM_FIELDS, ignore_validate=True)
 	if "hrms" in frappe.get_installed_apps():
 		print("Setup custom fields for hrms...")
 		create_custom_fields(HRMS_CUSTOM_FIELDS, ignore_validate=True)
@@ -44,13 +46,14 @@ def make_custom_fields():
 
 def make_property_setters():
 	print("Setup property setters for erpnext...")
-	for doctypes, property_setters in ERP_PROPERTY_SETTERS.items():
-		if isinstance(doctypes, str):
-			doctypes = (doctypes,)
-		for doctype in doctypes:
-			for property_setter in property_setters:
-				for_doctype = not property_setter[0]
-				make_property_setter(doctype, *property_setter, for_doctype)
+	for property_group in [ERP_PROPERTY_SETTERS, ADDRESS_PROPERTY_SETTERS]:
+		for doctypes, property_setters in property_group.items():
+			if isinstance(doctypes, str):
+				doctypes = (doctypes,)
+			for doctype in doctypes:
+				for property_setter in property_setters:
+					for_doctype = not property_setter[0]
+					make_property_setter(doctype, *property_setter, for_doctype)
 
 
 def after_app_install(app_name):

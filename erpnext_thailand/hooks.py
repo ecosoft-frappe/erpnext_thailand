@@ -207,7 +207,8 @@ doc_events = {
 		"before_validate": "erpnext_thailand.custom.print_format.allow_update_standard",
 	},
     "Address": {
-        "on_update": "erpnext_thailand.custom.address.update_tax_info_in_linked_doc"
+        "on_update": "erpnext_thailand.custom.address.update_tax_info_in_linked_doc",
+        "before_save": "erpnext_thailand.custom.address.update_address_line1",
     },
     "Item": {
         "validate": "erpnext_thailand.custom.item.validate_deposit_item",
