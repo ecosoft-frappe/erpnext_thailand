@@ -79,7 +79,7 @@ frappe.query_reports["Sales Tax Report"] = {
 
 function get_percent_options() {
 	let options = [""];
-	frappe.db.get_list("Sales Tax Invoice", { fields: ["distinct tax_percent"], order_by: "tax_percent" }).then((res) => {
+	frappe.db.get_list("Sales Tax Invoice", { fields: ["tax_percent"], distinct: 1, order_by: "tax_percent" }).then((res) => {
 		res.forEach((dimension) => {
 			options.push(dimension.tax_percent + "%");
 		});
