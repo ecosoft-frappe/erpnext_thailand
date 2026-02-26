@@ -715,7 +715,7 @@ DEPOSIT_CUSTOM_FIELDS =  {
 			"depends_on": "",
 			"fieldname": "is_deposit_invoice",
 			"fieldtype": "Check",
-			"insert_after": "company_tax_id",
+			"insert_after": "is_consolidated",
 			"label": "Is Deposit Invoice",
 			"read_only": 0
 		},
@@ -767,7 +767,7 @@ DEPOSIT_CUSTOM_FIELDS =  {
 			"depends_on": "",
 			"fieldname": "is_deposit_invoice",
 			"fieldtype": "Check",
-			"insert_after": "company",
+			"insert_after": "is_paid",
 			"label": "Is Deposit Invoice",
 			"read_only": 0
 		},
