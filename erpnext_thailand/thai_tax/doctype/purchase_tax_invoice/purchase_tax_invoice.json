@@ -175,9 +175,7 @@
   {
    "fieldname": "branch_code",
    "fieldtype": "Data",
-   "is_virtual": 1,
-   "label": "Branch Code",
-   "options": "frappe.get_doc('Supplier', doc.party).branch_code"
+   "label": "Branch Code"
   },
   {
    "fieldname": "reference_section",
