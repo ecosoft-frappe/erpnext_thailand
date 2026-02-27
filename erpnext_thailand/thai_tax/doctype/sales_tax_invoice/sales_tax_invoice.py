@@ -16,6 +16,7 @@ class SalesTaxInvoice(Document):
         self.validate_account()
         self.compute_report_date()
         self.compute_tax_percent()
+        self.set_branch_code()
 
     def on_update_after_submit(self):
         if self.get_doc_before_save():  # Some change is made
@@ -43,3 +44,19 @@ class SalesTaxInvoice(Document):
                 "- Invalid account is being assigned to Tax Invoice<br/>"
                 "- Returning Invoice with both negative rate and quantity is incorrect"
             ))
+    
+    def get_branch_code(self):
+        if self.voucher_type == "Sales Invoice" and self.voucher_no:
+            addr = frappe.db.get_value(
+                "Sales Invoice", self.voucher_no, "customer_address")
+            if addr:
+                branch_code = frappe.db.get_value("Address", addr, "branch_code")
+                if branch_code:
+                    return branch_code
+        if self.party:
+            return frappe.db.get_value("Customer", self.party, "branch_code")
+        return None
+    
+    def set_branch_code(self):
+        if not self.branch_code:
+            self.branch_code = self.get_branch_code()
