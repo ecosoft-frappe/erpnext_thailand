@@ -652,10 +652,16 @@ DEPOSIT_CUSTOM_FIELDS =  {
 			"fieldtype": "Column Break",
 			"insert_after": "deposit_invoice"
 		},
+        {
+			"fieldname": "deposit_amount",
+			"fieldtype": "Currency",
+			"insert_after": "column_break_euapx",
+			"label": "Deposit Amount",
+		},
 		{
 			"fieldname": "percent_deposit",
 			"fieldtype": "Percent",
-			"insert_after": "column_break_euapx",
+			"insert_after": "deposit_amount",
 			"label": "Percent Deposit",
 		},
 		{
@@ -695,10 +701,16 @@ DEPOSIT_CUSTOM_FIELDS =  {
 			"fieldtype": "Column Break",
 			"insert_after": "deposit_invoice"
 		},
+        {
+			"fieldname": "deposit_amount",
+			"fieldtype": "Currency",
+			"insert_after": "column_break_euapx",
+			"label": "Deposit Amount",
+		},
 		{
 			"fieldname": "percent_deposit",
 			"fieldtype": "Percent",
-			"insert_after": "column_break_euapx",
+			"insert_after": "deposit_amount",
 			"label": "Percent Deposit",
 		},
 		{

@@ -1,8 +1,9 @@
 import json
+
 import frappe
 from frappe import _
-from frappe.utils import get_link_to_form
 from frappe.model.mapper import get_mapped_doc
+from frappe.utils import get_link_to_form
 
 
 def get_invoice_order_type(doctype):
@@ -70,6 +71,7 @@ def validate_deposit_invoice(doc, order_doctype, order_field):
             percent = doc.total / order.total * 100
             order.db_set("deposit_invoice", doc.name, update_modified=False)
             order.db_set("percent_deposit", percent, update_modified=False)
+            order.db_set("deposit_amount", doc.total, update_modified=False)
             order.reload()
 
         # A full refund of the deposit is allowed
@@ -83,6 +85,7 @@ def validate_deposit_invoice(doc, order_doctype, order_field):
                 order = frappe.get_cached_doc(order_doctype, linked_doc)
                 order.db_set("deposit_invoice", "", update_modified=False)
                 order.db_set("percent_deposit", 0, update_modified=False)
+                order.db_set("deposit_amount", 0, update_modified=False)
                 order.reload()
     
     # Finally, erase link to so_detail, so it won't be used in the invoice
@@ -139,6 +142,7 @@ def cancel_deposit_invoice(doc, method):
         percent_deposit = return_against_total / order.total * 100
         order.db_set("deposit_invoice", doc.return_against, update_modified=False)
         order.db_set("percent_deposit", percent_deposit, update_modified=False)
+        order.db_set("deposit_amount", return_against_total, update_modified=False)
     order.reload()
     # If exist normal invoice, don't allow to cancel deposit invoice
     existing_invoices = frappe.get_all(
