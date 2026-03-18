@@ -30,15 +30,15 @@ class GLEntry(GLEntry):
 				frappe.throw(_("The petty cash holder ({}: {}) is currently disabled. Please enable it before proceeding with this transaction.").format(self.petty_cash_holder, self.petty_cash_holder_name))
 			
 			# Check amount
-			gl_entries = frappe.get_all(
-				"GL Entry",
-				filters={
-					"petty_cash_holder": petty_cash_holder,
-					"account": self.account,
-				},
-				group_by="petty_cash_holder",
-				fields=["petty_cash_holder", "sum(debit) as debit", "sum(credit) as credit"]
-			)
+			gl_entries = frappe.db.sql("""
+				select
+					petty_cash_holder,
+					sum(debit) as debit,
+					sum(credit) as credit
+				from `tabGL Entry`
+				where petty_cash_holder = %s and account = %s
+				group by petty_cash_holder
+			""", (petty_cash_holder, self.account), as_dict=True)
 			petty_cash_balance = gl_entries[0].debit - gl_entries[0].credit
 			petty_cash_float = frappe.get_value("Petty Cash Holder", petty_cash_holder, "petty_cash_float")
 			if petty_cash_balance > petty_cash_float:
