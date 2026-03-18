@@ -33,7 +33,15 @@ frappe.ui.form.on("Purchase Billing", {
                 callback: function(r) {
                     let invoices = []
                     for (let i of r.message) {
-                        invoices.push({purchase_invoice: i})
+                        invoices.push({
+                            purchase_invoice: i.name,
+                            invoice_date: i.posting_date,
+                            due_date: i.due_date,
+                            reference: i.po_no,
+                            outstanding_amount: i.outstanding_amount,
+                            grand_total: i.grand_total,
+                            payment_term: i.payment_terms_template,
+                        });
                     }
                     frm.set_value("purchase_billing_line", invoices)
                     frm.set_value("invoice_count", invoices.length)

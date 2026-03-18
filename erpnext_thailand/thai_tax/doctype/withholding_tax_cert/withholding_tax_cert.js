@@ -35,6 +35,6 @@ frappe.ui.form.on("Withholding Tax Items", {
 	// Helper to calculate tax amount from given rate
 	tax_rate: function (frm, cdt, cdn) {
 		var row = locals[cdt][cdn];
-		frappe.model.set_value(cdt, cdn, "tax_amount", (row.tax_base * row.tax_rate) / 100);
+		frappe.model.set_value(cdt, cdn, "tax_amount", flt((row.tax_base * row.tax_rate) / 100, precision("tax_amount", row)));
 	},
 });

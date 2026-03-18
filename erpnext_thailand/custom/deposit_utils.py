@@ -50,25 +50,40 @@ def validate_deposit_invoice(doc, order_doctype, order_field):
 
     # Condition 3: Deposit invoice must be the first invoice being created for the same order
     existing_invoices = frappe.get_all(
-		doc.doctype,
-		filters=[
-			[doc.doctype, "name", "!=", doc.name],
-			[doc.doctype, "docstatus", "<", 2],
-			[f"{doc.doctype} Item", order_field, "=", linked_doc],
-		],
-		limit=1,
-	)
+        doc.doctype,
+        filters=[
+            [doc.doctype, "name", "!=", doc.name],
+            [doc.doctype, "docstatus", "<", 2],
+            [doc.doctype, "is_deposit_invoice", "=", 0],
+            [f"{doc.doctype} Item", order_field, "=", linked_doc],
+        ],
+        limit=1,
+    )
     if existing_invoices:
         link = get_link_to_form(order_doctype, linked_doc)
         frappe.throw(_("Cannot create deposit invoice for order {}.<br/>Deposit invoice must be the 1st invoice").format(link))
 
-    # Update deposit invoice and percent deposit back to SO/PO
     if doc.docstatus in [0, 1]:
-        order = frappe.get_cached_doc(order_doctype, linked_doc)
-        percent = doc.total / order.total * 100
-        order.db_set("deposit_invoice", doc.name, update_modified=False)
-        order.db_set("percent_deposit", percent, update_modified=False)
-        order.reload()
+        # Update deposit invoice and percent deposit back to SO/PO
+        if not doc.is_return:
+            order = frappe.get_cached_doc(order_doctype, linked_doc)
+            percent = doc.total / order.total * 100
+            order.db_set("deposit_invoice", doc.name, update_modified=False)
+            order.db_set("percent_deposit", percent, update_modified=False)
+            order.reload()
+
+        # A full refund of the deposit is allowed
+        if doc.is_return and doc.return_against:
+            deposit_amount = frappe.db.get_value(doc.doctype, doc.return_against, "total")
+            return_deposit_amount = doc.total
+            balance = deposit_amount + return_deposit_amount
+            if balance != 0:
+                frappe.throw(_("A full refund of the deposit is allowed."))
+            else:
+                order = frappe.get_cached_doc(order_doctype, linked_doc)
+                order.db_set("deposit_invoice", "", update_modified=False)
+                order.db_set("percent_deposit", 0, update_modified=False)
+                order.reload()
     
     # Finally, erase link to so_detail, so it won't be used in the invoice
     # This is strangely needed as it was provided during open_mapped_doc to transfer currency
@@ -118,7 +133,27 @@ def cancel_deposit_invoice(doc, method):
         return
     order = frappe.get_cached_doc(order_doctype, linked_doc)
     order.db_set("deposit_invoice", "", update_modified=False)
+    # Case cancel return deposit
+    if doc.is_return and doc.return_against:
+        return_against_total = frappe.db.get_value(doc.doctype, doc.return_against, "total")
+        percent_deposit = return_against_total / order.total * 100
+        order.db_set("deposit_invoice", doc.return_against, update_modified=False)
+        order.db_set("percent_deposit", percent_deposit, update_modified=False)
     order.reload()
+    # If exist normal invoice, don't allow to cancel deposit invoice
+    existing_invoices = frappe.get_all(
+        doc.doctype,
+        filters=[
+            [doc.doctype, "name", "!=", doc.name],
+            [doc.doctype, "docstatus", "<", 2],
+            [doc.doctype, "is_deposit_invoice", "=", 0],
+            [f"{doc.doctype} Item", order_field, "=", linked_doc],
+        ],
+        limit=1,
+    )
+    if existing_invoices:
+        link = get_link_to_form(order_doctype, linked_doc)
+        frappe.throw("Unable to cancel the deposit invoice for order {}.<br/>Please cancel the normal invoice first.".format(link))
     # TODO: please make sure it is not cancelled if it already used as deposit deduction
 
 
@@ -247,12 +282,24 @@ def get_tied_to_order_deposits(invoice):
     for order_name in orders:
         order = frappe.get_cached_doc(order_doctype, order_name)
 
-        # Fetch all deposit invoices linked to the order
+        # Fetch all deposit invoices linked to the order (not included return deposit invoice)
+        return_against_deposit_invoices = frappe.get_all(
+            invoice_doctype,
+            filters={
+                "docstatus": 1,
+                "is_deposit_invoice": 1,
+                "is_return": 1,
+                order_field: order.name,
+            },
+            pluck="return_against",
+        )
         deposit_invoices = frappe.get_all(
             invoice_doctype,
             filters={
                 "docstatus": 1,
                 "is_deposit_invoice": 1,
+                "is_return": 0,
+                "name": ["not in", return_against_deposit_invoices],
                 order_field: order.name,
             },
             pluck="name",
@@ -297,13 +344,27 @@ def get_untied_deposits(invoice):
     _, order_field, partner = get_invoice_order_type(invoice_doctype)
 
     deductions = []
-    # Fetch all deposit invoices that is not tied to any order
+    # Fetch all deposit invoices that is not tied to any order (not included return deposit invoice)
+    return_against_deposit_invoices = frappe.get_all(
+        invoice_doctype,
+        filters={
+            partner: invoice.get(partner),
+            "docstatus": 1,
+            "is_deposit_invoice": 1,
+            "is_return": 1,
+            order_field: ["in", ["", None]],
+            "currency": invoice.get("currency"),
+        },
+        pluck="return_against",
+    )
     deposit_invoices = frappe.get_all(
         invoice_doctype,
         filters={
             partner: invoice.get(partner),
             "docstatus": 1,
             "is_deposit_invoice": 1,
+            "is_return": 0,
+            "name": ["not in", return_against_deposit_invoices],
             order_field: ["in", ["", None]],
             "currency": invoice.get("currency"),
         },
