@@ -6,7 +6,7 @@ app_publisher = "Ecosoft"
 app_description = "Thailand Localization"
 app_email = "kittiu@ecosoft.co.th"
 app_license = "MIT"
-required_apps = ["erpnext"]
+required_apps = ["erpnext", "hrms"]
 
 
 naming_series_variables = {
