@@ -4,10 +4,72 @@ from ast import literal_eval
 import frappe
 import pandas as pd
 from frappe import _
+from hrms.overrides.employee_payment_entry import EmployeePaymentEntry
+from hrms.overrides.employee_payment_entry import get_payment_entry_for_employee as origin_get_payment_entry_for_employee
 from erpnext_thailand.custom.custom_api import get_thai_tax_settings
 
 REF_DOCTYPES = ["Purchase Invoice", "Expense Claim", "Journal Entry"]
 
+
+class PaymentEntry(EmployeePaymentEntry):
+
+	def before_submit(self):
+		if self.is_petty_cash:
+			is_petty_cash_paid_from = frappe.get_value(
+				"Account",
+				self.paid_from,
+				"is_petty_cash_account",
+			)
+			is_petty_cash_paid_to = frappe.get_value(
+				"Account",
+				self.paid_to,
+				"is_petty_cash_account",
+			)
+			if not (is_petty_cash_paid_from or is_petty_cash_paid_to):
+				frappe.throw(_("Paid From / Paid To account is not petty cash account, please unselect <b>is petty cash</b> before submit."))
+
+	def validate(self):
+		super().validate()
+		if not self.is_petty_cash and (self.petty_cash_holder or self.petty_cash_holder_name):
+			self.update({
+				"petty_cash_holder": "",
+				"petty_cash_holder_name": "",
+			})
+
+	def get_gl_dict(self, args, account_currency=None, item=None):
+		gl_dict = super().get_gl_dict(args, account_currency=account_currency, item=item)
+		if item and item.doctype == "Payment Entry":
+			is_petty_cash_account = frappe.get_value(
+				"Account",
+				gl_dict["account"],
+				"is_petty_cash_account",
+			)
+			if is_petty_cash_account:
+				gl_dict.update({
+					"petty_cash_holder": item.petty_cash_holder,
+					"petty_cash_holder_name": item.petty_cash_holder_name,
+				})
+		return gl_dict
+
+@frappe.whitelist()
+def get_payment_entry_for_employee(dt, dn, party_amount=None, bank_account=None, bank_amount=None):
+	pe = origin_get_payment_entry_for_employee(dt, dn, party_amount=party_amount, bank_account=bank_account, bank_amount=bank_amount)
+	doc = frappe.get_doc(dt, dn)
+	# Petty Cash
+	if doc.is_petty_cash:
+		pe.is_petty_cash = doc.is_petty_cash
+		pe.petty_cash_holder = doc.petty_cash_holder
+		petty_cash_account = frappe.get_value(
+			"Account",
+			frappe.get_value("Petty Cash Holder", doc.petty_cash_holder, "petty_cash_account"),
+			["name", "account_currency"],
+			as_dict=1,
+		)
+		pe.paid_from = petty_cash_account.name
+		pe.paid_from_account_currency = petty_cash_account.account_currency
+		pe.set_exchange_rate(ref_doc=doc)
+		pe.set_amounts()
+	return pe
 
 @frappe.whitelist()
 def test_require_withholding_tax(doc):
