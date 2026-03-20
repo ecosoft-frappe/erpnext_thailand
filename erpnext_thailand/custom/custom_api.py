@@ -423,7 +423,6 @@ def clear_invoice_undue_tax(doc, method):
 	)
 	doc.tax_base_amount = base_total
 	doc.calculate_taxes()
-	doc.save()
 
 
 def get_undue_tax(doc, ref, gl, tax):
