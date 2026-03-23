@@ -6,7 +6,7 @@ app_publisher = "Ecosoft"
 app_description = "Thailand Localization"
 app_email = "kittiu@ecosoft.co.th"
 app_license = "MIT"
-required_apps = ["erpnext"]
+required_apps = ["erpnext", "hrms"]
 
 
 naming_series_variables = {
@@ -149,6 +149,10 @@ before_app_uninstall = "erpnext_thailand.uninstall.before_app_uninstall"
 # Override standard doctype classes
 override_doctype_class = {
 	"Currency Exchange Settings": "erpnext_thailand.custom.currency_exchange_settings.CurrencyExchangeSettings",
+	"Journal Entry": "erpnext_thailand.custom.journal_entry.JournalEntry",
+	"GL Entry": "erpnext_thailand.custom.gl_entry.GLEntry",
+	"Payment Entry": "erpnext_thailand.custom.payment_entry.PaymentEntry",
+	"Expense Claim": "erpnext_thailand.custom.expense_claim.ExpenseClaim",
 }
 
 # Document Events
