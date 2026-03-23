@@ -57,6 +57,50 @@
   {
    "child": 0,
    "collapsible": 1,
+   "icon": "receipt-text",
+   "indent": 1,
+   "keep_closed": 1,
+   "label": "Billing",
+   "link_type": "DocType",
+   "show_arrow": 0,
+   "type": "Section Break"
+  },
+  {
+   "child": 1,
+   "collapsible": 1,
+   "indent": 0,
+   "keep_closed": 0,
+   "label": "Sales Billing",
+   "link_to": "Sales Billing",
+   "link_type": "DocType",
+   "show_arrow": 0,
+   "type": "Link"
+  },
+  {
+   "child": 1,
+   "collapsible": 1,
+   "indent": 0,
+   "keep_closed": 0,
+   "label": "Purchase Billing",
+   "link_to": "Purchase Billing",
+   "link_type": "DocType",
+   "show_arrow": 0,
+   "type": "Link"
+  },
+  {
+   "child": 1,
+   "collapsible": 1,
+   "indent": 0,
+   "keep_closed": 0,
+   "label": "Payment Receipt",
+   "link_to": "Payment Receipt",
+   "link_type": "DocType",
+   "show_arrow": 0,
+   "type": "Link"
+  },
+  {
+   "child": 0,
+   "collapsible": 1,
    "icon": "notepad-text",
    "indent": 1,
    "keep_closed": 1,
@@ -143,8 +187,8 @@
    "type": "Link"
   }
  ],
- "modified": "2026-01-09 11:51:24.895329",
- "modified_by": "tharathipc@ecosoft.co.th",
+ "modified": "2026-02-03 14:20:21.816199",
+ "modified_by": "Administrator",
  "module": "Thai Tax",
  "name": "Thai Tax",
  "owner": "tharathipc@ecosoft.co.th",
