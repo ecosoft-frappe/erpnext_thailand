@@ -1,4 +1,5 @@
 import click
+import json
 import frappe
 from frappe.custom.doctype.custom_field.custom_field import \
     create_custom_fields
@@ -56,3 +57,9 @@ def make_property_setters():
 def after_app_install(app_name):
 	if app_name == "hrms":
 		create_custom_fields(HRMS_CUSTOM_FIELDS, ignore_validate=True)
+		# Change order erpnext_thailand after hrms
+		installed_apps = frappe.get_installed_apps()
+		installed_apps.remove("erpnext_thailand")
+		installed_apps.append("erpnext_thailand")
+		frappe.db.set_global("installed_apps", json.dumps(installed_apps))
+		frappe.db.commit()
