@@ -4,8 +4,14 @@ from ast import literal_eval
 import frappe
 import pandas as pd
 from frappe import _
-from hrms.overrides.employee_payment_entry import EmployeePaymentEntry
-from hrms.overrides.employee_payment_entry import get_payment_entry_for_employee as origin_get_payment_entry_for_employee
+try:
+    from hrms.overrides.employee_payment_entry import EmployeePaymentEntry
+    from hrms.overrides.employee_payment_entry import get_payment_entry_for_employee as origin_get_payment_entry_for_employee
+    _hrms_installed = True
+except ImportError:
+    from erpnext.accounts.doctype.payment_entry.payment_entry import PaymentEntry as EmployeePaymentEntry
+    origin_get_payment_entry_for_employee = None
+    _hrms_installed = False
 from erpnext_thailand.custom.custom_api import get_thai_tax_settings
 
 REF_DOCTYPES = ["Purchase Invoice", "Expense Claim", "Journal Entry"]
@@ -53,6 +59,8 @@ class PaymentEntry(EmployeePaymentEntry):
 
 @frappe.whitelist()
 def get_payment_entry_for_employee(dt, dn, party_amount=None, bank_account=None, bank_amount=None):
+	if not _hrms_installed:
+		frappe.throw(_("hrms is required for this feature"))
 	pe = origin_get_payment_entry_for_employee(dt, dn, party_amount=party_amount, bank_account=bank_account, bank_amount=bank_amount)
 	doc = frappe.get_doc(dt, dn)
 	# Petty Cash
