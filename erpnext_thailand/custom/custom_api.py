@@ -224,9 +224,18 @@ def update_voucher_tinv(doctype, voucher, tinv, split_tax_invoice=False):
 	# Sales Invoice - use Sales Tax Invoice as Tax Invoice
 	# Purchase Invoice - use Bill No as Tax Invoice
 	if doctype == "Sales Tax Invoice":
-		voucher.tax_invoice_number = tinv.name
-		voucher.tax_invoice_date = tinv.date
-		tinv.report_date = tinv.date
+		setting = get_thai_tax_settings(voucher.company)
+		if setting.create_sales_taxinv_on_zero_tax and setting.get("manual_keyin_sales_taxinv_on_zero_tax") and tinv.tax_amount == 0:
+			# Manual mode: behave like Purchase Tax Invoice — use user-provided number and date
+			if not (voucher.tax_invoice_number and voucher.tax_invoice_date):
+				frappe.throw(_("Please enter Tax Invoice Number / Tax Invoice Date"))
+			tinv.number = voucher.tax_invoice_number
+			tinv.report_date = tinv.date = voucher.tax_invoice_date
+		else:
+			# Auto mode (default): derive number and date from generated Tax Invoice
+			voucher.tax_invoice_number = tinv.name
+			voucher.tax_invoice_date = tinv.date
+			tinv.report_date = tinv.date
 	if doctype == "Purchase Tax Invoice":
 		if not (voucher.tax_invoice_number and voucher.tax_invoice_date):
 			frappe.throw(_("Please enter Tax Invoice Number / Tax Invoice Date"))
@@ -269,6 +278,21 @@ def validate_tax_invoice(doc, method):
 			frappe.throw(_("This document require Tax Invoice Number(s)"))
 		if not has_vat and doc.splitted_tax_invoices:
 			frappe.throw(_("This document has no due VAT, please remove Tax Invoice Number(s)"))
+
+
+def validate_sales_tax_invoice_zero_tax(doc, method):
+	"""When manual key-in is enabled, require Tax Invoice Number/Date on zero-tax Sales Invoices."""
+	setting = get_thai_tax_settings(doc.company)
+	if not (setting.create_sales_taxinv_on_zero_tax and setting.get("manual_keyin_sales_taxinv_on_zero_tax")):
+		return
+	zero_taxes = [t for t in doc.taxes if (
+		t.account_head == setting.sales_tax_account and t.tax_amount == 0
+	)]
+	if zero_taxes:
+		if not doc.tax_invoice_number:
+			frappe.throw(_("This document requires Tax Invoice Number"))
+		if not doc.tax_invoice_date:
+			frappe.throw(_("This document requires Tax Invoice Date"))
 
 
 @frappe.whitelist()

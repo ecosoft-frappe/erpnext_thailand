@@ -179,6 +179,7 @@ doc_events = {
         "on_submit": "erpnext_thailand.custom.unreconcile_payment.unreconcile_undue_tax",
 	},
     "Sales Invoice": {
+        "validate": "erpnext_thailand.custom.custom_api.validate_sales_tax_invoice_zero_tax",
         "on_submit": "erpnext_thailand.custom.custom_api.create_sales_tax_invoice_on_zero_tax",
 		"before_cancel": "erpnext_thailand.custom.custom_api.cancel_related_tax_invoice",
         "before_validate": [

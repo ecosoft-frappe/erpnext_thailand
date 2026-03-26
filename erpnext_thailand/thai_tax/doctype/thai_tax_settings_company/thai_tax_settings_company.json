@@ -13,6 +13,7 @@
   "column_break_dymu",
   "use_doc_name_for_sales_taxinv",
   "create_sales_taxinv_on_zero_tax",
+  "manual_keyin_sales_taxinv_on_zero_tax",
   "section_break_vsbj",
   "purchase_tax_account",
   "purchase_tax_account_undue",
@@ -92,6 +93,13 @@
    "fieldname": "create_sales_taxinv_on_zero_tax",
    "fieldtype": "Check",
    "label": "Create Sales Tax Invoice for Zero Tax"
+  },
+  {
+   "default": "0",
+   "depends_on": "eval:doc.create_sales_taxinv_on_zero_tax",
+   "fieldname": "manual_keyin_sales_taxinv_on_zero_tax",
+   "fieldtype": "Check",
+   "label": "Manual key-in Tax Invoice Number/Date"
   }
  ],
  "index_web_pages_for_search": 1,
