@@ -337,7 +337,7 @@ ERP_CUSTOM_FIELDS = {
  	"Purchase Invoice Item": [
 		{
 			"description": "Default Withholding Tax Type setup on Item",
-			"fetch_from": "item_code.withholding_tax_type",
+			"fetch_from": "item_code.withholding_tax_type_pay_supplier",
 			"fetch_if_empty": 1,
 			"fieldname": "withholding_tax_type",
 			"fieldtype": "Link",
