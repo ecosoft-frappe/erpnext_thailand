@@ -11,6 +11,11 @@ class SalesTaxInvoice(Document):
         setting = get_thai_tax_settings(self.company)
         if setting.use_doc_name_for_sales_taxinv:
             self.name = self.voucher_no
+        # When manual mode is enabled, use tax_invoice_number as the document name (zero tax only)
+        elif setting.create_sales_taxinv_on_zero_tax and setting.get("manual_keyin_sales_taxinv_on_zero_tax") and self.tax_amount == 0:
+            voucher = frappe.get_doc(self.voucher_type, self.voucher_no)
+            if voucher.tax_invoice_number:
+                self.name = voucher.tax_invoice_number
 
     def validate(self):
         self.validate_account()
