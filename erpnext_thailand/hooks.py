@@ -149,6 +149,10 @@ before_app_uninstall = "erpnext_thailand.uninstall.before_app_uninstall"
 # Override standard doctype classes
 override_doctype_class = {
 	"Currency Exchange Settings": "erpnext_thailand.custom.currency_exchange_settings.CurrencyExchangeSettings",
+	"Journal Entry": "erpnext_thailand.custom.journal_entry.JournalEntry",
+	"GL Entry": "erpnext_thailand.custom.gl_entry.GLEntry",
+	"Payment Entry": "erpnext_thailand.custom.payment_entry.PaymentEntry",
+	"Expense Claim": "erpnext_thailand.custom.expense_claim.ExpenseClaim",
 }
 
 # Document Events
