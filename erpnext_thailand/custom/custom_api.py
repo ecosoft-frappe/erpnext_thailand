@@ -351,6 +351,8 @@ def make_clear_vat_journal_entry(dt, dn):
 
 
 def clear_invoice_undue_tax(doc, method):
+	if frappe.flags.get("in_clear_invoice_undue_tax"):
+		return
 	old_doc = doc.get_doc_before_save()
 	if (
 		old_doc
@@ -423,7 +425,11 @@ def clear_invoice_undue_tax(doc, method):
 	)
 	doc.tax_base_amount = base_total
 	doc.calculate_taxes()
-	doc.save()
+	frappe.flags.in_clear_invoice_undue_tax = True
+	try:
+		doc.save()
+	finally:
+		frappe.flags.in_clear_invoice_undue_tax = False
 
 
 def get_undue_tax(doc, ref, gl, tax):
