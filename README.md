@@ -19,7 +19,7 @@ Thailand localization for ERPNext — additional tax functionality, reporting, a
 - **Withholding Tax on Payment**: Deduct WHT at source during Payment Entry (e.g., 1%, 2%, 3%, 5%).
 - **Auto-detect WHT from Items**: Automatically reads the WHT type from invoice line items; differentiates between individual and juristic-person suppliers.
 - **Type of Income**: Configurable income type codes for PND forms (Types 1–6, including subtypes 4.1.x and 4.2.x).
-- **Withholding Tax Certificate**: Create and print a WHT certificate (ใบรับรองการหักภาษี ณ ที่จ่าย) from a Payment Entry, with supplier name, address, income type, and tax amount.
+- **Withholding Tax Certificate**: Create and print a WHT certificate from a Payment Entry, with supplier name, address, income type, and tax amount.
 
 ### 3. Tax Reports for the Revenue Department
 
@@ -28,14 +28,14 @@ Thailand localization for ERPNext — additional tax functionality, reporting, a
 - **PND3 Report**: Withholding tax report for individual payees.
 - **PND53 Report**: Withholding tax report for juristic-person payees.
 
-### 4. Sales and Purchase Billing (ใบวางบิล)
+### 4. Sales and Purchase Billing
 
 - **Sales Billing**: Consolidate multiple sales invoices into a single billing document for a customer.
 - **Purchase Billing**: Consolidate multiple purchase invoices from a supplier.
 - **Payment Receipt**: Optionally auto-create a Payment Receipt document when payment is recorded against a Sales Billing.
 - **Outstanding Tracking**: Billing documents track total outstanding amount and close automatically when fully paid.
 
-### 5. Deposit Invoicing (ใบแจ้งหนี้เงินมัดจำ)
+### 5. Deposit Invoicing
 
 - **Deposit Invoice Creation**: Create the first invoice as a Deposit Invoice directly from a Sales Order or Purchase Order.
 - **Deposit Allocation**: Subsequent invoices against the same order automatically deduct the deposit balance, using either a **Percent** or **Full Amount** deduction method.
