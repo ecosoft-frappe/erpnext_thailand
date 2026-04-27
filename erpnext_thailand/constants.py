@@ -212,10 +212,32 @@ ERP_CUSTOM_FIELDS = {
 			"label": "For Payment",
 			"options": "Payment Entry",
 		},
+        {
+            "fieldname": "section_break_split_tax_invoice",
+            "fieldtype": "Section Break",
+            "insert_after": "for_payment",
+               "label": ""
+        },
+        {
+            "fieldname": "split_tax_invoice",
+            "fieldtype": "Check",
+            "insert_after": "section_break_split_tax_invoice",
+            "label": "Split Tax Invoices",
+            "no_copy": 1,
+        },
+        {
+            "fieldname": "splitted_tax_invoices",
+            "fieldtype": "Table",
+            "insert_after": "split_tax_invoice",
+            "label": "Splitted Tax Invoices",
+            "options": "Purchase Invoice Tax Invoice Detail",
+            "depends_on": "eval:doc.split_tax_invoice",
+        },
 		{
 			"fieldname": "section_break_pxm0e",
 			"fieldtype": "Section Break",
-			"insert_after": "for_payment",
+			"insert_after": "splitted_tax_invoices",
+            "depends_on": "eval:!doc.split_tax_invoice",
 		},
 		{
 			"fieldname": "tax_invoice_details",
@@ -224,6 +246,7 @@ ERP_CUSTOM_FIELDS = {
 			"label": "Tax Invoice Details",
 			"no_copy": 1,
 			"options": "Journal Entry Tax Invoice Detail",
+            "depends_on": "eval:!doc.split_tax_invoice",
 		},
 	],
 	"Sales Invoice": [
