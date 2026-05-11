@@ -99,7 +99,7 @@ def create_multi_payment_entries(payment_details, sales_billing_name, posting_da
             "reference_date": detail.chequereference_date,
         })
         for line in sales_billing.sales_billing_line:
-            if not line.sales_invoice or not line.outstanding_amount:
+            if not line.sales_invoice or not frappe.db.get_value("Sales Invoice", line.sales_invoice, "outstanding_amount"):
                 continue
             allocated = 1 if line.outstanding_amount > 0 else -1
             payment_entry.append("references", {
