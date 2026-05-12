@@ -35,6 +35,8 @@ def get_due_billing(supplier=None, currency=None, tax_type=None, threshold_type=
 		filters["due_date"] = ["<=", threshold_date]
 	if threshold_type == "Invoice Date":
 		filters["posting_date"] = ["<=", threshold_date]
+	if threshold_type == "Supplier Invoice Date":
+		filters["bill_date"] = ["<=", threshold_date]
 	invoices = frappe.get_list(
 		"Purchase Invoice",
 		filters=filters,
