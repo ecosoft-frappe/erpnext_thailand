@@ -111,6 +111,8 @@ def get_data(filters):
 	addr = frappe.qb.DocType("Address")
 	comp = frappe.qb.DocType("Company")
 	addr_company = addr.as_("company_address")
+	pi = frappe.qb.DocType("Purchase Invoice")
+	addr_invoice = addr.as_("invoice_address")
 	round = CustomFunction("round", ["value", "digit"])
 	coalesce = CustomFunction("coalesce", ["value1", "value2"])
 	month = CustomFunction("month", ["date"])
@@ -121,12 +123,14 @@ def get_data(filters):
 		frappe.qb.from_(tinv)
 		.left_join(sup)
 		.on(sup.name == tinv.party)
-		.left_join(addr)
-		.on(addr.name == sup.supplier_primary_address)
 		.left_join(comp)
 		.on(comp.name == tinv.company)
 		.left_join(addr_company)
 		.on(addr_company.name == tinv.company_tax_address)
+		.left_join(pi)
+		.on((pi.name == tinv.voucher_no) & (tinv.voucher_type == 'Purchase Invoice'))
+		.left_join(addr_invoice)
+		.on(addr_invoice.name == pi.supplier_address)
 		.select(
 			tinv.company_tax_address.as_("company_tax_address"),
 			tinv.report_date.as_("report_date"),
@@ -141,15 +145,15 @@ def get_data(filters):
 			coalesce(tinv.number, tinv.name).as_("name"),
 			sup.supplier_name.as_("party_name"),
 			sup.tax_id.as_("tax_id"),
-			sup.branch_code.as_("branch_code"),
+			addr_invoice.branch_code.as_("branch_code"),
 			concat_ws(
 				" ",
-				addr.address_line1,
-				addr.address_line2,
-				addr.city,
-				addr.county,
-				addr.state,
-				addr.pincode,
+				addr_invoice.address_line1,
+				addr_invoice.address_line2,
+				addr_invoice.city,
+				addr_invoice.county,
+				addr_invoice.state,
+				addr_invoice.pincode,
 			).as_("supplier_address"),
 			round(tinv.tax_base, 2).as_("tax_base"),
 			round(tinv.tax_amount, 2).as_("tax_amount"),

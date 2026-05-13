@@ -97,6 +97,8 @@ def get_data(filters):
 	addr = frappe.qb.DocType("Address")
 	comp = frappe.qb.DocType("Company")
 	addr_company = addr.as_("company_address")
+	si = frappe.qb.DocType("Sales Invoice")
+	addr_invoice = addr.as_("invoice_address")
 	round = CustomFunction("round", ["value", "digit"])
 	month = CustomFunction("month", ["date"])
 	year = CustomFunction("year", ["date"])
@@ -106,12 +108,14 @@ def get_data(filters):
 		frappe.qb.from_(tinv)
 		.left_join(cust)
 		.on(cust.name == tinv.party)
-		.left_join(addr)
-		.on(addr.name == cust.customer_primary_address)
 		.left_join(comp)
 		.on(comp.name == tinv.company)
 		.left_join(addr_company)
 		.on(addr_company.name == tinv.company_tax_address)
+		.left_join(si)
+		.on((si.name == tinv.voucher_no) & (tinv.voucher_type == 'Sales Invoice'))
+		.left_join(addr_invoice)
+		.on(addr_invoice.name == si.customer_address)
 		.select(
 			tinv.company_tax_address.as_("company_tax_address"),
 			addr_company.address_line1.as_("company_address_line1"),
@@ -139,7 +143,7 @@ def get_data(filters):
 			tinv.voucher_no.as_("voucher_no"),
 			comp.company_name.as_("company_name"),
 			comp.tax_id.as_("company_tax_id"),
-			addr.branch_code.as_("branch_code")
+			addr_invoice.branch_code.as_("branch_code")
 		)
 		.where(tinv.docstatus.isin([1, 2]))
 		.orderby(tinv.name)
