@@ -154,9 +154,9 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Purchase Receipt",
+   "label": "Payment Receipt",
    "link_count": 0,
-   "link_to": "Purchase Receipt",
+   "link_to": "Payment Receipt",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
