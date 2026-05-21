@@ -97,6 +97,7 @@
   {
    "default": "0",
    "depends_on": "eval:doc.create_sales_taxinv_on_zero_tax",
+   "description": "Allow manual entry of Tax Invoice Number and Date for zero-tax transactions.",
    "fieldname": "manual_keyin_sales_taxinv_on_zero_tax",
    "fieldtype": "Check",
    "label": "Manual key-in Tax Invoice Number/Date"
