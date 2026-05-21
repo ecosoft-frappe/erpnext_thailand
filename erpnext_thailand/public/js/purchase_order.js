@@ -1,7 +1,17 @@
 frappe.ui.form.on("Purchase Order", {
+	refresh: function (frm) {
+		erpnext_thailand.deposit_utils.add_create_deposit_button(frm);
+	},
 
-    refresh: function(frm) {
-        erpnext_thailand.deposit_utils.add_create_deposit_button(frm);
-    }
+	deposit_amount: function (frm) {
+		let { total, deposit_amount } = frm.doc;
+		if (total && deposit_amount != null)
+			frm.set_value("percent_deposit", (deposit_amount / total) * 100);
+	},
 
+	percent_deposit: function (frm) {
+		let { total, percent_deposit } = frm.doc;
+		if (total && percent_deposit != null)
+			frm.set_value("deposit_amount", (total * percent_deposit) / 100);
+	},
 });
