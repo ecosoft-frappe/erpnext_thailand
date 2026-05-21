@@ -72,12 +72,14 @@ def create_tax_invoice_on_gl_tax(doc, method):
 			elif voucher.doctype == "Payment Entry":
 				base_amount = voucher.tax_base_amount
 			elif voucher.doctype == "Journal Entry":
-				# If clear_undue_tax is not checked, return
+				# If create_tax_invoice is not checked, return
 				if not voucher.create_tax_invoice:
 					return
-				# For Journal Entry, use Tax Invoice Detail table as voucher
-				voucher = frappe.get_doc("Journal Entry Tax Invoice Detail", doc.voucher_detail_no)
-				base_amount = voucher.tax_base_amount
+				if voucher.split_tax_invoice:
+					base_amount = sum([x.tax_base_amount for x in voucher.splitted_tax_invoices])
+				else:
+					voucher = frappe.get_doc("Journal Entry Tax Invoice Detail", doc.voucher_detail_no)
+					base_amount = voucher.tax_base_amount
 			base_amount = abs(base_amount) * sign
 			# Validate base amount
 			tax_rate = frappe.get_cached_value("Account", doc.account, "tax_rate")
@@ -103,9 +105,14 @@ def create_tax_invoice_on_gl_tax(doc, method):
 
 def validate_splitted_tax_invoices(voucher, tax_account):
 	tax_amount = 0
-	for tax in voucher.taxes:
-		if tax.account_head == tax_account:
-			tax_amount += tax.get("base_tax_amount") or tax.tax_amount
+	if voucher.doctype == "Journal Entry":
+		for row in voucher.get("accounts", []):
+			if row.account == tax_account:
+				tax_amount += abs(flt(row.debit) - flt(row.credit))
+	else:
+		for tax in voucher.taxes:
+			if tax.account_head == tax_account:
+				tax_amount += tax.get("base_tax_amount") or tax.tax_amount
 	splitted_tax_amount = 0
 	for tax in voucher.splitted_tax_invoices:
 		splitted_tax_amount += tax.tax_amount
@@ -133,7 +140,7 @@ def create_tax_invoice(doc, doctype, base_amount, tax_amount, voucher, split_tax
 		fields=["party", "party_type"],
 	)
 	party = gl and gl[0].get("party")
-	if doc.voucher_type == "Journal Entry":
+	if doc.voucher_type == "Journal Entry" and not split_tax_invoice:
 		if doctype == "Sales Tax Invoice":
 			party = voucher.customer or party
 			if not party:
@@ -166,7 +173,7 @@ def create_tax_invoice(doc, doctype, base_amount, tax_amount, voucher, split_tax
 	# Case expense claim, partner should be supplier, not employee
 	if doc.voucher_type == "Expense Claim" and not voucher.split_tax_invoice:
 		party = voucher.supplier
-	if not party:
+	if not split_tax_invoice and not party:
 		frappe.throw(_("Please fill in Supplier for Purchase Tax Invoice"))
 	# Create Tax Invoice
 	tinv_dict.update(
@@ -198,6 +205,11 @@ def create_tax_invoice(doc, doctype, base_amount, tax_amount, voucher, split_tax
 						"splitted_tax_invoice": tax.name
 					}
 				)
+				if doc.voucher_type == "Journal Entry" and voucher.for_payment:
+					tinv_dict.update({
+						"against_voucher_type": "Payment Entry",
+						"against_voucher": voucher.for_payment,
+					})
 				tinvs.append(frappe.get_doc(tinv_dict).insert(ignore_permissions=True))
 		return tinvs
 
