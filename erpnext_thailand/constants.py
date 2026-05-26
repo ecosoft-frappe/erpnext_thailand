@@ -472,6 +472,22 @@ ERP_CUSTOM_FIELDS = {
 			"module": "Thai Tax"
 		},
 	],
+    "Currency": [
+		{
+			"fieldname": "bot_currency",
+			"fieldtype": "Data",
+			"insert_after": "fraction_value",
+			"label": "BOT Currency",
+		},
+		{
+			"fieldname": "bot_currency_rate_type",
+			"fieldtype": "Select",
+			"insert_after": "bot_currency",
+			"label": "BOT Currency Rate Type",
+			"options": "\nMid Rate\nSelling Rate\nBuying Sight Rate\nBuying Transfer Rate",
+			"default": "Selling Rate",
+		},
+	],
 	"Account": [
 		{
 			"fieldname": "is_petty_cash_account",
