@@ -3,6 +3,13 @@ import json
 import http.client
 from datetime import datetime, timedelta
 
+RATE_TYPE_FIELD_MAP = {
+	"Mid Rate": "mid_rate",
+	"Selling Rate": "selling",
+	"Buying Sight Rate": "buying_sight",
+	"Buying Transfer Rate": "buying_transfer",
+}
+
 
 @frappe.whitelist(allow_guest=True)
 def get_api_currency_exchange(
@@ -15,10 +22,13 @@ def get_api_currency_exchange(
 	trans_end_date = datetime.strptime(transaction_date, "%Y-%m-%d")
 	trans_end_date = trans_end_date.strftime("%Y-%m-%d")
 
+	currency_doc = frappe.get_cached_doc("Currency", from_currency)
+	bot_currency = (currency_doc.get("bot_currency") or from_currency).upper()
+	rate_field = RATE_TYPE_FIELD_MAP.get(currency_doc.get("bot_currency_rate_type"), "selling")
+
 	# Params to BOT API
 	start_date = trans_start_date
 	end_date = trans_end_date
-	currency = from_currency
 
 	if not token:
 		currency_exchange_settings = frappe.get_single("Currency Exchange Settings")
@@ -32,7 +42,7 @@ def get_api_currency_exchange(
 	}
 
 	# Properly formatted URL with dynamic date parameters
-	url_path = f"/Stat-ExchangeRate/v2/DAILY_AVG_EXG_RATE/?start_period={start_date}&end_period={end_date}&currency={currency}"
+	url_path = f"/Stat-ExchangeRate/v2/DAILY_AVG_EXG_RATE/?start_period={start_date}&end_period={end_date}&currency={bot_currency}"
 	conn.request("GET", url_path, headers=headers)
 
 	# Respose
@@ -54,14 +64,14 @@ def get_api_currency_exchange(
 
 			# Get the latest period's data (the last element in the sorted list)
 			latest_period_data = sorted_data[-1]
-			rates = float(latest_period_data["selling"])
+			rates = float(latest_period_data[rate_field])
 
 	# Creating the response dictionary
 	response_data = {
 		"amount": 1.0,
 		"from_currency": from_currency,
 		"date": transaction_date,
-		"rates": {to_currency: rates}  # Assume rate is static for example
+		"rates": {to_currency: rates}
 	}
 	print("response_data", response_data)
 	# Setting the response directly to avoid Frappe's automatic "data" wrapping
