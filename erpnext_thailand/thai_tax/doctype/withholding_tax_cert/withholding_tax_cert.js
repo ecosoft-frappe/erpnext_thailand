@@ -5,6 +5,7 @@ frappe.ui.form.on("Withholding Tax Cert", {
 	refresh(frm) {
 		frm.set_query("supplier_address", function () {
 			return {
+				query: "frappe.contacts.doctype.address.address.address_query",
 				filters: {
 					link_doctype: "Supplier",
 					link_name: frm.doc.supplier,
