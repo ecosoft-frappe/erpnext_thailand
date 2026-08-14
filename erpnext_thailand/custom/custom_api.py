@@ -45,7 +45,7 @@ def create_tax_invoice_on_gl_tax(doc, method):
 		is_return = voucher.reversal_of and True or False
 	sign = is_return and -1 or 1
 	# Tax amount, use Dr/Cr to ensure it support every case
-	if doc.account in [setting.sales_tax_account, setting.purchase_tax_account]:
+	if doc.account in [setting.sales_tax_account, setting.purchase_tax_account, setting.purchase_tax_account_non_recoverable]:
 		tax_amount = doc.credit - doc.debit
 		if (tax_amount > 0 and not is_return) or (tax_amount < 0 and is_return):
 			doctype = "Sales Tax Invoice"
@@ -265,11 +265,11 @@ def validate_company_address(doc, method):
 def validate_tax_invoice(doc, method):
 	# If taxes contain tax account, tax invoice is required.
 	setting = get_thai_tax_settings(doc.company)
-	tax_account = setting.purchase_tax_account
+	tax_accounts = [setting.purchase_tax_account, setting.purchase_tax_account_non_recoverable]
 	voucher = frappe.get_doc(doc.doctype, doc.name)
 	has_vat = False
 	for tax in voucher.taxes:
-		if tax.account_head == tax_account:
+		if tax.account_head in tax_accounts:
 			has_vat = True
 			break
 	if not doc.split_tax_invoice:
@@ -531,7 +531,7 @@ def is_tax_reset(doc, tax_accounts):
 
 def prepare_journal_entry_tax_invoice_detail(doc, method):
 	setting = get_thai_tax_settings(doc.company)
-	tax_accounts = [setting.sales_tax_account, setting.purchase_tax_account]
+	tax_accounts = [setting.sales_tax_account, setting.purchase_tax_account, setting.purchase_tax_account_non_recoverable]
 	precision = get_field_precision(
 		frappe.get_meta("Journal Entry Tax Invoice Detail").get_field("tax_base_amount")
 	)

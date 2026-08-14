@@ -110,6 +110,7 @@ def get_data(filters):
 	sup = frappe.qb.DocType("Supplier")
 	addr = frappe.qb.DocType("Address")
 	comp = frappe.qb.DocType("Company")
+	ttsc = frappe.qb.DocType("Thai Tax Settings Company")
 	addr_company = addr.as_("company_address")
 	round = CustomFunction("round", ["value", "digit"])
 	coalesce = CustomFunction("coalesce", ["value1", "value2"])
@@ -127,6 +128,8 @@ def get_data(filters):
 		.on(comp.name == tinv.company)
 		.left_join(addr_company)
 		.on(addr_company.name == tinv.company_tax_address)
+		.left_join(ttsc)
+		.on(ttsc.company == tinv.company)
 		.select(
 			tinv.company_tax_address.as_("company_tax_address"),
 			tinv.report_date.as_("report_date"),
@@ -160,6 +163,10 @@ def get_data(filters):
 			comp.tax_id.as_("company_tax_id"),
 		)
 		.where(tinv.docstatus == 1)
+		.where(
+			ttsc.purchase_tax_account_non_recoverable.isnull()
+			| (tinv.account != ttsc.purchase_tax_account_non_recoverable)
+		)
 		.orderby(tinv.date)
 	)
 

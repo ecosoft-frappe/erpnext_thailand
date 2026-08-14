@@ -17,6 +17,7 @@
   "section_break_vsbj",
   "purchase_tax_account",
   "purchase_tax_account_undue",
+  "purchase_tax_account_non_recoverable",
   "column_break_wran"
  ],
  "fields": [
@@ -101,17 +102,26 @@
    "fieldname": "manual_keyin_sales_taxinv_on_zero_tax",
    "fieldtype": "Check",
    "label": "Manual key-in Tax Invoice Number/Date"
+  },
+  {
+   "fieldname": "purchase_tax_account_non_recoverable",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Purchase Tax Account Non Recoverable",
+   "link_filters": "[[\"Account\",\"account_type\",\"=\",\"Tax\"]]",
+   "options": "Account"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2025-01-07 22:27:27.858711",
+ "modified": "2026-07-31 12:37:45.170844",
  "modified_by": "Administrator",
  "module": "Thai Tax",
  "name": "Thai Tax Settings Company",
  "owner": "Administrator",
  "permissions": [],
+ "row_format": "Dynamic",
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": []

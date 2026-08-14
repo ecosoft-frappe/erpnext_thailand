@@ -60,7 +60,8 @@ class PurchaseTaxInvoice(Document):
 	def validate_account(self):
 		""" Get purchase tax account from thai tax settings, make sure the account is correct """
 		setting = get_thai_tax_settings(self.company)
-		if self.account != setting.purchase_tax_account:
+		valid_accounts = [setting.purchase_tax_account, setting.purchase_tax_account_non_recoverable]
+		if self.account not in valid_accounts:
 			frappe.throw(_(
 				"Tax Invoice creation failed,<br/>"
 				"- Invalid account is being assigned to Tax Invoice<br/>"
