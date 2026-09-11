@@ -178,14 +178,30 @@ def import_thai_zip_code_data():
 
 @frappe.whitelist()
 def get_location_by_zip_code(zip_code):
-	locations = frappe.get_all("Thai Zip Code", filters={"zip_code": zip_code}, fields=["name", "zip_code", "tambon", "amphur", "province"])
-	return [
-		{
-			'id': loc['name'],
-			'zip_code': loc['zip_code'],
-			'tambon': loc['tambon'],
-			'amphur': loc['amphur'],
-			'province': loc['province']
-		}
-		for loc in locations
-	]
+	"""Get location details by zip code from Thai Zip Code master data.
+
+	Args:
+		zip_code (str): Thai zip code to look up
+
+	Returns:
+		list: List of dicts with id, zip_code, tambon, amphur, province fields.
+		      Bangkok locations use แขวง/เขต prefixes; others use ต./อ./จ.
+	"""
+	locations = frappe.get_all(
+		"Thai Zip Code",
+		filters={"zip_code": zip_code},
+		fields=["name", "zip_code", "tambon", "amphur", "province"],
+	)
+
+	result = []
+	for loc in locations:
+		is_bangkok = loc["province"] == "กรุงเทพมหานคร"
+		result.append({
+			"id": loc["name"],
+			"zip_code": loc["zip_code"],
+			"tambon": f"{'แขวง' if is_bangkok else 'ต.'}{loc['tambon']}",
+			"amphur": f"{'เขต' if is_bangkok else 'อ.'}{loc['amphur']}",
+			"province": f"{'จ.' if not is_bangkok else ''}{loc['province']}",
+		})
+
+	return result
