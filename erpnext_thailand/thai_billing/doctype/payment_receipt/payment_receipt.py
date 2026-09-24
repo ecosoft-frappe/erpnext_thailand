@@ -57,5 +57,5 @@ class PaymentReceipt(Document):
 		return group
 
 	def update_total_paid_amount(self):
-		self.total_paid_amount = sum([r.paid_amount for r in self.payment_references])
-		self.total_invoice_amount = sum([r.grand_total for r in self.billing_references])
+		self.total_paid_amount = sum(r.paid_amount for r in self.payment_references)
+		self.total_invoice_amount = sum(r.grand_total for r in self.billing_references)

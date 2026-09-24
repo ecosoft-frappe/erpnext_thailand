@@ -30,5 +30,5 @@ frappe.ui.form.on("Expense Claim", {
 	is_petty_cash: function (frm) {
 		frm.set_value("petty_cash_holder", "");
 		frm.set_value("petty_cash_holder_name", "");
-	}
+	},
 });

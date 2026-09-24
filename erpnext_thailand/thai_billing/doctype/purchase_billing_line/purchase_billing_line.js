@@ -1,6 +1,1 @@
-
-frappe.ui.form.on("Purchase Billing Line", {
-
-
-
-})
+frappe.ui.form.on("Purchase Billing Line", {});
