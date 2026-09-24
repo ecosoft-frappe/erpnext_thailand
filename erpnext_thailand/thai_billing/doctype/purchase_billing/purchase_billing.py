@@ -12,21 +12,25 @@ class PurchaseBilling(Document):
 		invoices = [i.purchase_invoice for i in self.purchase_billing_line]
 		if len(invoices) > len(list(set(invoices))):
 			frappe.throw(_("Please do not select same Purchase Invoice more than once!"))
-		total_outstanding_amount = sum([i.outstanding_amount for i in self.purchase_billing_line])
+		total_outstanding_amount = sum(
+			[i.outstanding_amount for i in self.purchase_billing_line]
+		)
 		total_billing_amount = sum([i.grand_total for i in self.purchase_billing_line])
 		self.total_outstanding_amount = total_outstanding_amount
 		self.total_billing_amount = total_billing_amount
 
 
 @frappe.whitelist()
-def get_due_billing(supplier=None, currency=None, tax_type=None, threshold_type=None, threshold_date=None):
+def get_due_billing(
+	supplier=None, currency=None, tax_type=None, threshold_type=None, threshold_date=None
+):
 	if not (supplier, currency, tax_type, threshold_date):
 		return {}
 	filters = {
 		"supplier": supplier,
 		"currency": currency,
 		"docstatus": 1,
-		"outstanding_amount": ["!=", 0]
+		"outstanding_amount": ["!=", 0],
 	}
 
 	if tax_type:
@@ -40,7 +44,15 @@ def get_due_billing(supplier=None, currency=None, tax_type=None, threshold_type=
 	invoices = frappe.get_list(
 		"Purchase Invoice",
 		filters=filters,
-		fields=["name", "posting_date", "due_date", "po_no", "grand_total", "outstanding_amount", "payment_terms_template"]
+		fields=[
+			"name",
+			"posting_date",
+			"due_date",
+			"po_no",
+			"grand_total",
+			"outstanding_amount",
+			"payment_terms_template",
+		],
 	)
 
 	PurchaseBilling = DocType("Purchase Billing")
@@ -60,15 +72,15 @@ def get_due_billing(supplier=None, currency=None, tax_type=None, threshold_type=
 
 
 def update_sales_billing_outstanding_amount(doc, method):
-    # Document: Payment Entry
-    total_outstanding_amount = 0
-    if not doc.purchase_billing:
-        return
-    bill = frappe.get_doc("Purchase Billing", doc.purchase_billing)
-    for bill_line in bill.purchase_billing_line:
-        invoice = frappe.get_doc("Purchase Invoice", bill_line.purchase_invoice)
-        bill_line.outstanding_amount = invoice.outstanding_amount
-        total_outstanding_amount += invoice.outstanding_amount
-    bill.total_outstanding_amount = total_outstanding_amount
-    print("bill.total_outstanding_amount", bill.total_outstanding_amount)
-    bill.save()
+	# Document: Payment Entry
+	total_outstanding_amount = 0
+	if not doc.purchase_billing:
+		return
+	bill = frappe.get_doc("Purchase Billing", doc.purchase_billing)
+	for bill_line in bill.purchase_billing_line:
+		invoice = frappe.get_doc("Purchase Invoice", bill_line.purchase_invoice)
+		bill_line.outstanding_amount = invoice.outstanding_amount
+		total_outstanding_amount += invoice.outstanding_amount
+	bill.total_outstanding_amount = total_outstanding_amount
+	print("bill.total_outstanding_amount", bill.total_outstanding_amount)
+	bill.save()

@@ -1,12 +1,13 @@
 import frappe
 import requests
+from erpnext.accounts.doctype.currency_exchange_settings.currency_exchange_settings import (
+	CurrencyExchangeSettings,
+)
 from frappe import _
-from erpnext.accounts.doctype.currency_exchange_settings.currency_exchange_settings import CurrencyExchangeSettings
 from frappe.utils import nowdate
 
 
 class CurrencyExchangeSettings(CurrencyExchangeSettings):
-
 	def validate_parameters(self):
 		if self.service_provider == "Bank of Thailand":
 			params = {}
@@ -16,7 +17,8 @@ class CurrencyExchangeSettings(CurrencyExchangeSettings):
 				)
 			params["token"] = self.token
 			api_url = self.api_endpoint.format(
-				transaction_date=nowdate(), to_currency="THB", from_currency="USD")
+				transaction_date=nowdate(), to_currency="THB", from_currency="USD"
+			)
 			try:
 				response = requests.get(api_url, params=params)
 			except requests.exceptions.RequestException as e:
@@ -32,7 +34,9 @@ class CurrencyExchangeSettings(CurrencyExchangeSettings):
 			try:
 				for key in self.result_key:
 					value = value[
-						str(key.key).format(transaction_date=nowdate(), to_currency="THB", from_currency="USD")
+						str(key.key).format(
+							transaction_date=nowdate(), to_currency="THB", from_currency="USD"
+						)
 					]
 			except Exception:
 				frappe.throw(_("Invalid result key. Response:") + " " + response.text)

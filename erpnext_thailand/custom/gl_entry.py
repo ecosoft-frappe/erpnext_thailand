@@ -1,10 +1,9 @@
 import frappe
-from frappe import _
 from erpnext.accounts.doctype.gl_entry.gl_entry import GLEntry
+from frappe import _
 
 
 class GLEntry(GLEntry):
-
 	def after_insert(self):
 		is_petty_cash_account = frappe.get_value(
 			"Account",
@@ -14,9 +13,16 @@ class GLEntry(GLEntry):
 		if is_petty_cash_account:
 
 			if not self.petty_cash_holder or not self.petty_cash_holder_name:
-				frappe.throw(_("The account is set as petty cash, but the petty cash holder is missing. Please provide it."))
+				frappe.throw(
+					_(
+						"The account is set as petty cash, but the petty cash holder is missing. Please provide it."
+					)
+				)
 
-			petty_cash_holder = frappe.get_value("Petty Cash Holder", {"name": self.petty_cash_holder, "petty_cash_account": self.account})
+			petty_cash_holder = frappe.get_value(
+				"Petty Cash Holder",
+				{"name": self.petty_cash_holder, "petty_cash_account": self.account},
+			)
 			if not petty_cash_holder:
 				frappe.throw(_("Petty Cash Holder is missing or invalid."))
 
@@ -27,10 +33,15 @@ class GLEntry(GLEntry):
 				"disabled",
 			)
 			if disabled == 1:
-				frappe.throw(_("The petty cash holder ({}: {}) is currently disabled. Please enable it before proceeding with this transaction.").format(self.petty_cash_holder, self.petty_cash_holder_name))
-			
+				frappe.throw(
+					_(
+						"The petty cash holder ({}: {}) is currently disabled. Please enable it before proceeding with this transaction."
+					).format(self.petty_cash_holder, self.petty_cash_holder_name)
+				)
+
 			# Check amount
-			gl_entries = frappe.db.sql("""
+			gl_entries = frappe.db.sql(
+				"""
 				select
 					petty_cash_holder,
 					sum(debit) as debit,
@@ -38,17 +49,28 @@ class GLEntry(GLEntry):
 				from `tabGL Entry`
 				where petty_cash_holder = %s and account = %s
 				group by petty_cash_holder
-			""", (petty_cash_holder, self.account), as_dict=True)
+			""",
+				(petty_cash_holder, self.account),
+				as_dict=True,
+			)
 			petty_cash_balance = gl_entries[0].debit - gl_entries[0].credit
-			petty_cash_float = frappe.get_value("Petty Cash Holder", petty_cash_holder, "petty_cash_float")
+			petty_cash_float = frappe.get_value(
+				"Petty Cash Holder", petty_cash_holder, "petty_cash_float"
+			)
 			if petty_cash_balance > petty_cash_float:
-				frappe.throw(_("The petty cash balance ({:,.2f}) must not exceed the petty cash float ({:,.2f}).").format(petty_cash_balance, petty_cash_float))
+				frappe.throw(
+					_(
+						"The petty cash balance ({:,.2f}) must not exceed the petty cash float ({:,.2f})."
+					).format(petty_cash_balance, petty_cash_float)
+				)
 			if petty_cash_balance < 0:
 				frappe.throw(_("The petty cash holder does not have enough balance."))
 
-			frappe.set_value("Petty Cash Holder", petty_cash_holder, "petty_cash_balance", petty_cash_balance)
+			frappe.set_value(
+				"Petty Cash Holder", petty_cash_holder, "petty_cash_balance", petty_cash_balance
+			)
 		else:
-			
+
 			if self.petty_cash_holder or self.petty_cash_holder_name:
 				frappe.throw(_("Please validate petty cash holder."))
 
@@ -57,5 +79,5 @@ def rename_gl_entry_in_tax_invoice(newname, oldname):
 	for tax_invoice in ["Sales Tax Invoice", "Purchase Tax Invoice"]:
 		frappe.db.sql(
 			f"UPDATE `tab{tax_invoice}` SET gl_entry = %s where gl_entry = %s",
-			(newname, oldname)
+			(newname, oldname),
 		)

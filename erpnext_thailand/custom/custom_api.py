@@ -8,14 +8,16 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
 def get_thai_tax_settings(company):
-    settings = frappe.get_single("Thai Tax Settings")
-    accounts = list(filter(lambda x: x.company == company, settings.company_accounts))
-    if not accounts:
-        frappe.throw(_("Please set up {0} for company {1}").format(
-			frappe.utils.get_link_to_form("Thai Tax Settings", "Thai Tax Settings"),
-   			company,
-		))
-    return accounts[0]
+	settings = frappe.get_single("Thai Tax Settings")
+	accounts = list(filter(lambda x: x.company == company, settings.company_accounts))
+	if not accounts:
+		frappe.throw(
+			_("Please set up {0} for company {1}").format(
+				frappe.utils.get_link_to_form("Thai Tax Settings", "Thai Tax Settings"),
+				company,
+			)
+		)
+	return accounts[0]
 
 
 def create_tax_invoice_on_gl_tax(doc, method):
@@ -25,19 +27,19 @@ def create_tax_invoice_on_gl_tax(doc, method):
 	setting = get_thai_tax_settings(doc.company)
 	doctype = False
 	tax_amount = 0.0
-	
+
 	# Check if the voucher is a tax invoice related doctypes
 	if doc.voucher_type not in [
-     	"Sales Invoice",
-      	"Purchase Invoice",
-       	"Payment Entry",
-        "Expense Claim",
-        "Journal Entry",
-    ]:
+		"Sales Invoice",
+		"Purchase Invoice",
+		"Payment Entry",
+		"Expense Claim",
+		"Journal Entry",
+	]:
 		return
-	
+
 	voucher = frappe.get_doc(doc.voucher_type, doc.voucher_no)
- 
+
 	is_return = False
 	if doc.voucher_type in ["Sales Invoice", "Purchase Invoice"]:
 		is_return = voucher.is_return  # Case Debit/Credit Note
@@ -91,7 +93,9 @@ def create_tax_invoice_on_gl_tax(doc, method):
 					)
 				else:
 					# Overwrite base amount for case of separated tax percent in sales/purchase invoice
-					base_amount = sum([tax.net_amount for tax in voucher.taxes if tax.account_head == doc.account])
+					base_amount = sum(
+						[tax.net_amount for tax in voucher.taxes if tax.account_head == doc.account]
+					)
 			if voucher.get("split_tax_invoice", False):
 				# Use Split Tax Invoice Table
 				tinvs = create_tax_invoice(doc, doctype, base_amount, tax_amount, voucher, True)
@@ -124,7 +128,9 @@ def validate_splitted_tax_invoices(voucher, tax_account):
 		)
 
 
-def create_tax_invoice(doc, doctype, base_amount, tax_amount, voucher, split_tax_invoice=False):
+def create_tax_invoice(
+	doc, doctype, base_amount, tax_amount, voucher, split_tax_invoice=False
+):
 	tinv_dict = {}
 	# For sales invoice / purchase invoice / payment and journal entry, we can get the party from GL
 	gl = frappe.db.get_all(
@@ -199,7 +205,7 @@ def create_tax_invoice(doc, doctype, base_amount, tax_amount, voucher, split_tax
 						"number": tax.tax_invoice_number,
 						"date": tax.tax_invoice_date,
 						"report_date": tax.tax_invoice_date,
-						"splitted_tax_invoice": tax.name
+						"splitted_tax_invoice": tax.name,
 					}
 				)
 				tinvs.append(frappe.get_doc(tinv_dict).insert(ignore_permissions=True))
@@ -220,7 +226,7 @@ def update_voucher_tinv(doctype, voucher, tinv, split_tax_invoice=False):
 			frappe.throw(_("No Company Billing/Tax Address"))
 
 	update_company_tax_address(voucher, tinv)
- 
+
 	# Use data in tax detail table
 	if split_tax_invoice:
 		return tinv
@@ -229,7 +235,11 @@ def update_voucher_tinv(doctype, voucher, tinv, split_tax_invoice=False):
 	# Purchase Invoice - use Bill No as Tax Invoice
 	if doctype == "Sales Tax Invoice":
 		setting = get_thai_tax_settings(voucher.company)
-		if setting.create_sales_taxinv_on_zero_tax and setting.get("manual_keyin_sales_taxinv_on_zero_tax") and tinv.tax_amount == 0:
+		if (
+			setting.create_sales_taxinv_on_zero_tax
+			and setting.get("manual_keyin_sales_taxinv_on_zero_tax")
+			and tinv.tax_amount == 0
+		):
 			# Manual mode: behave like Purchase Tax Invoice — use user-provided number and date
 			if not (voucher.tax_invoice_number and voucher.tax_invoice_date):
 				frappe.throw(_("Please enter Tax Invoice Number / Tax Invoice Date"))
@@ -287,11 +297,16 @@ def validate_tax_invoice(doc, method):
 def validate_sales_tax_invoice_zero_tax(doc, method):
 	"""When manual key-in is enabled, require Tax Invoice Number/Date on zero-tax Sales Invoices."""
 	setting = get_thai_tax_settings(doc.company)
-	if not (setting.create_sales_taxinv_on_zero_tax and setting.get("manual_keyin_sales_taxinv_on_zero_tax")):
+	if not (
+		setting.create_sales_taxinv_on_zero_tax
+		and setting.get("manual_keyin_sales_taxinv_on_zero_tax")
+	):
 		return
-	zero_taxes = [t for t in doc.taxes if (
-		t.account_head == setting.sales_tax_account and t.tax_amount == 0
-	)]
+	zero_taxes = [
+		t
+		for t in doc.taxes
+		if (t.account_head == setting.sales_tax_account and t.tax_amount == 0)
+	]
 	if zero_taxes:
 		if not doc.tax_invoice_number:
 			frappe.throw(_("This document requires Tax Invoice Number"))
@@ -488,6 +503,7 @@ def get_undue_tax(doc, ref, gl, tax):
 		# --
 	return (undue_tax, base_amount, tax_account_undue, tax_account)
 
+
 # kittiu: For now, as residual from bs_reconcile is not stable, do not use.
 # def get_uncleared_tax_amount(gl, payment_type):
 # 	# If module bs_reconcile is installed, uncleared_tax = residual amount
@@ -499,6 +515,7 @@ def get_undue_tax(doc, ref, gl, tax):
 # 		uncleared_tax = -uncleared_tax
 # 	return uncleared_tax
 # --
+
 
 def is_tax_reset(doc, tax_accounts):
 	# For new doc, or has tax changes, do the reset
@@ -581,50 +598,58 @@ def prepare_journal_entry_tax_invoice_detail(doc, method):
 
 # Zero Tax Invoice for Sales Ivoice
 def create_sales_tax_invoice_on_zero_tax(doc, method):
-    """ This method is used for Sales Invoice only """
-    if doc.flags.from_repost:
-        return
-    if doc.doctype != "Sales Invoice":
-        return
-    setting = get_thai_tax_settings(doc.company)
-    if not setting.create_sales_taxinv_on_zero_tax:
-        return
-    doctype = "Sales Tax Invoice"
-    zero_taxes = list(filter(lambda t: (
-    t.account_head == setting.sales_tax_account
-    and t.tax_amount == 0
-	), doc.taxes))
-    base_amount = sum(tax.base_total for tax in zero_taxes)
-    if base_amount:
-        tinv = create_sales_tax_invoice_zero_tax(doc, doctype, base_amount, zero_taxes[0].account_head)
-        tinv = update_voucher_tinv(doctype, doc, tinv)
-        tinv.submit()
+	"""This method is used for Sales Invoice only"""
+	if doc.flags.from_repost:
+		return
+	if doc.doctype != "Sales Invoice":
+		return
+	setting = get_thai_tax_settings(doc.company)
+	if not setting.create_sales_taxinv_on_zero_tax:
+		return
+	doctype = "Sales Tax Invoice"
+	zero_taxes = list(
+		filter(
+			lambda t: (t.account_head == setting.sales_tax_account and t.tax_amount == 0),
+			doc.taxes,
+		)
+	)
+	base_amount = sum(tax.base_total for tax in zero_taxes)
+	if base_amount:
+		tinv = create_sales_tax_invoice_zero_tax(
+			doc, doctype, base_amount, zero_taxes[0].account_head
+		)
+		tinv = update_voucher_tinv(doctype, doc, tinv)
+		tinv.submit()
 
 
 def create_sales_tax_invoice_zero_tax(doc, doctype, base_amount, account):
-    tinv_dict = {
-        "date": doc.posting_date,
-        "doctype": doctype,
-        "tax_amount": 0,
-        "tax_base": base_amount,
-        "party": doc.customer,
-        "voucher_type": doc.doctype,
-        "voucher_no": doc.name,
-        "account": account,
-    }
-    tinv = frappe.get_doc(tinv_dict)
-    tinv.insert(ignore_permissions=True)
-    return tinv
+	tinv_dict = {
+		"date": doc.posting_date,
+		"doctype": doctype,
+		"tax_amount": 0,
+		"tax_base": base_amount,
+		"party": doc.customer,
+		"voucher_type": doc.doctype,
+		"voucher_no": doc.name,
+		"account": account,
+	}
+	tinv = frappe.get_doc(tinv_dict)
+	tinv.insert(ignore_permissions=True)
+	return tinv
 
 
 def cancel_related_tax_invoice(doc, method):
 	doctypes = ["Sales Tax Invoice", "Purchase Tax Invoice"]
 	for doctype in doctypes:
-		tinv = frappe.get_all(doctype, filters={
-			"voucher_type": doc.doctype,
-			"voucher_no": doc.name,
-			"docstatus": ("!=", 2),
-		}, pluck="name")
+		tinv = frappe.get_all(
+			doctype,
+			filters={
+				"voucher_type": doc.doctype,
+				"voucher_no": doc.name,
+				"docstatus": ("!=", 2),
+			},
+			pluck="name",
+		)
 		if tinv:
 			tinv = frappe.get_doc(doctype, tinv[0])
 			tinv.cancel()

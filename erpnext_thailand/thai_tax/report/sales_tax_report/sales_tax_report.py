@@ -139,7 +139,7 @@ def get_data(filters):
 			tinv.voucher_no.as_("voucher_no"),
 			comp.company_name.as_("company_name"),
 			comp.tax_id.as_("company_tax_id"),
-			addr.branch_code.as_("branch_code")
+			addr.branch_code.as_("branch_code"),
 		)
 		.where(tinv.docstatus.isin([1, 2]))
 		.orderby(tinv.name)

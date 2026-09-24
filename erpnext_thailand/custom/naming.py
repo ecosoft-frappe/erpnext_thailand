@@ -1,12 +1,17 @@
-from frappe.utils import getdate
 from frappe.model.naming import determine_consecutive_week_number
+from frappe.utils import getdate
 
 
 def parse_naming_series_variable(doc, variable):
-	""" Use date to get part """
+	"""Use date to get part"""
 	date = getdate()
 	if doc:
-		date = doc.get("posting_date") or doc.get("transaction_date") or doc.get("date") or getdate()
+		date = (
+			doc.get("posting_date")
+			or doc.get("transaction_date")
+			or doc.get("date")
+			or getdate()
+		)
 		if isinstance(date, str):
 			date = getdate(date)
 	if variable == "YYYY-DATE":

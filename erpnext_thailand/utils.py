@@ -1,10 +1,11 @@
-import datetime
 import csv
+import datetime
+
 import frappe
-from frappe import _
-from num2words import num2words
 import requests
+from frappe import _
 from lxml import etree
+from num2words import num2words
 
 
 def amount_in_bahttext(amount):
@@ -12,12 +13,12 @@ def amount_in_bahttext(amount):
 
 
 def amount_to_text(amount, currency=None, lang=None):
-    try:
-        currency = currency or frappe.defaults.get_global_default("currency")
-        lang = lang or ("th" if currency == "THB" else "en")
-        return num2words(amount, to="currency", lang=lang, currency=currency).title()
-    except:
-        return ""
+	try:
+		currency = currency or frappe.defaults.get_global_default("currency")
+		lang = lang or ("th" if currency == "THB" else "en")
+		return num2words(amount, to="currency", lang=lang, currency=currency).title()
+	except:
+		return ""
 
 
 def full_thai_date(date_str):
@@ -36,18 +37,18 @@ def get_address_by_tax_id(tax_id=False, branch=False):
 	"""Get address information from Revenue Department Web Service by Tax ID and Branch number.
 
 	Args:
-		tax_id (str): Tax ID of the company
-		branch (str): Branch number of the company
+	        tax_id (str): Tax ID of the company
+	        branch (str): Branch number of the company
 
 	Returns:
-		dict: Dictionary containing address information
-			  Empty dict if there's an error
+	        dict: Dictionary containing address information
+	                  Empty dict if there's an error
 
 	Raises:
-		frappe.ValidationError: If tax_id or branch is not provided
+	        frappe.ValidationError: If tax_id or branch is not provided
 	"""
 	if not (tax_id and branch):
-		frappe.throw(_('Please provide both Tax ID and Branch number'))
+		frappe.throw(_("Please provide both Tax ID and Branch number"))
 
 	# API Configuration
 	url = "https://rdws.rd.go.th/serviceRD3/vatserviceRD3.asmx"
@@ -61,19 +62,19 @@ def get_address_by_tax_id(tax_id=False, branch=False):
 	payload = (
 		'<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" '
 		'xmlns:vat="https://rdws.rd.go.th/serviceRD3/vatserviceRD3">'
-		'<soap:Header/>'
-		'<soap:Body>'
-		'<vat:Service>'
-		'<vat:username>anonymous</vat:username>'
-		'<vat:password>anonymous</vat:password>'
-		f'<vat:TIN>{tax_id}</vat:TIN>'
-		'<vat:Name></vat:Name>'
-		'<vat:ProvinceCode>0</vat:ProvinceCode>'
-		f'<vat:BranchNumber>{branch_number}</vat:BranchNumber>'
-		'<vat:AmphurCode>0</vat:AmphurCode>'
-		'</vat:Service>'
-		'</soap:Body>'
-		'</soap:Envelope>'
+		"<soap:Header/>"
+		"<soap:Body>"
+		"<vat:Service>"
+		"<vat:username>anonymous</vat:username>"
+		"<vat:password>anonymous</vat:password>"
+		f"<vat:TIN>{tax_id}</vat:TIN>"
+		"<vat:Name></vat:Name>"
+		"<vat:ProvinceCode>0</vat:ProvinceCode>"
+		f"<vat:BranchNumber>{branch_number}</vat:BranchNumber>"
+		"<vat:AmphurCode>0</vat:AmphurCode>"
+		"</vat:Service>"
+		"</soap:Body>"
+		"</soap:Envelope>"
 	)
 
 	# Setup session with SSL verification disabled
@@ -105,7 +106,6 @@ def get_address_by_tax_id(tax_id=False, branch=False):
 
 
 def finalize_address_dict(data):
-
 	def get_part(data, key, value):
 		return data.get(key, "-") != "-" and value % (map[key], data.get(key)) or ""
 
@@ -163,14 +163,16 @@ def import_thai_zip_code_data():
 		for row in reader:
 			if frappe.db.exists("Thai Zip Code", row["ID"]):
 				continue
-			doc = frappe.get_doc({
-				"doctype": "Thai Zip Code",
-				"name": row["ID"],
-				"zip_code": row["Zip Code"],
-				"tambon": row["Tambon"],
-				"amphur": row["Amphur"],
-				"province": row["Province"],
-			})
+			doc = frappe.get_doc(
+				{
+					"doctype": "Thai Zip Code",
+					"name": row["ID"],
+					"zip_code": row["Zip Code"],
+					"tambon": row["Tambon"],
+					"amphur": row["Amphur"],
+					"province": row["Province"],
+				}
+			)
 			doc.insert(ignore_permissions=True)
 			frappe.db.commit()
 	return "Import completed successfully."
@@ -178,14 +180,18 @@ def import_thai_zip_code_data():
 
 @frappe.whitelist()
 def get_location_by_zip_code(zip_code):
-	locations = frappe.get_all("Thai Zip Code", filters={"zip_code": zip_code}, fields=["name", "zip_code", "tambon", "amphur", "province"])
+	locations = frappe.get_all(
+		"Thai Zip Code",
+		filters={"zip_code": zip_code},
+		fields=["name", "zip_code", "tambon", "amphur", "province"],
+	)
 	return [
 		{
-			'id': loc['name'],
-			'zip_code': loc['zip_code'],
-			'tambon': loc['tambon'],
-			'amphur': loc['amphur'],
-			'province': loc['province']
+			"id": loc["name"],
+			"zip_code": loc["zip_code"],
+			"tambon": loc["tambon"],
+			"amphur": loc["amphur"],
+			"province": loc["province"],
 		}
 		for loc in locations
 	]
