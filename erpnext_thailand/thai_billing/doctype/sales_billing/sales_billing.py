@@ -12,10 +12,8 @@ class SalesBilling(Document):
 		invoices = [i.sales_invoice for i in self.sales_billing_line]
 		if len(invoices) > len(list(set(invoices))):
 			frappe.throw(_("Please do not select same sales invoice more than once!"))
-		total_outstanding_amount = sum(
-			[i.outstanding_amount for i in self.sales_billing_line]
-		)
-		total_billing_amount = sum([i.grand_total for i in self.sales_billing_line])
+		total_outstanding_amount = sum(i.outstanding_amount for i in self.sales_billing_line)
+		total_billing_amount = sum(i.grand_total for i in self.sales_billing_line)
 		self.total_outstanding_amount = total_outstanding_amount
 		self.total_billing_amount = total_billing_amount
 

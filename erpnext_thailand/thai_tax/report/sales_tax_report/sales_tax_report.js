@@ -55,12 +55,12 @@ frappe.query_reports["Sales Tax Report"] = {
 			label: __("End Date"),
 			fieldtype: "Date",
 		},
-        {
-            fieldname: "tax_percent",
-            label: __("Tax Percent"),
-            fieldtype: "Select",
-            options: get_percent_options()
-        },
+		{
+			fieldname: "tax_percent",
+			label: __("Tax Percent"),
+			fieldtype: "Select",
+			options: get_percent_options(),
+		},
 		{
 			fieldname: "company_tax_address",
 			label: __("Company Address"),
@@ -79,10 +79,16 @@ frappe.query_reports["Sales Tax Report"] = {
 
 function get_percent_options() {
 	let options = [""];
-	frappe.db.get_list("Sales Tax Invoice", { fields: ["tax_percent"], distinct: 1, order_by: "tax_percent" }).then((res) => {
-		res.forEach((dimension) => {
-			options.push(dimension.tax_percent + "%");
+	frappe.db
+		.get_list("Sales Tax Invoice", {
+			fields: ["tax_percent"],
+			distinct: 1,
+			order_by: "tax_percent",
+		})
+		.then((res) => {
+			res.forEach((dimension) => {
+				options.push(dimension.tax_percent + "%");
+			});
 		});
-	});
 	return options;
 }

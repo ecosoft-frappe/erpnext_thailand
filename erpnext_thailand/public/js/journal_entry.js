@@ -52,5 +52,5 @@ frappe.ui.form.on("Journal Entry Account", {
 	account(frm, cdt, cdn) {
 		frappe.model.set_value(cdt, cdn, "petty_cash_holder", "");
 		frappe.model.set_value(cdt, cdn, "petty_cash_holder_name", "");
-	}
+	},
 });

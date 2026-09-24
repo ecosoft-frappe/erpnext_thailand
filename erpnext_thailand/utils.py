@@ -17,7 +17,7 @@ def amount_to_text(amount, currency=None, lang=None):
 		currency = currency or frappe.defaults.get_global_default("currency")
 		lang = lang or ("th" if currency == "THB" else "en")
 		return num2words(amount, to="currency", lang=lang, currency=currency).title()
-	except:
+	except Exception:
 		return ""
 
 
@@ -158,7 +158,7 @@ def finalize_address_dict(data):
 
 def import_thai_zip_code_data():
 	file_path = f"{frappe.get_app_path('erpnext_thailand')}/public/files/thai_zip_code.csv"
-	with open(file_path, mode="r", encoding="utf-8") as csvfile:
+	with open(file_path, encoding="utf-8") as csvfile:
 		reader = csv.DictReader(csvfile)
 		for row in reader:
 			if frappe.db.exists("Thai Zip Code", row["ID"]):

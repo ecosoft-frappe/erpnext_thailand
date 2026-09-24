@@ -1,5 +1,4 @@
 frappe.ui.form.on("Payment Entry", {
-
 	refresh(frm) {
 		// Filter company tax address
 		frm.set_query("company_tax_address", function () {
@@ -68,11 +67,7 @@ frappe.ui.form.on("Payment Entry", {
 			let income_tax_form = "";
 			if (frm.doc.party_type == "Supplier") {
 				supplier_type = (
-					await frappe.db.get_value(
-						frm.doc.party_type,
-						frm.doc.party,
-						"supplier_type"
-					)
+					await frappe.db.get_value(frm.doc.party_type, frm.doc.party, "supplier_type")
 				).message.supplier_type;
 				if (supplier_type == "Individual") {
 					income_tax_form = "PND3";
@@ -139,7 +134,7 @@ frappe.ui.form.on("Payment Entry", {
 	},
 
 	manual_deduct_withholding_tax: function (frm) {
-		const fields = [ 
+		const fields = [
 			{
 				fieldtype: "Link",
 				label: __("WHT Type"),
@@ -148,11 +143,14 @@ frappe.ui.form.on("Payment Entry", {
 				reqd: 1,
 				get_query: function () {
 					return {
-						filters: [[
-							"Withholding Tax Type",
-							"for_payment_type",
-							"in",
-							[frm.doc.payment_type, "Pay and Receive"]]],
+						filters: [
+							[
+								"Withholding Tax Type",
+								"for_payment_type",
+								"in",
+								[frm.doc.payment_type, "Pay and Receive"],
+							],
+						],
 					};
 				},
 			},
@@ -267,62 +265,86 @@ frappe.ui.form.on("Payment Entry", {
 
 	// --------------- Thai Billing ---------------
 
-	get_invoices_from_sales_billing: function(frm) {
+	get_invoices_from_sales_billing: function (frm) {
 		const fields = [
 			{
-                fieldtype: "Link",
-                label: __("Sales Billing"),
-                fieldname: "sales_billing",
-                options: "Sales Billing",
-                reqd: 0,
-				"get_query": function() {
+				fieldtype: "Link",
+				label: __("Sales Billing"),
+				fieldname: "sales_billing",
+				options: "Sales Billing",
+				reqd: 0,
+				get_query: function () {
 					return {
-						"filters": {
-                            "company": frm.doc.company,
-                            "customer": frm.doc.party,
-                            "docstatus": 1,
-                            "total_outstanding_amount": [">", 0]
-                        }
-					}
-				}
+						filters: {
+							company: frm.doc.company,
+							customer: frm.doc.party,
+							docstatus: 1,
+							total_outstanding_amount: [">", 0],
+						},
+					};
+				},
 			},
-			{fieldtype:"Check", label: __("Allocate Payment Amount"), fieldname:"allocate_payment_amount", default:1},
+			{
+				fieldtype: "Check",
+				label: __("Allocate Payment Amount"),
+				fieldname: "allocate_payment_amount",
+				default: 1,
+			},
 		];
 
-		frappe.prompt(fields, function(filters){
-			frm.set_value("sales_billing", filters["sales_billing"]);
-			if (!filters["sales_billing"]) { return; }
-			frm.events.get_outstanding_documents(frm, filters, true, false);
-		}, __("Filters"), __("Get Invoices From Billing"));
+		frappe.prompt(
+			fields,
+			function (filters) {
+				frm.set_value("sales_billing", filters["sales_billing"]);
+				if (!filters["sales_billing"]) {
+					return;
+				}
+				frm.events.get_outstanding_documents(frm, filters, true, false);
+			},
+			__("Filters"),
+			__("Get Invoices From Billing")
+		);
 	},
 
-    get_invoices_from_purchase_billing: function(frm) {
+	get_invoices_from_purchase_billing: function (frm) {
 		const fields = [
 			{
-                fieldtype: "Link",
-                label: __("Purchase Billing"),
-                fieldname: "purchase_billing",
-                options: "Purchase Billing",
-                reqd: 0,
-				"get_query": function() {
+				fieldtype: "Link",
+				label: __("Purchase Billing"),
+				fieldname: "purchase_billing",
+				options: "Purchase Billing",
+				reqd: 0,
+				get_query: function () {
 					return {
-						"filters": {
-                            "company": frm.doc.company,
-                            "supplier": frm.doc.party,
-                            "docstatus": 1,
-                            "total_outstanding_amount": [">", 0]
-                        }
-					}
-				}
+						filters: {
+							company: frm.doc.company,
+							supplier: frm.doc.party,
+							docstatus: 1,
+							total_outstanding_amount: [">", 0],
+						},
+					};
+				},
 			},
-			{fieldtype:"Check", label: __("Allocate Payment Amount"), fieldname:"allocate_payment_amount", default:1},
+			{
+				fieldtype: "Check",
+				label: __("Allocate Payment Amount"),
+				fieldname: "allocate_payment_amount",
+				default: 1,
+			},
 		];
 
-		frappe.prompt(fields, function(filters){
-			frm.set_value("purchase_billing", filters["purchase_billing"]);
-			if (!filters["purchase_billing"]) { return; }
-			frm.events.get_outstanding_documents(frm, filters, true, false);
-		}, __("Filters"), __("Get Invoices From Billing"));
+		frappe.prompt(
+			fields,
+			function (filters) {
+				frm.set_value("purchase_billing", filters["purchase_billing"]);
+				if (!filters["purchase_billing"]) {
+					return;
+				}
+				frm.events.get_outstanding_documents(frm, filters, true, false);
+			},
+			__("Filters"),
+			__("Get Invoices From Billing")
+		);
 	},
 
 	// --------------- END Thai Billing -----------
@@ -330,54 +352,55 @@ frappe.ui.form.on("Payment Entry", {
 	is_petty_cash: function (frm) {
 		frm.set_value("petty_cash_holder", "");
 		frm.set_value("petty_cash_holder_name", "");
-	}
-
+	},
 });
 
 frappe.ui.form.on("Payment Entry Deduction", {
-    amount: function(frm, cdt, cdn) {
-        update_wht_fields(frm, cdt, cdn, "amount");
-    },
-    withholding_tax_base: function(frm, cdt, cdn) {
-        update_wht_fields(frm, cdt, cdn, "base");
-    },
-    withholding_tax_type: function(frm, cdt, cdn) {
-        update_wht_fields(frm, cdt, cdn, "type");
-    }
+	amount: function (frm, cdt, cdn) {
+		update_wht_fields(frm, cdt, cdn, "amount");
+	},
+	withholding_tax_base: function (frm, cdt, cdn) {
+		update_wht_fields(frm, cdt, cdn, "base");
+	},
+	withholding_tax_type: function (frm, cdt, cdn) {
+		update_wht_fields(frm, cdt, cdn, "type");
+	},
 });
 
 async function update_wht_fields(frm, cdt, cdn, changeType) {
-    let row = locals[cdt][cdn];
-    if (row.is_updating) return; // Prevent cyclic calls
-    row.is_updating = true;
+	let row = locals[cdt][cdn];
+	if (row.is_updating) return; // Prevent cyclic calls
+	row.is_updating = true;
 
-    let percent = row.withholding_tax_type ? await get_wht_percentage(row.withholding_tax_type) : 0;
+	let percent = row.withholding_tax_type
+		? await get_wht_percentage(row.withholding_tax_type)
+		: 0;
 
-    if (changeType === "amount" && percent) {
-        row.withholding_tax_base = row.amount ? row.amount / (percent / 100) : 0;
-    } else if (changeType === "base" && percent) {
-        row.amount = row.withholding_tax_base ? row.withholding_tax_base * (percent / 100) : 0;
-    } else if (changeType === "type" && percent) {
-        row.amount = row.withholding_tax_base ? row.withholding_tax_base * (percent / 100) : 0;
-    }
+	if (changeType === "amount" && percent) {
+		row.withholding_tax_base = row.amount ? row.amount / (percent / 100) : 0;
+	} else if (changeType === "base" && percent) {
+		row.amount = row.withholding_tax_base ? row.withholding_tax_base * (percent / 100) : 0;
+	} else if (changeType === "type" && percent) {
+		row.amount = row.withholding_tax_base ? row.withholding_tax_base * (percent / 100) : 0;
+	}
 
-    frm.refresh_field("deductions"); // Refresh the field to reflect changes
-    row.is_updating = false; // Reset the flag
+	frm.refresh_field("deductions"); // Refresh the field to reflect changes
+	row.is_updating = false; // Reset the flag
 }
 
 // Function to get the tax percentage based on tax_type
 async function get_wht_percentage(tax_type) {
-    return new Promise((resolve, reject) => {
-        frappe.db.get_value("Withholding Tax Type", tax_type, "percent", (r) => {
-            if (r && r.percent) {
-                resolve(r.percent);
-            } else {
-                frappe.show_alert({
-                    message: __("Withholding Tax Type not found"),
-                    indicator: "red",
-                });
-                resolve(0); // Default to 0 if not found
-            }
-        });
-    });
+	return new Promise((resolve, reject) => {
+		frappe.db.get_value("Withholding Tax Type", tax_type, "percent", (r) => {
+			if (r && r.percent) {
+				resolve(r.percent);
+			} else {
+				frappe.show_alert({
+					message: __("Withholding Tax Type not found"),
+					indicator: "red",
+				});
+				resolve(0); // Default to 0 if not found
+			}
+		});
+	});
 }

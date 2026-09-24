@@ -61,14 +61,14 @@ def create_tax_invoice_on_gl_tax(doc, method):
 			# Base amount, use base amount from origin document
 			if voucher.doctype == "Expense Claim":
 				if voucher.split_tax_invoice:
-					base_amount = sum([x.tax_base_amount for x in voucher.splitted_tax_invoices])
+					base_amount = sum(x.tax_base_amount for x in voucher.splitted_tax_invoices)
 				else:
 					base_amount = voucher.base_amount_overwrite or voucher.total_sanctioned_amount
 			elif voucher.doctype == "Sales Invoice":
 				base_amount = voucher.base_net_total
 			elif voucher.doctype == "Purchase Invoice":
 				if voucher.split_tax_invoice:
-					base_amount = sum([x.tax_base_amount for x in voucher.splitted_tax_invoices])
+					base_amount = sum(x.tax_base_amount for x in voucher.splitted_tax_invoices)
 				else:
 					base_amount = voucher.base_net_total
 			elif voucher.doctype == "Payment Entry":
@@ -94,7 +94,7 @@ def create_tax_invoice_on_gl_tax(doc, method):
 				else:
 					# Overwrite base amount for case of separated tax percent in sales/purchase invoice
 					base_amount = sum(
-						[tax.net_amount for tax in voucher.taxes if tax.account_head == doc.account]
+						tax.net_amount for tax in voucher.taxes if tax.account_head == doc.account
 					)
 			if voucher.get("split_tax_invoice", False):
 				# Use Split Tax Invoice Table

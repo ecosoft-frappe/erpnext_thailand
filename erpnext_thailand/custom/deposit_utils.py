@@ -19,7 +19,7 @@ def validate_invoice(doc, methods):
 	if doc.doctype not in ("Sales Invoice", "Purchase Invoice"):
 		frappe.throw(_("Not an invoice document!"))
 
-	order_doctype, order_field, _ = get_invoice_order_type(doc.doctype)
+	order_doctype, order_field, partner = get_invoice_order_type(doc.doctype)
 
 	if doc.is_deposit_invoice:
 		validate_deposit_invoice(doc, order_doctype, order_field)
@@ -128,21 +128,21 @@ def validate_normal_invoice(doc, order_doctype, order_field):
 
 	# Ensure total allocated amount (on ui) does not exceed the deposit balance (from db)
 	doc_json = json.dumps(doc.as_dict(), indent=4, sort_keys=True, default=str)
-	db_deposit = sum([x["deposit_amount"] for x in get_deposits(doc_json)])
-	ui_allocation = sum([x.allocated_amount for x in doc.deposits])
+	db_deposit = sum(x["deposit_amount"] for x in get_deposits(doc_json))
+	ui_allocation = sum(x.allocated_amount for x in doc.deposits)
 	if ui_allocation > db_deposit:
 		frappe.throw(
 			_(
 				"The Deposit Deduction in this document is {} but the remaining deposit for deduction is {}. "
 				"Please verify Deposit Deduction"
-			).format("{:,}".format(ui_allocation), "{:,}".format(db_deposit))
+			).format(f"{ui_allocation:,}", f"{db_deposit:,}")
 		)
 
 
 def cancel_deposit_invoice(doc, method):
 	if not doc.is_deposit_invoice:
 		return
-	order_doctype, order_field, _ = get_invoice_order_type(doc.doctype)
+	order_doctype, order_field, partner = get_invoice_order_type(doc.doctype)
 	linked_doc = doc.items[0].get(order_field)
 	if not linked_doc:
 		return
@@ -311,7 +311,7 @@ def get_deposits(doc):
 def get_tied_to_order_deposits(invoice):
 	"""Find orders related to this invoice and their deposit invoices"""
 	invoice_doctype = invoice["doctype"]
-	order_doctype, order_field, _ = get_invoice_order_type(invoice_doctype)
+	order_doctype, order_field, partner = get_invoice_order_type(invoice_doctype)
 
 	# Collect all linked orders from the invoice items
 	orders = {
@@ -385,7 +385,7 @@ def get_tied_to_order_deposits(invoice):
 def get_untied_deposits(invoice):
 	"""Find deposit that is not related to any order but same customer/supplier and currency"""
 	invoice_doctype = invoice["doctype"]
-	_, order_field, partner = get_invoice_order_type(invoice_doctype)
+	order_doctype, order_field, partner = get_invoice_order_type(invoice_doctype)
 
 	deductions = []
 	# Fetch all deposit invoices that is not tied to any order (not included return deposit invoice)
