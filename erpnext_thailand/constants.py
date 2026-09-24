@@ -4,22 +4,21 @@ ERP_CUSTOM_FIELDS = {
 			"fieldname": "tax_id",
 			"fieldtype": "Data",
 			"label": "Tax ID",
-			"insert_after": "disabled"
+			"insert_after": "disabled",
 		},
 		{
 			"fieldname": "branch_code",
 			"fieldtype": "Data",
 			"label": "Branch Code",
-			"insert_after": "tax_id"
+			"insert_after": "tax_id",
 		},
 		{
 			"fieldname": "update_tax_branch",
 			"fieldtype": "Check",
 			"label": "Update Tax ID/Branch Code",
 			"insert_after": "branch_code",
-			"description": "Update Tax ID and Brach Code to linked Customer/Supplier"
+			"description": "Update Tax ID and Brach Code to linked Customer/Supplier",
 		},
-  
 	],
 	"Print Format": [
 		{
@@ -27,21 +26,21 @@ ERP_CUSTOM_FIELDS = {
 			"fieldtype": "Data",
 			"label": "Default Condition",
 			"description": "Use python expression to set default format, i.e., doc.doctype=='Sales Invoice'",
-			"insert_after": "disabled"
+			"insert_after": "disabled",
 		},
 		{
 			"fieldname": "hide_if_not_default",
 			"fieldtype": "Check",
 			"label": "Hide if not Default",
 			"description": "If default condition is not met, hide this format form selection",
-			"insert_after": "default_condition"
+			"insert_after": "default_condition",
 		},
 		{
 			"fieldname": "add_comment_info",
 			"fieldtype": "Check",
 			"label": "Add Comment",
 			"description": "Add printed as comment in document activity",
-			"insert_after": "hide_if_not_default"
+			"insert_after": "hide_if_not_default",
 		},
 		{
 			"fieldname": "add_copies",
@@ -50,7 +49,7 @@ ERP_CUSTOM_FIELDS = {
 			"options": "\n1\n2\n3\n4",
 			"description": "2 additional copies will print 3 copies, 1 original and 2 copies. For jinja template, doc.copy = 0 is original, else copies.",
 			"insert_after": "add_comment_info",
-		}
+		},
 	],
 	"Payment Entry": [
 		{
@@ -282,7 +281,7 @@ ERP_CUSTOM_FIELDS = {
 			"fieldname": "section_break_split_tax_invoice",
 			"fieldtype": "Section Break",
 			"insert_after": "tax_invoice",
-   			"label": ""
+			"label": "",
 		},
 		{
 			"fieldname": "split_tax_invoice",
@@ -303,7 +302,7 @@ ERP_CUSTOM_FIELDS = {
 			"fieldname": "section_break_tax_invoice",
 			"fieldtype": "Section Break",
 			"insert_after": "splitted_tax_invoices",
-   			"label": ""
+			"label": "",
 		},
 		{
 			"allow_on_submit": 1,
@@ -334,7 +333,7 @@ ERP_CUSTOM_FIELDS = {
 			"depends_on": "eval:!doc.split_tax_invoice",
 		},
 	],
- 	"Purchase Invoice Item": [
+	"Purchase Invoice Item": [
 		{
 			"description": "Default Withholding Tax Type setup on Item",
 			"fetch_from": "item_code.withholding_tax_type_pay_supplier",
@@ -353,7 +352,7 @@ ERP_CUSTOM_FIELDS = {
 			"fieldname": "section_break_6buh1",
 			"fieldtype": "Section Break",
 			"insert_after": "item_tax_section_break",
-   			"label": "Thai Tax"
+			"label": "Thai Tax",
 		},
 		{
 			"description": "Select withholding tax type for service amount withheld when recevice from customer.",
@@ -447,7 +446,7 @@ ERP_CUSTOM_FIELDS = {
 			"insert_after": "is_petty_cash_account",
 			"label": "Petty Cash Holder",
 			"options": "Petty Cash Holder",
-			"link_filters": "[[\"Petty Cash Holder\",\"petty_cash_account\",\"=\",\"eval: doc.account\"]]",
+			"link_filters": '[["Petty Cash Holder","petty_cash_account","=","eval: doc.account"]]',
 			"depends_on": "eval:doc.is_petty_cash_account == 1;",
 			"mandatory_depends_on": "eval:doc.is_petty_cash_account == 1;",
 		},
@@ -461,7 +460,7 @@ ERP_CUSTOM_FIELDS = {
 			"depends_on": "eval:doc.is_petty_cash_account == 1;",
 		},
 	],
-    "Currency Exchange Settings": [
+	"Currency Exchange Settings": [
 		{
 			"depends_on": "eval:doc.service_provider == 'Bank of Thailand';",
 			"fieldname": "token",
@@ -469,10 +468,10 @@ ERP_CUSTOM_FIELDS = {
 			"insert_after": "access_key",
 			"label": "Token",
 			"mandatory_depends_on": "eval:doc.service_provider == 'Bank of Thailand';",
-			"module": "Thai Tax"
+			"module": "Thai Tax",
 		},
 	],
-    "Currency": [
+	"Currency": [
 		{
 			"fieldname": "bot_currency",
 			"fieldtype": "Data",
@@ -511,7 +510,7 @@ ERP_CUSTOM_FIELDS = {
 			"insert_after": "petty_cash_holder",
 			"label": "Petty Cash Holder Name",
 		},
-	]
+	],
 }
 
 HRMS_CUSTOM_FIELDS = {
@@ -539,7 +538,7 @@ HRMS_CUSTOM_FIELDS = {
 			"description": "Use this field only when you want to overwrite",
 			"fieldname": "base_amount_overwrite",
 			"fieldtype": "Currency",
-            "insert_after": "column_break_rqacr",
+			"insert_after": "column_break_rqacr",
 			"label": "Base Amount Overwrite",
 			"no_copy": 1,
 			"options": "Company:company:default_currency",
@@ -549,7 +548,7 @@ HRMS_CUSTOM_FIELDS = {
 			"fieldname": "section_break_split_tax_invoice",
 			"fieldtype": "Section Break",
 			"insert_after": "base_amount_overwrite",
-   			"label": ""
+			"label": "",
 		},
 		{
 			"fieldname": "split_tax_invoice",
@@ -662,47 +661,57 @@ ERP_PROPERTY_SETTERS = {
 		("naming_series", "depends_on", "eval:!doc.amended_from", "Data"),
 	],
 	"Document Naming Settings": [
-		("help_html", "options", "<div class=\"well\">\n    Edit list of Series in the box. Rules:\n    <ul>\n        <li>Each Series Prefix on a new line.</li>\n        <li>Allowed special characters are \"/\" and \"-\"</li>\n        <li>\n            Optionally, set the number of digits in the series using dot (.)\n            followed by hashes (#). For example, \".####\" means that the series\n            will have four digits. Default is five digits.\n        </li>\n        <li>\n            You can also use variables in the series name by putting them\n            between (.) dots\n            <br>\n            Supported Variables:\n            <ul>\n                <li><code>.YYYY.</code> - Year in 4 digits</li>\n                <li><code>.YYYY-DATE.</code> - Year in 4 digits by Document Date</li>\n                <li><code>.YY.</code> - Year in 2 digits</li>\n                <li><code>.YY-DATE.</code> - Year in 2 digits by Document Date</li>\n                <li><code>.MM.</code> - Month</li>\n                <li><code>.MM-DATE.</code> - Month by Document Date</li>\n                <li><code>.DD.</code> - Day of month</li>\n                <li><code>.DD-DATE.</code> - Day of month by Document Date</li>\n                <li><code>.WW.</code> - Week of the year</li>\n                <li><code>.WW-DATE.</code> - Week of the year by Document Date</li>\n                <li><code>.FY.</code> - Fiscal Year</li>\n                <li>\n                    <code>.{fieldname}.</code> - fieldname on the document e.g.\n                    <code>branch</code>\n                </li>\n            </ul>\n        </li>\n    </ul>\n    Examples:\n    <ul>\n        <li>INV-</li>\n        <li>INV-10-</li>\n        <li>INVK-</li>\n        <li>INV-.YYYY.-.{branch}.-.MM.-.####</li>\n    </ul>\n</div>\n<br>\n", "Text"),
+		(
+			"help_html",
+			"options",
+			'<div class="well">\n    Edit list of Series in the box. Rules:\n    <ul>\n        <li>Each Series Prefix on a new line.</li>\n        <li>Allowed special characters are "/" and "-"</li>\n        <li>\n            Optionally, set the number of digits in the series using dot (.)\n            followed by hashes (#). For example, ".####" means that the series\n            will have four digits. Default is five digits.\n        </li>\n        <li>\n            You can also use variables in the series name by putting them\n            between (.) dots\n            <br>\n            Supported Variables:\n            <ul>\n                <li><code>.YYYY.</code> - Year in 4 digits</li>\n                <li><code>.YYYY-DATE.</code> - Year in 4 digits by Document Date</li>\n                <li><code>.YY.</code> - Year in 2 digits</li>\n                <li><code>.YY-DATE.</code> - Year in 2 digits by Document Date</li>\n                <li><code>.MM.</code> - Month</li>\n                <li><code>.MM-DATE.</code> - Month by Document Date</li>\n                <li><code>.DD.</code> - Day of month</li>\n                <li><code>.DD-DATE.</code> - Day of month by Document Date</li>\n                <li><code>.WW.</code> - Week of the year</li>\n                <li><code>.WW-DATE.</code> - Week of the year by Document Date</li>\n                <li><code>.FY.</code> - Fiscal Year</li>\n                <li>\n                    <code>.{fieldname}.</code> - fieldname on the document e.g.\n                    <code>branch</code>\n                </li>\n            </ul>\n        </li>\n    </ul>\n    Examples:\n    <ul>\n        <li>INV-</li>\n        <li>INV-10-</li>\n        <li>INVK-</li>\n        <li>INV-.YYYY.-.{branch}.-.MM.-.####</li>\n    </ul>\n</div>\n<br>\n',
+			"Text",
+		),
 	],
 	"Currency Exchange Settings": [
-		("service_provider", "options", "frankfurter.dev\nexchangerate.host\nBank of Thailand\nCustom", "Select"),
+		(
+			"service_provider",
+			"options",
+			"frankfurter.dev\nexchangerate.host\nBank of Thailand\nCustom",
+			"Select",
+		),
 	],
 }
 
-BILLING_CUSTOM_FIELDS =  {
-    "Payment Entry": [
-        {
-            "depends_on": 'eval:doc.docstatus == 0 && doc.payment_type == "Receive" && doc.party_type == "Customer" && doc.party',
-            "fieldname": "get_invoices_from_sales_billing",
-            "fieldtype": "Button",
-            "insert_after": "get_outstanding_invoices",
-            "label": "Get Invoices from Sales Billing",
-        },
-        {
-            "depends_on": 'eval:doc.docstatus == 0 && doc.payment_type == "Receive" && doc.party_type == "Customer" && doc.party',
-            "fieldname": "sales_billing",
-            "read_only": 1,
-            "fieldtype": "Link",
-            "insert_after": "get_invoices_from_sales_billing",
-            "label": "Sales Billing",
-            "options": "Sales Billing",
-        },
-        {
-            "depends_on": 'eval:doc.docstatus == 0 && doc.payment_type == "Pay" && doc.party_type == "Supplier" && doc.party',
-            "fieldname": "get_invoices_from_purchase_billing",
-            "fieldtype": "Button",
-            "insert_after": "sales_billing",
-            "label": "Get Invoices from Purchase Billing",
-        },
-        {
-            "depends_on": 'eval:doc.docstatus == 0 && doc.payment_type == "Pay" && doc.party_type == "Supplier" && doc.party',
-            "fieldname": "purchase_billing",
-            "fieldtype": "Link",
-            "read_only": 1,
-            "insert_after": "get_invoices_from_purchase_billing",
-            "label": "Purchase Billing",
-            "options": "Purchase Billing",
-        },
+BILLING_CUSTOM_FIELDS = {
+	"Payment Entry": [
+		{
+			"depends_on": 'eval:doc.docstatus == 0 && doc.payment_type == "Receive" && doc.party_type == "Customer" && doc.party',
+			"fieldname": "get_invoices_from_sales_billing",
+			"fieldtype": "Button",
+			"insert_after": "get_outstanding_invoices",
+			"label": "Get Invoices from Sales Billing",
+		},
+		{
+			"depends_on": 'eval:doc.docstatus == 0 && doc.payment_type == "Receive" && doc.party_type == "Customer" && doc.party',
+			"fieldname": "sales_billing",
+			"read_only": 1,
+			"fieldtype": "Link",
+			"insert_after": "get_invoices_from_sales_billing",
+			"label": "Sales Billing",
+			"options": "Sales Billing",
+		},
+		{
+			"depends_on": 'eval:doc.docstatus == 0 && doc.payment_type == "Pay" && doc.party_type == "Supplier" && doc.party',
+			"fieldname": "get_invoices_from_purchase_billing",
+			"fieldtype": "Button",
+			"insert_after": "sales_billing",
+			"label": "Get Invoices from Purchase Billing",
+		},
+		{
+			"depends_on": 'eval:doc.docstatus == 0 && doc.payment_type == "Pay" && doc.party_type == "Supplier" && doc.party',
+			"fieldname": "purchase_billing",
+			"fieldtype": "Link",
+			"read_only": 1,
+			"insert_after": "get_invoices_from_purchase_billing",
+			"label": "Purchase Billing",
+			"options": "Purchase Billing",
+		},
 		{
 			"fieldname": "is_petty_cash",
 			"fieldtype": "Check",
@@ -715,7 +724,7 @@ BILLING_CUSTOM_FIELDS =  {
 			"insert_after": "is_petty_cash",
 			"label": "Petty Cash Holder",
 			"options": "Petty Cash Holder",
-			"link_filters": "[[\"Petty Cash Holder\",\"petty_cash_account\",\"in\",\"eval: [doc.paid_from, doc.paid_to]\"]]",
+			"link_filters": '[["Petty Cash Holder","petty_cash_account","in","eval: [doc.paid_from, doc.paid_to]"]]',
 			"depends_on": "eval:doc.is_petty_cash == 1;",
 			"mandatory_depends_on": "eval:doc.is_petty_cash == 1;",
 		},
@@ -728,33 +737,33 @@ BILLING_CUSTOM_FIELDS =  {
 			"read_only": 1,
 			"depends_on": "eval:doc.is_petty_cash == 1;",
 		},
-    ],
+	],
 }
 
-DEPOSIT_CUSTOM_FIELDS =  {
-    "Item": [
+DEPOSIT_CUSTOM_FIELDS = {
+	"Item": [
 		{
 			"depends_on": "eval:!doc.is_stock_item",
 			"fieldname": "is_deposit_item",
 			"fieldtype": "Check",
 			"insert_after": "is_stock_item",
-			"label": "Is Deposit Item"
+			"label": "Is Deposit Item",
 		},
 	],
-    "Sales Order": [
+	"Sales Order": [
 		{
 			"fieldname": "section_break_o8q38",
 			"fieldtype": "Section Break",
 			"insert_after": "payment_schedule",
-            "label": "Deposit",
-		}, 
+			"label": "Deposit",
+		},
 		{
 			"description": "If checked, the 1st invoice from this order should be a deposit invoice.",
 			"fieldname": "has_deposit",
 			"fieldtype": "Check",
 			"insert_after": "section_break_o8q38",
 			"label": "Deposit on 1st Invoice",
-			"allow_on_submit": 1
+			"allow_on_submit": 1,
 		},
 		{
 			"fieldname": "deposit_invoice",
@@ -762,14 +771,14 @@ DEPOSIT_CUSTOM_FIELDS =  {
 			"insert_after": "has_deposit",
 			"label": "Deposit Invoice",
 			"no_copy": 1,
-			"read_only": 1
+			"read_only": 1,
 		},
 		{
 			"fieldname": "column_break_euapx",
 			"fieldtype": "Column Break",
-			"insert_after": "deposit_invoice"
+			"insert_after": "deposit_invoice",
 		},
-        {
+		{
 			"fieldname": "deposit_amount",
 			"fieldtype": "Currency",
 			"insert_after": "column_break_euapx",
@@ -788,22 +797,22 @@ DEPOSIT_CUSTOM_FIELDS =  {
 			"options": "Percent\nFull Amount",
 			"description": "Deposit deduction (return of deposit) on following invoice(s).",
 			"insert_after": "percent_deposit",
-		}
+		},
 	],
-    "Purchase Order": [
+	"Purchase Order": [
 		{
 			"fieldname": "section_break_o8q38",
 			"fieldtype": "Section Break",
 			"insert_after": "payment_schedule",
-            "label": "Deposit",
-		}, 
+			"label": "Deposit",
+		},
 		{
 			"description": "If checked, the 1st invoice from this order should be a deposit invoice.",
 			"fieldname": "has_deposit",
 			"fieldtype": "Check",
 			"insert_after": "section_break_o8q38",
 			"label": "Deposit on 1st Invoice",
-			"allow_on_submit": 1
+			"allow_on_submit": 1,
 		},
 		{
 			"fieldname": "deposit_invoice",
@@ -811,14 +820,14 @@ DEPOSIT_CUSTOM_FIELDS =  {
 			"insert_after": "has_deposit",
 			"label": "Deposit Invoice",
 			"no_copy": 1,
-			"read_only": 1
+			"read_only": 1,
 		},
 		{
 			"fieldname": "column_break_euapx",
 			"fieldtype": "Column Break",
-			"insert_after": "deposit_invoice"
+			"insert_after": "deposit_invoice",
 		},
-        {
+		{
 			"fieldname": "deposit_amount",
 			"fieldtype": "Currency",
 			"insert_after": "column_break_euapx",
@@ -837,16 +846,16 @@ DEPOSIT_CUSTOM_FIELDS =  {
 			"options": "Percent\nFull Amount",
 			"description": "Deposit deduction (return of deposit) on following invoice(s).",
 			"insert_after": "percent_deposit",
-		}
+		},
 	],
-    "Sales Invoice": [
+	"Sales Invoice": [
 		{
 			"depends_on": "",
 			"fieldname": "is_deposit_invoice",
 			"fieldtype": "Check",
 			"insert_after": "is_consolidated",
 			"label": "Is Deposit Invoice",
-			"read_only": 0
+			"read_only": 0,
 		},
 		{
 			"collapsible": 1,
@@ -855,7 +864,7 @@ DEPOSIT_CUSTOM_FIELDS =  {
 			"fieldname": "deposit_deductions",
 			"fieldtype": "Section Break",
 			"insert_after": "advances",
-			"label": "Deposit Deductions"
+			"label": "Deposit Deductions",
 		},
 		{
 			"fieldname": "use_untied_deposit",
@@ -879,26 +888,26 @@ DEPOSIT_CUSTOM_FIELDS =  {
 			"label": "Deposits",
 			"options": "Sales Invoice Deposit",
 			"read_only_depends_on": "eval:!doc.manual_deposit_allocation",
-		}
+		},
 	],
-    "Sales Invoice Item": [
+	"Sales Invoice Item": [
 		{
 			"fetch_from": "item_code.is_deposit_item",
 			"fieldname": "is_deposit_item",
 			"fieldtype": "Check",
 			"insert_after": "item_code",
 			"label": "Is Deposit Item",
-			"read_only": 1
+			"read_only": 1,
 		},
 	],
-    "Purchase Invoice": [
+	"Purchase Invoice": [
 		{
 			"depends_on": "",
 			"fieldname": "is_deposit_invoice",
 			"fieldtype": "Check",
 			"insert_after": "is_paid",
 			"label": "Is Deposit Invoice",
-			"read_only": 0
+			"read_only": 0,
 		},
 		{
 			"collapsible": 1,
@@ -907,7 +916,7 @@ DEPOSIT_CUSTOM_FIELDS =  {
 			"fieldname": "deposit_deductions",
 			"fieldtype": "Section Break",
 			"insert_after": "advance_tax",
-			"label": "Deposit Deductions"
+			"label": "Deposit Deductions",
 		},
 		{
 			"fieldname": "use_untied_deposit",
@@ -931,27 +940,27 @@ DEPOSIT_CUSTOM_FIELDS =  {
 			"label": "Deposits",
 			"options": "Purchase Invoice Deposit",
 			"read_only_depends_on": "eval:!doc.manual_deposit_allocation",
-		}
+		},
 	],
-    "Purchase Invoice Item": [
+	"Purchase Invoice Item": [
 		{
 			"fetch_from": "item_code.is_deposit_item",
 			"fieldname": "is_deposit_item",
 			"fieldtype": "Check",
 			"insert_after": "item_code",
 			"label": "Is Deposit Item",
-			"read_only": 1
+			"read_only": 1,
 		},
 	],
-    "Item Default": [
+	"Item Default": [
 		{
 			"depends_on": "eval:parent.is_deposit_item",
 			"fieldname": "purchase_deposit_account",
 			"fieldtype": "Link",
 			"insert_after": "column_break_r6eft",
 			"label": "Purchase Deposit Account",
-			"link_filters": "[[\"Account\",\"root_type\",\"=\",\"Asset\"]]",
-			"options": "Account"
+			"link_filters": '[["Account","root_type","=","Asset"]]',
+			"options": "Account",
 		},
 		{
 			"depends_on": "eval:parent.is_deposit_item",
@@ -959,19 +968,19 @@ DEPOSIT_CUSTOM_FIELDS =  {
 			"fieldtype": "Link",
 			"insert_after": "deposit_defaults",
 			"label": "Sales Deposit Account",
-			"link_filters": "[[\"Account\",\"root_type\",\"=\",\"Liability\"]]",
-			"options": "Account"
+			"link_filters": '[["Account","root_type","=","Liability"]]',
+			"options": "Account",
 		},
 		{
 			"fieldname": "deposit_defaults",
 			"fieldtype": "Section Break",
 			"insert_after": "deferred_revenue_account",
-			"label": "Deposit Defaults"
+			"label": "Deposit Defaults",
 		},
 		{
 			"fieldname": "column_break_deposit_account",
 			"fieldtype": "Column Break",
-			"insert_after": "sales_deposit_account"
+			"insert_after": "sales_deposit_account",
 		},
 	],
 }

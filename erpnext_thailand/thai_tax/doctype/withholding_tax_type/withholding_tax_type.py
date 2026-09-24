@@ -8,7 +8,6 @@ from frappe.utils import cint, cstr
 
 
 class WithholdingTaxType(Document):
-
 	def get_account(self, company):
 		account = list(filter(lambda x: x.company == company, self.accounts))
 		return account and account[0].account or None

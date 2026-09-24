@@ -1,17 +1,18 @@
-import click
 import json
+
+import click
 import frappe
-from frappe.custom.doctype.custom_field.custom_field import \
-    create_custom_fields
-from frappe.custom.doctype.property_setter.property_setter import \
-    make_property_setter
-from erpnext_thailand.utils import import_thai_zip_code_data
+from frappe.custom.doctype.custom_field.custom_field import create_custom_fields
+from frappe.custom.doctype.property_setter.property_setter import make_property_setter
 
 from erpnext_thailand.constants import (
-    ERP_CUSTOM_FIELDS, ERP_PROPERTY_SETTERS,
-    HRMS_CUSTOM_FIELDS, BILLING_CUSTOM_FIELDS,
-	DEPOSIT_CUSTOM_FIELDS
+	BILLING_CUSTOM_FIELDS,
+	DEPOSIT_CUSTOM_FIELDS,
+	ERP_CUSTOM_FIELDS,
+	ERP_PROPERTY_SETTERS,
+	HRMS_CUSTOM_FIELDS,
 )
+from erpnext_thailand.utils import import_thai_zip_code_data
 
 
 def after_install():

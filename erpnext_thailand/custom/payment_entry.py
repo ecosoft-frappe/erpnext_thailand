@@ -4,21 +4,27 @@ from ast import literal_eval
 import frappe
 import pandas as pd
 from frappe import _
+
 try:
-    from hrms.overrides.employee_payment_entry import EmployeePaymentEntry
-    from hrms.overrides.employee_payment_entry import get_payment_entry_for_employee as origin_get_payment_entry_for_employee
-    _hrms_installed = True
+	from hrms.overrides.employee_payment_entry import EmployeePaymentEntry
+	from hrms.overrides.employee_payment_entry import (
+		get_payment_entry_for_employee as origin_get_payment_entry_for_employee,
+	)
+
+	_hrms_installed = True
 except ImportError:
-    from erpnext.accounts.doctype.payment_entry.payment_entry import PaymentEntry as EmployeePaymentEntry
-    origin_get_payment_entry_for_employee = None
-    _hrms_installed = False
+	from erpnext.accounts.doctype.payment_entry.payment_entry import (
+		PaymentEntry as EmployeePaymentEntry,
+	)
+
+	origin_get_payment_entry_for_employee = None
+	_hrms_installed = False
 from erpnext_thailand.custom.custom_api import get_thai_tax_settings
 
 REF_DOCTYPES = ["Purchase Invoice", "Expense Claim", "Journal Entry"]
 
 
 class PaymentEntry(EmployeePaymentEntry):
-
 	def before_submit(self):
 		if self.is_petty_cash:
 			is_petty_cash_paid_from = frappe.get_value(
@@ -32,15 +38,21 @@ class PaymentEntry(EmployeePaymentEntry):
 				"is_petty_cash_account",
 			)
 			if not (is_petty_cash_paid_from or is_petty_cash_paid_to):
-				frappe.throw(_("Paid From / Paid To account is not petty cash account, please unselect <b>is petty cash</b> before submit."))
+				frappe.throw(
+					_(
+						"Paid From / Paid To account is not petty cash account, please unselect <b>is petty cash</b> before submit."
+					)
+				)
 
 	def validate(self):
 		super().validate()
 		if not self.is_petty_cash and (self.petty_cash_holder or self.petty_cash_holder_name):
-			self.update({
-				"petty_cash_holder": "",
-				"petty_cash_holder_name": "",
-			})
+			self.update(
+				{
+					"petty_cash_holder": "",
+					"petty_cash_holder_name": "",
+				}
+			)
 
 	def get_gl_dict(self, args, account_currency=None, item=None):
 		gl_dict = super().get_gl_dict(args, account_currency=account_currency, item=item)
@@ -51,17 +63,24 @@ class PaymentEntry(EmployeePaymentEntry):
 				"is_petty_cash_account",
 			)
 			if is_petty_cash_account:
-				gl_dict.update({
-					"petty_cash_holder": item.petty_cash_holder,
-					"petty_cash_holder_name": item.petty_cash_holder_name,
-				})
+				gl_dict.update(
+					{
+						"petty_cash_holder": item.petty_cash_holder,
+						"petty_cash_holder_name": item.petty_cash_holder_name,
+					}
+				)
 		return gl_dict
 
+
 @frappe.whitelist()
-def get_payment_entry_for_employee(dt, dn, party_amount=None, bank_account=None, bank_amount=None):
+def get_payment_entry_for_employee(
+	dt, dn, party_amount=None, bank_account=None, bank_amount=None
+):
 	if not _hrms_installed:
 		frappe.throw(_("hrms is required for this feature"))
-	pe = origin_get_payment_entry_for_employee(dt, dn, party_amount=party_amount, bank_account=bank_account, bank_amount=bank_amount)
+	pe = origin_get_payment_entry_for_employee(
+		dt, dn, party_amount=party_amount, bank_account=bank_account, bank_amount=bank_amount
+	)
 	doc = frappe.get_doc(dt, dn)
 	# Petty Cash
 	if doc.is_petty_cash:
@@ -78,6 +97,7 @@ def get_payment_entry_for_employee(dt, dn, party_amount=None, bank_account=None,
 		pe.set_exchange_rate(ref_doc=doc)
 		pe.set_amounts()
 	return pe
+
 
 @frappe.whitelist()
 def test_require_withholding_tax(doc):
@@ -146,7 +166,7 @@ def get_withholding_tax_from_type(filters, doc):
 				"Indirect Expense",
 				"Indirect Income",
 				"Service Received But Not Billed",
-				"Temporary"
+				"Temporary",
 			)
 			if root_type in ["Asset", "Income", "Expense"] and account_type in valid_types:
 				base_amount += alloc_percent * (credit - debit)
@@ -170,9 +190,7 @@ def get_withholding_tax_from_docs_items(doc):
 	result = []
 	wht_types = frappe.get_all(
 		"Withholding Tax Type",
-		filters=[
-        	["Withholding Tax Type Account", "company", "=", company.name]
-        ],
+		filters=[["Withholding Tax Type Account", "company", "=", company.name]],
 		fields=["name", "percent", "`tabWithholding Tax Type Account`.account"],
 		as_list=True,
 	)
@@ -256,13 +274,13 @@ def make_withholding_tax_cert(filters, doc):
 
 
 def reconcile_undue_tax(doc, method):
-	""" If bs_reconcile is installed, unreconcile undue tax gls """
+	"""If bs_reconcile is installed, unreconcile undue tax gls"""
 	vouchers = [doc.name] + [r.reference_name for r in doc.references]
 	reconcile_undue_tax_gls(vouchers, doc.company)
 
 
 def reconcile_undue_tax_gls(vouchers, company, unreconcile=False):
-	""" Only if bs_reconcile app is install, reconcile/unreconcile undue tax gl entries """
+	"""Only if bs_reconcile app is install, reconcile/unreconcile undue tax gl entries"""
 	if "bs_reconcile" not in frappe.get_installed_apps():
 		return
 	try:
@@ -297,8 +315,10 @@ def update_sales_billing_outstanding_amount(doc, method):
 
 @frappe.whitelist()
 def get_outstanding_reference_documents(args, validate=False):
-	from erpnext.accounts.doctype.payment_entry.payment_entry \
-     	import get_outstanding_reference_documents as erpnext_get_outstanding
+	from erpnext.accounts.doctype.payment_entry.payment_entry import (
+		get_outstanding_reference_documents as erpnext_get_outstanding,
+	)
+
 	data = erpnext_get_outstanding(args, validate)
 	# Filter by Sales billing / Purchase Billing
 	args = frappe._dict(json.loads(args))

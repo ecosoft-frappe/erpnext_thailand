@@ -1,20 +1,19 @@
 import json
 from io import BytesIO
-from pypdf import PdfWriter
 
 import frappe
 from frappe.utils.safe_exec import get_safe_globals
+from pypdf import PdfWriter
 
 
 @frappe.whitelist()
 def get_print_formats(doctype, docname):
 	# Fetch available print formats for the given doctype
 	print_formats = frappe.get_all(
-		"Print Format", filters={
-      		"doc_type": doctype,
-        	"disabled": 0},
-  		pluck="name",
-		order_by="name"
+		"Print Format",
+		filters={"doc_type": doctype, "disabled": 0},
+		pluck="name",
+		order_by="name",
 	)
 	default_formats = []
 	doc = frappe.get_doc(doctype, docname)
@@ -47,9 +46,9 @@ def allow_update_standard(doc, method):
 	if doc.standard == "Yes":
 		prev_doc = doc.get_doc_before_save()
 		if prev_doc and (
-      			prev_doc.default_condition != doc.default_condition or
-      			prev_doc.hide_if_not_default != doc.hide_if_not_default
-         	):
+			prev_doc.default_condition != doc.default_condition
+			or prev_doc.hide_if_not_default != doc.hide_if_not_default
+		):
 			frappe.flags.in_test = 1
 
 
@@ -62,7 +61,7 @@ def download_print_pdf(
 	# letterhead: str | None = None,  # For future impl.
 	# options: str | None = None,  # For future impl.
 ):
-	""" Inspired by _download_multi_pdf(), but used to generate multiple copies """
+	"""Inspired by _download_multi_pdf(), but used to generate multiple copies"""
 	pdf_writer = PdfWriter()
 
 	# Concatenating pdf files

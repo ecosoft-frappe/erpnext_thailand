@@ -1,7 +1,8 @@
-import frappe
-import json
 import http.client
+import json
 from datetime import datetime, timedelta
+
+import frappe
 
 RATE_TYPE_FIELD_MAP = {
 	"Mid Rate": "mid_rate",
@@ -26,11 +27,10 @@ def clear_exchange_rate_cache(doc, method=None):
 	]
 	if stale_keys:
 		cache.delete(*stale_keys)
-		
+
 
 @frappe.whitelist(allow_guest=True)
-def get_api_currency_exchange(
-	from_currency, to_currency, transaction_date, token=None):
+def get_api_currency_exchange(from_currency, to_currency, transaction_date, token=None):
 	# Convert the transaction_date string to a datetime object
 	trans_start_date = datetime.strptime(transaction_date, "%Y-%m-%d")
 	trans_start_date = trans_start_date - timedelta(days=5)
@@ -41,7 +41,9 @@ def get_api_currency_exchange(
 
 	currency_doc = frappe.get_cached_doc("Currency", from_currency)
 	bot_currency = (currency_doc.get("bot_currency") or from_currency).upper()
-	rate_field = RATE_TYPE_FIELD_MAP.get(currency_doc.get("bot_currency_rate_type"), "selling")
+	rate_field = RATE_TYPE_FIELD_MAP.get(
+		currency_doc.get("bot_currency_rate_type"), "selling"
+	)
 
 	# Params to BOT API
 	start_date = trans_start_date
@@ -55,7 +57,7 @@ def get_api_currency_exchange(
 	headers = {
 		"Authorization": token,
 		"accept": "application/json",
-        "Content-Type": "application/json",
+		"Content-Type": "application/json",
 	}
 
 	# Properly formatted URL with dynamic date parameters
@@ -72,12 +74,17 @@ def get_api_currency_exchange(
 
 	rates = 0
 	# Check if "data_detail" exists and has items
-	if "data_detail" in parsed_result["result"]["data"] and parsed_result["result"]["data"]["data_detail"]:
+	if (
+		"data_detail" in parsed_result["result"]["data"]
+		and parsed_result["result"]["data"]["data_detail"]
+	):
 		data_detail = parsed_result["result"]["data"]["data_detail"]
 
 		# Sort data by the "period" field if not empty
 		if data_detail:
-			sorted_data = sorted(data_detail, key=lambda x: datetime.strptime(x["period"], "%Y-%m-%d"))
+			sorted_data = sorted(
+				data_detail, key=lambda x: datetime.strptime(x["period"], "%Y-%m-%d")
+			)
 
 			# Get the latest period's data (the last element in the sorted list)
 			latest_period_data = sorted_data[-1]
@@ -88,7 +95,7 @@ def get_api_currency_exchange(
 		"amount": 1.0,
 		"from_currency": from_currency,
 		"date": transaction_date,
-		"rates": {to_currency: rates}
+		"rates": {to_currency: rates},
 	}
 	print("response_data", response_data)
 	# Setting the response directly to avoid Frappe's automatic "data" wrapping

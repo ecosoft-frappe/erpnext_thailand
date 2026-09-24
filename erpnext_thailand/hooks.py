@@ -25,9 +25,22 @@ fixtures = [
 				"name",
 				"in",
 				(
-        			"1", "2", "3", "4", "4.1.1", "4.1.2", "4.1.3", "4.1.4",
-        			"4.2.1", "4.2.2", "4.2.3", "4.2.4", "4.2.5", "5", "6",
-				)
+					"1",
+					"2",
+					"3",
+					"4",
+					"4.1.1",
+					"4.1.2",
+					"4.1.3",
+					"4.1.4",
+					"4.2.1",
+					"4.2.2",
+					"4.2.3",
+					"4.2.4",
+					"4.2.5",
+					"5",
+					"6",
+				),
 			]
 		],
 	},
@@ -107,7 +120,7 @@ doctype_js = {
 jinja = {
 	"methods": [
 		"erpnext_thailand.utils.amount_in_bahttext",
-        "erpnext_thailand.utils.amount_to_text",
+		"erpnext_thailand.utils.amount_to_text",
 		"erpnext_thailand.utils.full_thai_date",
 	],
 }
@@ -167,38 +180,38 @@ doc_events = {
 	"Payment Entry": {
 		"validate": "erpnext_thailand.custom.custom_api.validate_company_address",
 		"on_update": "erpnext_thailand.custom.custom_api.clear_invoice_undue_tax",
-        "on_submit": [
-            "erpnext_thailand.custom.payment_entry.reconcile_undue_tax",
-            "erpnext_thailand.custom.payment_entry.update_sales_billing_outstanding_amount",
-        ],
-        "on_cancel": [
-            "erpnext_thailand.custom.payment_entry.update_sales_billing_outstanding_amount",
-        ],
-    },
-    "Unreconcile Payment": {
-        "on_submit": "erpnext_thailand.custom.unreconcile_payment.unreconcile_undue_tax",
-	},
-    "Sales Invoice": {
-        "validate": "erpnext_thailand.custom.custom_api.validate_sales_tax_invoice_zero_tax",
-        "on_submit": "erpnext_thailand.custom.custom_api.create_sales_tax_invoice_on_zero_tax",
-		"before_cancel": "erpnext_thailand.custom.custom_api.cancel_related_tax_invoice",
-        "before_validate": [
-            "erpnext_thailand.custom.deposit_utils.validate_invoice",
-            "erpnext_thailand.custom.deposit_utils.apply_deposit_deduction"
+		"on_submit": [
+			"erpnext_thailand.custom.payment_entry.reconcile_undue_tax",
+			"erpnext_thailand.custom.payment_entry.update_sales_billing_outstanding_amount",
 		],
-        "on_cancel": "erpnext_thailand.custom.deposit_utils.cancel_deposit_invoice",        
-        "on_trash": "erpnext_thailand.custom.deposit_utils.cancel_deposit_invoice",
-    },
+		"on_cancel": [
+			"erpnext_thailand.custom.payment_entry.update_sales_billing_outstanding_amount",
+		],
+	},
+	"Unreconcile Payment": {
+		"on_submit": "erpnext_thailand.custom.unreconcile_payment.unreconcile_undue_tax",
+	},
+	"Sales Invoice": {
+		"validate": "erpnext_thailand.custom.custom_api.validate_sales_tax_invoice_zero_tax",
+		"on_submit": "erpnext_thailand.custom.custom_api.create_sales_tax_invoice_on_zero_tax",
+		"before_cancel": "erpnext_thailand.custom.custom_api.cancel_related_tax_invoice",
+		"before_validate": [
+			"erpnext_thailand.custom.deposit_utils.validate_invoice",
+			"erpnext_thailand.custom.deposit_utils.apply_deposit_deduction",
+		],
+		"on_cancel": "erpnext_thailand.custom.deposit_utils.cancel_deposit_invoice",
+		"on_trash": "erpnext_thailand.custom.deposit_utils.cancel_deposit_invoice",
+	},
 	"Purchase Invoice": {
 		"after_insert": "erpnext_thailand.custom.custom_api.validate_tax_invoice",
 		"on_update": "erpnext_thailand.custom.custom_api.validate_tax_invoice",
-        "before_cancel": "erpnext_thailand.custom.custom_api.cancel_related_tax_invoice",
-        "before_validate": [
-            "erpnext_thailand.custom.deposit_utils.validate_invoice",
-            "erpnext_thailand.custom.deposit_utils.apply_deposit_deduction"
+		"before_cancel": "erpnext_thailand.custom.custom_api.cancel_related_tax_invoice",
+		"before_validate": [
+			"erpnext_thailand.custom.deposit_utils.validate_invoice",
+			"erpnext_thailand.custom.deposit_utils.apply_deposit_deduction",
 		],
-        "on_cancel": "erpnext_thailand.custom.deposit_utils.cancel_deposit_invoice",        
-        "on_trash": "erpnext_thailand.custom.deposit_utils.cancel_deposit_invoice",
+		"on_cancel": "erpnext_thailand.custom.deposit_utils.cancel_deposit_invoice",
+		"on_trash": "erpnext_thailand.custom.deposit_utils.cancel_deposit_invoice",
 	},
 	"Expense Claim": {
 		"after_insert": "erpnext_thailand.custom.custom_api.validate_tax_invoice",
@@ -211,15 +224,15 @@ doc_events = {
 	"Print Format": {
 		"before_validate": "erpnext_thailand.custom.print_format.allow_update_standard",
 	},
-    "Address": {
-        "on_update": "erpnext_thailand.custom.address.update_tax_info_in_linked_doc"
-    },
-    "Item": {
-        "validate": "erpnext_thailand.custom.item.validate_deposit_item",
+	"Address": {
+		"on_update": "erpnext_thailand.custom.address.update_tax_info_in_linked_doc"
 	},
-    "Currency": {
-        "on_update": "erpnext_thailand.custom.currency_exchange_bot_api.clear_exchange_rate_cache",
-    }
+	"Item": {
+		"validate": "erpnext_thailand.custom.item.validate_deposit_item",
+	},
+	"Currency": {
+		"on_update": "erpnext_thailand.custom.currency_exchange_bot_api.clear_exchange_rate_cache",
+	},
 }
 
 # Scheduled Tasks
@@ -252,7 +265,7 @@ doc_events = {
 # ------------------------------
 #
 override_whitelisted_methods = {
-    "erpnext.accounts.doctype.payment_entry.payment_entry.get_outstanding_reference_documents": "erpnext_thailand.custom.payment_entry.get_outstanding_reference_documents"
+	"erpnext.accounts.doctype.payment_entry.payment_entry.get_outstanding_reference_documents": "erpnext_thailand.custom.payment_entry.get_outstanding_reference_documents"
 }
 #
 # each overriding function accepts a `data` argument;

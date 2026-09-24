@@ -4,19 +4,23 @@ import frappe
 from frappe import _
 from frappe.model.document import Document
 from frappe.utils import add_months
+
 from erpnext_thailand.custom.custom_api import get_thai_tax_settings
 
 
 class PurchaseTaxInvoice(Document):
-    
 	def submit(self):
 		if self.against_voucher_type == "Payment Entry":
-			frappe.db.set_value("Payment Entry", self.against_voucher, "has_purchase_tax_invoice", 1)
+			frappe.db.set_value(
+				"Payment Entry", self.against_voucher, "has_purchase_tax_invoice", 1
+			)
 		super().submit()
 
 	def cancel(self):
 		if self.against_voucher_type == "Payment Entry":
-			frappe.db.set_value("Payment Entry", self.against_voucher, "has_purchase_tax_invoice", 0)
+			frappe.db.set_value(
+				"Payment Entry", self.against_voucher, "has_purchase_tax_invoice", 0
+			)
 		super().cancel()
 
 	def validate(self):
@@ -37,7 +41,7 @@ class PurchaseTaxInvoice(Document):
 					origin_doc.tax_invoice_number = self.number
 					origin_doc.tax_invoice_date = self.date
 					origin_doc.save(ignore_permissions=True)
-				else: # find in Purchase Invoice Detail Tax Invoice
+				else:  # find in Purchase Invoice Detail Tax Invoice
 					dt = {
 						"Purchase Invoice": "Purchase Invoice Tax Invoice Detail",
 						"Expense Claim": "Expense Claim Tax Invoice Detail",
@@ -50,7 +54,6 @@ class PurchaseTaxInvoice(Document):
 					row.supplier = self.party
 					row.save(ignore_permissions=True)
 
-
 	def compute_report_date(self):
 		if int(self.months_delayed) == 0:
 			self.db_set("report_date", self.date)
@@ -58,11 +61,13 @@ class PurchaseTaxInvoice(Document):
 			self.db_set("report_date", add_months(self.date, int(self.months_delayed)))
 
 	def validate_account(self):
-		""" Get purchase tax account from thai tax settings, make sure the account is correct """
+		"""Get purchase tax account from thai tax settings, make sure the account is correct"""
 		setting = get_thai_tax_settings(self.company)
 		if self.account != setting.purchase_tax_account:
-			frappe.throw(_(
-				"Tax Invoice creation failed,<br/>"
-				"- Invalid account is being assigned to Tax Invoice<br/>"
-				"- Returning Invoice with both negative rate and quantity is incorrect"
-			))
+			frappe.throw(
+				_(
+					"Tax Invoice creation failed,<br/>"
+					"- Invalid account is being assigned to Tax Invoice<br/>"
+					"- Returning Invoice with both negative rate and quantity is incorrect"
+				)
+			)
