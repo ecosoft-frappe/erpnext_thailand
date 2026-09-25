@@ -281,7 +281,9 @@ doc_events = {
 # Testing
 # -------
 
-# before_tests = "erpnext_thailand.install.before_tests"
+# run-tests only runs this app's hook, so reuse ERPNext's to complete the setup wizard
+# (creates Company, Warehouse Type "Transit", etc.) before test records are made
+before_tests = "erpnext.setup.utils.before_tests"
 
 # Overriding Methods
 # ------------------------------

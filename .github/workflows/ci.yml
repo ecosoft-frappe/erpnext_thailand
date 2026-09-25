@@ -69,10 +69,13 @@ jobs:
       - name: Install apps
         working-directory: /home/runner/frappe-bench
         run: |
+          # payments provides DocType "Payment Gateway" that ERPNext links to (same as ERPNext's own CI)
+          bench get-app --branch version-15 payments
           bench get-app --branch version-15 erpnext
           bench get-app erpnext_thailand "$GITHUB_WORKSPACE"
           bench setup requirements --dev
           bench new-site --db-root-password root --admin-password admin test_site
+          bench --site test_site install-app payments
           bench --site test_site install-app erpnext
           bench --site test_site install-app erpnext_thailand
           bench build --app erpnext_thailand
