@@ -3,6 +3,7 @@
 [post_model_sync]
 execute:from erpnext_thailand.install import after_install; after_install()
 execute:from erpnext_thailand.utils import import_thai_zip_code_data; import_thai_zip_code_data()
+execute:from erpnext_thailand.utils import import_thai_zip_code_data; import_thai_zip_code_data() # Rerun for tambons with multiple zip codes
 erpnext_thailand.patches.update_sales_tax_invoice_tax_percent
 erpnext_thailand.patches.add_print_format_field_default_condition
 erpnext_thailand.patches.add_custom_field_address

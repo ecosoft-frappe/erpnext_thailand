@@ -44,6 +44,28 @@ fixtures = [
 			]
 		],
 	},
+	{
+		"doctype": "Custom Field",
+		"filters": [
+			[
+				"name",
+				"in",
+				(
+					"Company-thai_settings_tab",
+					"Company-address_section",
+					"Company-bangkok_column",
+					"Company-prefix_thambon_bangkok",
+					"Company-prefix_amphur_bangkok",
+					"Company-prefix_province_bangkok",
+					"Company-enable_prefix_for_address",
+					"Company-other_provinces_column",
+					"Company-prefix_thambon_other_province",
+					"Company-prefix_amphur_other_province",
+					"Company-prefix_province_other_province",
+				),
+			]
+		],
+	},
 ]
 
 
