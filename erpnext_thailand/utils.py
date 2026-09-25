@@ -1,5 +1,6 @@
 import csv
 import datetime
+import re
 
 import frappe
 import requests
@@ -54,7 +55,7 @@ def get_prefix_for_address(data):
 
 
 @frappe.whitelist()
-def get_address_by_tax_id(tax_id=False, branch=False):
+def get_address_by_tax_id(tax_id: str | None = None, branch: str | None = None):
 	"""Get address information from Revenue Department Web Service by Tax ID and Branch number.
 
 	Args:
@@ -66,10 +67,14 @@ def get_address_by_tax_id(tax_id=False, branch=False):
 	                  Empty dict if there's an error
 
 	Raises:
-	        frappe.ValidationError: If tax_id or branch is not provided
+	        frappe.ValidationError: If tax_id or branch is not provided, or tax_id is not 13 digits
 	"""
 	if not (tax_id and branch):
 		frappe.throw(_("Please provide both Tax ID and Branch number"))
+	# tax_id is put into the SOAP payload as is, so allow only a 13-digit Thai Tax ID
+	tax_id = re.sub(r"[\s-]", "", tax_id)
+	if not re.fullmatch(r"[0-9]{13}", tax_id):
+		frappe.throw(_("Tax ID must be 13 digits"))
 
 	# API Configuration
 	url = "https://rdws.rd.go.th/serviceRD3/vatserviceRD3.asmx"
