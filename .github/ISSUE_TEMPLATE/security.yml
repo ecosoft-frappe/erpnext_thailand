@@ -1,0 +1,40 @@
+name: Security issue
+description: Report a security issue in ERPNext Thailand (see SECURITY.md)
+title: "[Security] "
+labels: ["security"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This issue is **public**. Please describe the problem, but **do not post a working exploit**.
+        We will ask for more details if needed.
+
+        Issues in Frappe Framework or ERPNext core should be reported at https://frappe.io/security instead.
+  - type: textarea
+    id: description
+    attributes:
+      label: Description and impact
+      description: What is the issue, and what could an attacker do with it?
+    validations:
+      required: true
+  - type: input
+    id: affected
+    attributes:
+      label: Affected module, DocType, or API method
+      placeholder: e.g. erpnext_thailand.utils.get_address_by_tax_id
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Do not include a working exploit.
+    validations:
+      required: true
+  - type: input
+    id: versions
+    attributes:
+      label: Versions
+      placeholder: "ERPNext Thailand 1.0.2, ERPNext v15.x, Frappe v15.x"
+    validations:
+      required: true

@@ -1,0 +1,49 @@
+thai-tax:
+  - changed-files:
+      - any-glob-to-any-file: erpnext_thailand/thai_tax/**
+
+thai-billing:
+  - changed-files:
+      - any-glob-to-any-file: erpnext_thailand/thai_billing/**
+
+thai-deposit:
+  - changed-files:
+      - any-glob-to-any-file: erpnext_thailand/thai_deposit/**
+
+petty-cash:
+  - changed-files:
+      - any-glob-to-any-file: erpnext_thailand/petty_cash/**
+
+customization:
+  - changed-files:
+      - any-glob-to-any-file:
+          - erpnext_thailand/custom/**
+          - erpnext_thailand/fixtures/**
+          - erpnext_thailand/constants.py
+          - erpnext_thailand/hooks.py
+
+patches:
+  - changed-files:
+      - any-glob-to-any-file:
+          - erpnext_thailand/patches/**
+          - erpnext_thailand/patches.txt
+
+translations:
+  - changed-files:
+      - any-glob-to-any-file: erpnext_thailand/translations/**
+
+frontend:
+  - changed-files:
+      - any-glob-to-any-file:
+          - erpnext_thailand/public/**
+          - "**/*.js"
+
+documentation:
+  - changed-files:
+      - any-glob-to-any-file: "*.md"
+
+ci:
+  - changed-files:
+      - any-glob-to-any-file:
+          - .github/**
+          - .pre-commit-config.yaml

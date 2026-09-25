@@ -1,4 +1,4 @@
-name: Delete merged branch
+name: Delete branch on PR close
 
 on:
   pull_request:
@@ -6,7 +6,6 @@ on:
 
 jobs:
   delete-branch:
-    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     permissions:
       contents: write
