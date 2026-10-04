@@ -204,4 +204,4 @@
 		}
 	};
 })();
-//# sourceMappingURL=erpnext_thailand.bundle.VVIBIWH2.js.map
+//# sourceMappingURL=erpnext_thailand.bundle.LFC4DQJI.js.map

@@ -33,32 +33,42 @@ frappe.ui.form.on("Petty Cash Holder", {
 								`
                             <table style="width: 100%;">
                                 <tr>
-                                    <td style="width: 150px;vertical-align:top;padding-left: 5px;padding-right: 5px;border-left: 1px solid;border-right: 1px solid;border-top: 1px solid;"><b>Date</b></td>
+                                    <td style="width: 150px;vertical-align:top;padding-left: 5px;padding-right: 5px;border-left: 1px solid;border-right: 1px solid;border-top: 1px solid;"><b>${__(
+										"Date"
+									)}</b></td>
                                     <td style="vertical-align:top;padding-left: 5px;padding-right: 5px;border-right: 1px solid;border-top: 1px solid;">${value.posting_date
 										.split("-")
 										.reverse()
 										.join("-")}</td>
                                 </tr>
                                 <tr>
-                                    <td style="vertical-align:top;padding-left: 5px;padding-right: 5px;border-left: 1px solid;border-right: 1px solid;"><b>Petty Cash Holder</b></td>
+                                    <td style="vertical-align:top;padding-left: 5px;padding-right: 5px;border-left: 1px solid;border-right: 1px solid;"><b>${__(
+										"Petty Cash Holder"
+									)}</b></td>
                                     <td style="vertical-align:top;padding-left: 5px;padding-right: 5px;border-right: 1px solid;">${
 										frm.doc.petty_cash_holder
 									}</td>
                                 </tr>
                                 <tr>
-                                    <td style="vertical-align:top;padding-left: 5px;padding-right: 5px;border-left: 1px solid;border-right: 1px solid;"><b>From Account</b></td>
+                                    <td style="vertical-align:top;padding-left: 5px;padding-right: 5px;border-left: 1px solid;border-right: 1px solid;"><b>${__(
+										"From Account"
+									)}</b></td>
                                     <td style="vertical-align:top;padding-left: 5px;padding-right: 5px;border-right: 1px solid;">${
 										frm.doc.cash_bank_account_for_petty_cash_top_up
 									}</td>
                                 </tr>
                                 <tr>
-                                    <td style="vertical-align:top;padding-left: 5px;padding-right: 5px;border-left: 1px solid;border-right: 1px solid;"><b>To Account</b></td>
+                                    <td style="vertical-align:top;padding-left: 5px;padding-right: 5px;border-left: 1px solid;border-right: 1px solid;"><b>${__(
+										"To Account"
+									)}</b></td>
                                     <td style="vertical-align:top;padding-left: 5px;padding-right: 5px;border-right: 1px solid;">${
 										frm.doc.petty_cash_account
 									}</td>
                                 </tr>
                                 <tr>
-                                    <td style="vertical-align:top;padding-left: 5px;padding-right: 5px;border-left: 1px solid;border-right: 1px solid;border-bottom: 1px solid;"><b>Amount</b></td>
+                                    <td style="vertical-align:top;padding-left: 5px;padding-right: 5px;border-left: 1px solid;border-right: 1px solid;border-bottom: 1px solid;"><b>${__(
+										"Amount"
+									)}</b></td>
                                     <td style="vertical-align:top;padding-left: 5px;padding-right: 5px;border-right: 1px solid;border-bottom: 1px solid;">${Number(
 										value.amount
 									).toLocaleString(undefined, {
@@ -68,7 +78,7 @@ frappe.ui.form.on("Petty Cash Holder", {
                                 </tr>
                             </table>
                             <br>
-                            Are you sure you want to confirm this transaction?`,
+                            ${__("Are you sure you want to confirm this transaction?")}`,
 								function () {
 									// Validate amount
 									if (value.amount <= 0) {
@@ -106,7 +116,7 @@ frappe.ui.form.on("Petty Cash Holder", {
 								}
 							);
 						},
-						"Top Up"
+						__("Top Up")
 					);
 				});
 				// Withdraw from petty cash holder
@@ -134,32 +144,42 @@ frappe.ui.form.on("Petty Cash Holder", {
 								`
                             <table style="width: 100%;">
                                 <tr>
-                                    <td style="width: 150px;vertical-align:top;padding-left: 5px;padding-right: 5px;border-left: 1px solid;border-right: 1px solid;border-top: 1px solid;"><b>Date</b></td>
+                                    <td style="width: 150px;vertical-align:top;padding-left: 5px;padding-right: 5px;border-left: 1px solid;border-right: 1px solid;border-top: 1px solid;"><b>${__(
+										"Date"
+									)}</b></td>
                                     <td style="vertical-align:top;padding-left: 5px;padding-right: 5px;border-right: 1px solid;border-top: 1px solid;">${value.posting_date
 										.split("-")
 										.reverse()
 										.join("-")}</td>
                                 </tr>
                                 <tr>
-                                    <td style="vertical-align:top;padding-left: 5px;padding-right: 5px;border-left: 1px solid;border-right: 1px solid;"><b>Petty Cash Holder</b></td>
+                                    <td style="vertical-align:top;padding-left: 5px;padding-right: 5px;border-left: 1px solid;border-right: 1px solid;"><b>${__(
+										"Petty Cash Holder"
+									)}</b></td>
                                     <td style="vertical-align:top;padding-left: 5px;padding-right: 5px;border-right: 1px solid;">${
 										frm.doc.petty_cash_holder
 									}</td>
                                 </tr>
                                 <tr>
-                                    <td style="vertical-align:top;padding-left: 5px;padding-right: 5px;border-left: 1px solid;border-right: 1px solid;"><b>From Account</b></td>
+                                    <td style="vertical-align:top;padding-left: 5px;padding-right: 5px;border-left: 1px solid;border-right: 1px solid;"><b>${__(
+										"From Account"
+									)}</b></td>
                                     <td style="vertical-align:top;padding-left: 5px;padding-right: 5px;border-right: 1px solid;">${
 										frm.doc.petty_cash_account
 									}</td>
                                 </tr>
                                 <tr>
-                                    <td style="vertical-align:top;padding-left: 5px;padding-right: 5px;border-left: 1px solid;border-right: 1px solid;"><b>To Account</b></td>
+                                    <td style="vertical-align:top;padding-left: 5px;padding-right: 5px;border-left: 1px solid;border-right: 1px solid;"><b>${__(
+										"To Account"
+									)}</b></td>
                                     <td style="vertical-align:top;padding-left: 5px;padding-right: 5px;border-right: 1px solid;">${
 										frm.doc.cash_bank_account_for_petty_cash_withdraw
 									}</td>
                                 </tr>
                                 <tr>
-                                    <td style="vertical-align:top;padding-left: 5px;padding-right: 5px;border-left: 1px solid;border-right: 1px solid;border-bottom: 1px solid;"><b>Amount</b></td>
+                                    <td style="vertical-align:top;padding-left: 5px;padding-right: 5px;border-left: 1px solid;border-right: 1px solid;border-bottom: 1px solid;"><b>${__(
+										"Amount"
+									)}</b></td>
                                     <td style="vertical-align:top;padding-left: 5px;padding-right: 5px;border-right: 1px solid;border-bottom: 1px solid;">${Number(
 										value.amount
 									).toLocaleString(undefined, {
@@ -169,7 +189,7 @@ frappe.ui.form.on("Petty Cash Holder", {
                                 </tr>
                             </table>
                             <br>
-                            Are you sure you want to confirm this transaction?`,
+                            ${__("Are you sure you want to confirm this transaction?")}`,
 								function () {
 									// Validate amount
 									if (value.amount <= 0) {
@@ -207,7 +227,7 @@ frappe.ui.form.on("Petty Cash Holder", {
 								}
 							);
 						},
-						"Withdraw"
+						__("Withdraw")
 					);
 				});
 			}

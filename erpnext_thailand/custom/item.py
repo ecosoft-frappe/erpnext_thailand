@@ -7,7 +7,7 @@ def validate_deposit_item(doc, method):
 	# Deposit Item must not be a stock item.
 	if doc.is_stock_item:
 		doc.is_deposit_item = 0
-	# Oonly 1 active deposit item allowed
+	# Only 1 active deposit item allowed
 	if doc.is_deposit_item and not doc.disabled:
 		existing_deposit_item = frappe.get_all(
 			"Item",
