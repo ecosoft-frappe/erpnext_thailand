@@ -20,7 +20,6 @@
  ],
  "fields": [
   {
-   "description": "\u0e1c\u0e39\u0e49\u0e16\u0e37\u0e2d\u0e27\u0e07\u0e40\u0e07\u0e34\u0e19\u0e2a\u0e14\u0e22\u0e48\u0e2d\u0e22",
    "fieldname": "petty_cash_holder",
    "fieldtype": "Data",
    "in_standard_filter": 1,
@@ -33,7 +32,6 @@
    "fieldtype": "Column Break"
   },
   {
-   "description": "\u0e27\u0e07\u0e40\u0e07\u0e34\u0e19\u0e2a\u0e14\u0e22\u0e48\u0e2d\u0e22\u0e15\u0e31\u0e49\u0e07\u0e15\u0e49\u0e19",
    "fieldname": "petty_cash_float",
    "fieldtype": "Float",
    "in_list_view": 1,
@@ -43,7 +41,6 @@
    "reqd": 1
   },
   {
-   "description": "\u0e08\u0e33\u0e19\u0e27\u0e19\u0e17\u0e35\u0e48\u0e40\u0e1a\u0e34\u0e01\u0e40\u0e07\u0e34\u0e19\u0e2a\u0e14\u0e22\u0e48\u0e2d\u0e22\u0e44\u0e14\u0e49\u0e2a\u0e39\u0e07\u0e2a\u0e38\u0e14\u0e15\u0e48\u0e2d 1 \u0e23\u0e32\u0e22\u0e01\u0e32\u0e23 (0 = Unlimited)",
    "fieldname": "petty_cash_limit",
    "fieldtype": "Float",
    "label": "Petty Cash Limit",
@@ -51,7 +48,6 @@
    "precision": "2"
   },
   {
-   "description": "\u0e27\u0e07\u0e40\u0e07\u0e34\u0e19\u0e2a\u0e14\u0e22\u0e48\u0e2d\u0e22\u0e04\u0e07\u0e40\u0e2b\u0e25\u0e37\u0e2d",
    "fieldname": "petty_cash_balance",
    "fieldtype": "Float",
    "in_list_view": 1,
@@ -62,7 +58,6 @@
    "read_only": 1
   },
   {
-   "description": "\u0e1a\u0e31\u0e0d\u0e0a\u0e35\u0e40\u0e07\u0e34\u0e19\u0e2a\u0e14\u0e22\u0e48\u0e2d\u0e22",
    "fieldname": "petty_cash_account",
    "fieldtype": "Link",
    "label": "Petty Cash Account",
@@ -82,7 +77,6 @@
    "fieldtype": "Section Break"
   },
   {
-   "description": "\u0e1a\u0e31\u0e0d\u0e0a\u0e35\u0e40\u0e07\u0e34\u0e19\u0e2a\u0e14/\u0e18\u0e19\u0e32\u0e04\u0e32\u0e23\u0e2a\u0e33\u0e2b\u0e23\u0e31\u0e1a\u0e40\u0e15\u0e34\u0e21\u0e40\u0e07\u0e34\u0e19\u0e40\u0e02\u0e49\u0e32\u0e27\u0e07\u0e40\u0e07\u0e34\u0e19\u0e2a\u0e14\u0e22\u0e48\u0e2d\u0e22",
    "fieldname": "cash_bank_account_for_petty_cash_top_up",
    "fieldtype": "Link",
    "label": "Cash / Bank Account for Petty Cash Top Up",
@@ -91,7 +85,6 @@
    "reqd": 1
   },
   {
-   "description": "\u0e1a\u0e31\u0e0d\u0e0a\u0e35\u0e40\u0e07\u0e34\u0e19\u0e2a\u0e14/\u0e18\u0e19\u0e32\u0e04\u0e32\u0e23\u0e2a\u0e33\u0e2b\u0e23\u0e31\u0e1a\u0e16\u0e2d\u0e19\u0e40\u0e07\u0e34\u0e19\u0e2d\u0e2d\u0e01\u0e08\u0e32\u0e01\u0e27\u0e07\u0e40\u0e07\u0e34\u0e19\u0e2a\u0e14\u0e22\u0e48\u0e2d\u0e22",
    "fieldname": "cash_bank_account_for_petty_cash_withdraw",
    "fieldtype": "Link",
    "label": "Cash / Bank Account for Petty Cash Withdraw",

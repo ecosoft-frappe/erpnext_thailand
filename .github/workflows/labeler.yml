@@ -1,0 +1,18 @@
+name: Labeler
+
+on:
+  # pull_request_target lets it label PRs from forks too; it never checks out PR code
+  pull_request_target:
+
+permissions:
+  contents: read
+
+jobs:
+  label:
+    name: Label PR by changed module
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/labeler@v7

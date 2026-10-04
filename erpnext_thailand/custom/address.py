@@ -1,4 +1,5 @@
 import frappe
+from frappe import _
 
 
 def update_tax_info_in_linked_doc(doc, method):
@@ -17,7 +18,7 @@ def update_tax_info_in_linked_doc(doc, method):
 
 		if did_update:
 			frappe.msgprint(
-				"Tax ID and Branch Code updated in linked Customer/Supplier.",
+				_("Tax ID and Branch Code updated in linked Customer/Supplier."),
 				alert=True,
 				indicator="green",
 			)

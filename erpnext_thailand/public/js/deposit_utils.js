@@ -146,7 +146,7 @@ erpnext_thailand.deposit_utils.add_create_deposit_button = function (frm) {
 };
 
 erpnext_thailand.deposit_utils.get_deposit_item = function (frm) {
-	// For deposit invoice, add 1 line itema as Deposit Item
+	// For deposit invoice, add 1 line item as Deposit Item
 	if (frm.doc.is_deposit_invoice) {
 		frm.doc.items = [];
 		frappe.call({
