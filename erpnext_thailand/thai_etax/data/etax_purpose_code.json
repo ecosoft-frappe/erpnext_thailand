@@ -1,0 +1,536 @@
+[
+ {
+  "applicable_document_type_codes": [
+   {
+    "document_type_code": "388",
+    "parent": "TIVC01",
+    "parentfield": "applicable_document_type_codes",
+    "parenttype": "eTax Purpose Code",
+    "doctype": "eTax Purpose Code Applicable"
+   },
+   {
+    "document_type_code": "T02",
+    "parent": "TIVC01",
+    "parentfield": "applicable_document_type_codes",
+    "parenttype": "eTax Purpose Code",
+    "doctype": "eTax Purpose Code Applicable"
+   },
+   {
+    "document_type_code": "T03",
+    "parent": "TIVC01",
+    "parentfield": "applicable_document_type_codes",
+    "parenttype": "eTax Purpose Code",
+    "doctype": "eTax Purpose Code Applicable"
+   },
+   {
+    "document_type_code": "T04",
+    "parent": "TIVC01",
+    "parentfield": "applicable_document_type_codes",
+    "parenttype": "eTax Purpose Code",
+    "doctype": "eTax Purpose Code Applicable"
+   },
+   {
+    "document_type_code": "T05",
+    "parent": "TIVC01",
+    "parentfield": "applicable_document_type_codes",
+    "parenttype": "eTax Purpose Code",
+    "doctype": "eTax Purpose Code Applicable"
+   }
+  ],
+  "code": "TIVC01",
+  "docstatus": 0,
+  "doctype": "eTax Purpose Code",
+  "modified": "2026-10-14 10:00:00.000000",
+  "name": "TIVC01",
+  "purpose_name": "ชื่อผิด",
+  "reason": "ชื่อผิด"
+ },
+ {
+  "applicable_document_type_codes": [
+   {
+    "document_type_code": "388",
+    "parent": "TIVC02",
+    "parentfield": "applicable_document_type_codes",
+    "parenttype": "eTax Purpose Code",
+    "doctype": "eTax Purpose Code Applicable"
+   },
+   {
+    "document_type_code": "T02",
+    "parent": "TIVC02",
+    "parentfield": "applicable_document_type_codes",
+    "parenttype": "eTax Purpose Code",
+    "doctype": "eTax Purpose Code Applicable"
+   },
+   {
+    "document_type_code": "T03",
+    "parent": "TIVC02",
+    "parentfield": "applicable_document_type_codes",
+    "parenttype": "eTax Purpose Code",
+    "doctype": "eTax Purpose Code Applicable"
+   },
+   {
+    "document_type_code": "T04",
+    "parent": "TIVC02",
+    "parentfield": "applicable_document_type_codes",
+    "parenttype": "eTax Purpose Code",
+    "doctype": "eTax Purpose Code Applicable"
+   },
+   {
+    "document_type_code": "T05",
+    "parent": "TIVC02",
+    "parentfield": "applicable_document_type_codes",
+    "parenttype": "eTax Purpose Code",
+    "doctype": "eTax Purpose Code Applicable"
+   }
+  ],
+  "code": "TIVC02",
+  "docstatus": 0,
+  "doctype": "eTax Purpose Code",
+  "modified": "2026-10-14 10:00:00.000000",
+  "name": "TIVC02",
+  "purpose_name": "ที่อยู่ผิด",
+  "reason": "ที่อยู่ผิด"
+ },
+ {
+  "applicable_document_type_codes": [
+   {
+    "document_type_code": "388",
+    "parent": "TIVC99",
+    "parentfield": "applicable_document_type_codes",
+    "parenttype": "eTax Purpose Code",
+    "doctype": "eTax Purpose Code Applicable"
+   },
+   {
+    "document_type_code": "T02",
+    "parent": "TIVC99",
+    "parentfield": "applicable_document_type_codes",
+    "parenttype": "eTax Purpose Code",
+    "doctype": "eTax Purpose Code Applicable"
+   },
+   {
+    "document_type_code": "T03",
+    "parent": "TIVC99",
+    "parentfield": "applicable_document_type_codes",
+    "parenttype": "eTax Purpose Code",
+    "doctype": "eTax Purpose Code Applicable"
+   },
+   {
+    "document_type_code": "T04",
+    "parent": "TIVC99",
+    "parentfield": "applicable_document_type_codes",
+    "parenttype": "eTax Purpose Code",
+    "doctype": "eTax Purpose Code Applicable"
+   },
+   {
+    "document_type_code": "T05",
+    "parent": "TIVC99",
+    "parentfield": "applicable_document_type_codes",
+    "parenttype": "eTax Purpose Code",
+    "doctype": "eTax Purpose Code Applicable"
+   }
+  ],
+  "code": "TIVC99",
+  "docstatus": 0,
+  "doctype": "eTax Purpose Code",
+  "modified": "2026-10-14 10:00:00.000000",
+  "name": "TIVC99",
+  "purpose_name": "อื่นๆ ระบุ",
+  "reason": null
+ },
+ {
+  "applicable_document_type_codes": [
+   {
+    "document_type_code": "80",
+    "parent": "DBNG01",
+    "parentfield": "applicable_document_type_codes",
+    "parenttype": "eTax Purpose Code",
+    "doctype": "eTax Purpose Code Applicable"
+   }
+  ],
+  "code": "DBNG01",
+  "docstatus": 0,
+  "doctype": "eTax Purpose Code",
+  "modified": "2026-10-14 10:00:00.000000",
+  "name": "DBNG01",
+  "purpose_name": "มีการเพิ่มราคาสินค้า (สินค้าเกินกว่าจำนวนที่ตกลงกัน)",
+  "reason": "มีการเพิ่มราคาสินค้า (สินค้าเกินกว่าจำนวนที่ตกลงกัน)"
+ },
+ {
+  "applicable_document_type_codes": [
+   {
+    "document_type_code": "80",
+    "parent": "DBNG02",
+    "parentfield": "applicable_document_type_codes",
+    "parenttype": "eTax Purpose Code",
+    "doctype": "eTax Purpose Code Applicable"
+   }
+  ],
+  "code": "DBNG02",
+  "docstatus": 0,
+  "doctype": "eTax Purpose Code",
+  "modified": "2026-10-14 10:00:00.000000",
+  "name": "DBNG02",
+  "purpose_name": "คำนวณราคาสินค้า ผิดพลาดต่ำกว่าที่เป็นจริง",
+  "reason": "คำนวณราคาสินค้า ผิดพลาดต่ำกว่าที่เป็นจริง"
+ },
+ {
+  "applicable_document_type_codes": [
+   {
+    "document_type_code": "80",
+    "parent": "DBNG99",
+    "parentfield": "applicable_document_type_codes",
+    "parenttype": "eTax Purpose Code",
+    "doctype": "eTax Purpose Code Applicable"
+   }
+  ],
+  "code": "DBNG99",
+  "docstatus": 0,
+  "doctype": "eTax Purpose Code",
+  "modified": "2026-10-14 10:00:00.000000",
+  "name": "DBNG99",
+  "purpose_name": "เหตุอื่น (ระบุสาเหตุ)",
+  "reason": null
+ },
+ {
+  "applicable_document_type_codes": [
+   {
+    "document_type_code": "80",
+    "parent": "DBNS01",
+    "parentfield": "applicable_document_type_codes",
+    "parenttype": "eTax Purpose Code",
+    "doctype": "eTax Purpose Code Applicable"
+   }
+  ],
+  "code": "DBNS01",
+  "docstatus": 0,
+  "doctype": "eTax Purpose Code",
+  "modified": "2026-10-14 10:00:00.000000",
+  "name": "DBNS01",
+  "purpose_name": "การเพิ่มราคาค่าบริการ (บริการเกินกว่าข้อกำหนดที่ตกลงกัน)",
+  "reason": "การเพิ่มราคาค่าบริการ (บริการเกินกว่าข้อกำหนดที่ตกลงกัน)"
+ },
+ {
+  "applicable_document_type_codes": [
+   {
+    "document_type_code": "80",
+    "parent": "DBNS02",
+    "parentfield": "applicable_document_type_codes",
+    "parenttype": "eTax Purpose Code",
+    "doctype": "eTax Purpose Code Applicable"
+   }
+  ],
+  "code": "DBNS02",
+  "docstatus": 0,
+  "doctype": "eTax Purpose Code",
+  "modified": "2026-10-14 10:00:00.000000",
+  "name": "DBNS02",
+  "purpose_name": "คำนวณราคาค่าบริการ ผิดพลาดต่ำกว่าที่เป็นจริง",
+  "reason": "คำนวณราคาค่าบริการ ผิดพลาดต่ำกว่าที่เป็นจริง"
+ },
+ {
+  "applicable_document_type_codes": [
+   {
+    "document_type_code": "80",
+    "parent": "DBNS99",
+    "parentfield": "applicable_document_type_codes",
+    "parenttype": "eTax Purpose Code",
+    "doctype": "eTax Purpose Code Applicable"
+   }
+  ],
+  "code": "DBNS99",
+  "docstatus": 0,
+  "doctype": "eTax Purpose Code",
+  "modified": "2026-10-14 10:00:00.000000",
+  "name": "DBNS99",
+  "purpose_name": "เหตุอื่น (ระบุสาเหตุ)",
+  "reason": null
+ },
+ {
+  "applicable_document_type_codes": [
+   {
+    "document_type_code": "81",
+    "parent": "CDNG01",
+    "parentfield": "applicable_document_type_codes",
+    "parenttype": "eTax Purpose Code",
+    "doctype": "eTax Purpose Code Applicable"
+   }
+  ],
+  "code": "CDNG01",
+  "docstatus": 0,
+  "doctype": "eTax Purpose Code",
+  "modified": "2026-10-14 10:00:00.000000",
+  "name": "CDNG01",
+  "purpose_name": "ลดราคาสินค้าที่ขาย (สินค้าผิดข้อกำหนดที่ตกลงกัน)",
+  "reason": "ลดราคาสินค้าที่ขาย (สินค้าผิดข้อกำหนดที่ตกลงกัน)"
+ },
+ {
+  "applicable_document_type_codes": [
+   {
+    "document_type_code": "81",
+    "parent": "CDNG02",
+    "parentfield": "applicable_document_type_codes",
+    "parenttype": "eTax Purpose Code",
+    "doctype": "eTax Purpose Code Applicable"
+   }
+  ],
+  "code": "CDNG02",
+  "docstatus": 0,
+  "doctype": "eTax Purpose Code",
+  "modified": "2026-10-14 10:00:00.000000",
+  "name": "CDNG02",
+  "purpose_name": "สินค้าชำรุดเสียหาย",
+  "reason": "สินค้าชำรุดเสียหาย"
+ },
+ {
+  "applicable_document_type_codes": [
+   {
+    "document_type_code": "81",
+    "parent": "CDNG03",
+    "parentfield": "applicable_document_type_codes",
+    "parenttype": "eTax Purpose Code",
+    "doctype": "eTax Purpose Code Applicable"
+   }
+  ],
+  "code": "CDNG03",
+  "docstatus": 0,
+  "doctype": "eTax Purpose Code",
+  "modified": "2026-10-14 10:00:00.000000",
+  "name": "CDNG03",
+  "purpose_name": "สินค้าขาดจำนวนตามที่ตกลงซื้อขาย",
+  "reason": "สินค้าขาดจำนวนตามที่ตกลงซื้อขาย"
+ },
+ {
+  "applicable_document_type_codes": [
+   {
+    "document_type_code": "81",
+    "parent": "CDNG04",
+    "parentfield": "applicable_document_type_codes",
+    "parenttype": "eTax Purpose Code",
+    "doctype": "eTax Purpose Code Applicable"
+   }
+  ],
+  "code": "CDNG04",
+  "docstatus": 0,
+  "doctype": "eTax Purpose Code",
+  "modified": "2026-10-14 10:00:00.000000",
+  "name": "CDNG04",
+  "purpose_name": "คำนวณราคาสินค้าผิดพลาดสูงกว่าที่เป็นจริง",
+  "reason": "คำนวณราคาสินค้าผิดพลาดสูงกว่าที่เป็นจริง"
+ },
+ {
+  "applicable_document_type_codes": [
+   {
+    "document_type_code": "81",
+    "parent": "CDNG05",
+    "parentfield": "applicable_document_type_codes",
+    "parenttype": "eTax Purpose Code",
+    "doctype": "eTax Purpose Code Applicable"
+   }
+  ],
+  "code": "CDNG05",
+  "docstatus": 0,
+  "doctype": "eTax Purpose Code",
+  "modified": "2026-10-14 10:00:00.000000",
+  "name": "CDNG05",
+  "purpose_name": "รับคืนสินค้า (ไม่ตรงตามคำพรรณนา)",
+  "reason": "รับคืนสินค้า (ไม่ตรงตามคำพรรณนา)"
+ },
+ {
+  "applicable_document_type_codes": [
+   {
+    "document_type_code": "81",
+    "parent": "CDNG99",
+    "parentfield": "applicable_document_type_codes",
+    "parenttype": "eTax Purpose Code",
+    "doctype": "eTax Purpose Code Applicable"
+   }
+  ],
+  "code": "CDNG99",
+  "docstatus": 0,
+  "doctype": "eTax Purpose Code",
+  "modified": "2026-10-14 10:00:00.000000",
+  "name": "CDNG99",
+  "purpose_name": "เหตุอื่น (ระบุสาเหตุ)",
+  "reason": null
+ },
+ {
+  "applicable_document_type_codes": [
+   {
+    "document_type_code": "81",
+    "parent": "CDNS01",
+    "parentfield": "applicable_document_type_codes",
+    "parenttype": "eTax Purpose Code",
+    "doctype": "eTax Purpose Code Applicable"
+   }
+  ],
+  "code": "CDNS01",
+  "docstatus": 0,
+  "doctype": "eTax Purpose Code",
+  "modified": "2026-10-14 10:00:00.000000",
+  "name": "CDNS01",
+  "purpose_name": "ลดราคาค่าบริการ (บริการผิดข้อกำหนดที่ตกลงกัน)",
+  "reason": "ลดราคาค่าบริการ (บริการผิดข้อกำหนดที่ตกลงกัน)"
+ },
+ {
+  "applicable_document_type_codes": [
+   {
+    "document_type_code": "81",
+    "parent": "CDNS02",
+    "parentfield": "applicable_document_type_codes",
+    "parenttype": "eTax Purpose Code",
+    "doctype": "eTax Purpose Code Applicable"
+   }
+  ],
+  "code": "CDNS02",
+  "docstatus": 0,
+  "doctype": "eTax Purpose Code",
+  "modified": "2026-10-14 10:00:00.000000",
+  "name": "CDNS02",
+  "purpose_name": "ค่าบริการขาดจำนวน",
+  "reason": "ค่าบริการขาดจำนวน"
+ },
+ {
+  "applicable_document_type_codes": [
+   {
+    "document_type_code": "81",
+    "parent": "CDNS03",
+    "parentfield": "applicable_document_type_codes",
+    "parenttype": "eTax Purpose Code",
+    "doctype": "eTax Purpose Code Applicable"
+   }
+  ],
+  "code": "CDNS03",
+  "docstatus": 0,
+  "doctype": "eTax Purpose Code",
+  "modified": "2026-10-14 10:00:00.000000",
+  "name": "CDNS03",
+  "purpose_name": "คำนวณราคาค่าบริการผิดพลาดสูงกว่าที่เป็นจริง",
+  "reason": "คำนวณราคาค่าบริการผิดพลาดสูงกว่าที่เป็นจริง"
+ },
+ {
+  "applicable_document_type_codes": [
+   {
+    "document_type_code": "81",
+    "parent": "CDNS04",
+    "parentfield": "applicable_document_type_codes",
+    "parenttype": "eTax Purpose Code",
+    "doctype": "eTax Purpose Code Applicable"
+   }
+  ],
+  "code": "CDNS04",
+  "docstatus": 0,
+  "doctype": "eTax Purpose Code",
+  "modified": "2026-10-14 10:00:00.000000",
+  "name": "CDNS04",
+  "purpose_name": "บอกเลิกสัญญาบริการ",
+  "reason": "บอกเลิกสัญญาบริการ"
+ },
+ {
+  "applicable_document_type_codes": [
+   {
+    "document_type_code": "81",
+    "parent": "CDNS99",
+    "parentfield": "applicable_document_type_codes",
+    "parenttype": "eTax Purpose Code",
+    "doctype": "eTax Purpose Code Applicable"
+   }
+  ],
+  "code": "CDNS99",
+  "docstatus": 0,
+  "doctype": "eTax Purpose Code",
+  "modified": "2026-10-14 10:00:00.000000",
+  "name": "CDNS99",
+  "purpose_name": "เหตุอื่น (ระบุสาเหตุ)",
+  "reason": null
+ },
+ {
+  "applicable_document_type_codes": [
+   {
+    "document_type_code": "T01",
+    "parent": "RCTC01",
+    "parentfield": "applicable_document_type_codes",
+    "parenttype": "eTax Purpose Code",
+    "doctype": "eTax Purpose Code Applicable"
+   }
+  ],
+  "code": "RCTC01",
+  "docstatus": 0,
+  "doctype": "eTax Purpose Code",
+  "modified": "2026-10-14 10:00:00.000000",
+  "name": "RCTC01",
+  "purpose_name": "ชื่อผิด",
+  "reason": "ชื่อผิด"
+ },
+ {
+  "applicable_document_type_codes": [
+   {
+    "document_type_code": "T01",
+    "parent": "RCTC02",
+    "parentfield": "applicable_document_type_codes",
+    "parenttype": "eTax Purpose Code",
+    "doctype": "eTax Purpose Code Applicable"
+   }
+  ],
+  "code": "RCTC02",
+  "docstatus": 0,
+  "doctype": "eTax Purpose Code",
+  "modified": "2026-10-14 10:00:00.000000",
+  "name": "RCTC02",
+  "purpose_name": "ที่อยู่ผิด",
+  "reason": "ที่อยู่ผิด"
+ },
+ {
+  "applicable_document_type_codes": [
+   {
+    "document_type_code": "T01",
+    "parent": "RCTC03",
+    "parentfield": "applicable_document_type_codes",
+    "parenttype": "eTax Purpose Code",
+    "doctype": "eTax Purpose Code Applicable"
+   }
+  ],
+  "code": "RCTC03",
+  "docstatus": 0,
+  "doctype": "eTax Purpose Code",
+  "modified": "2026-10-14 10:00:00.000000",
+  "name": "RCTC03",
+  "purpose_name": "รับคืนสินค้า / ยกเลิกบริการ ทั้งจำนวน (ระบุจำนวนเงิน) บาท",
+  "reason": null
+ },
+ {
+  "applicable_document_type_codes": [
+   {
+    "document_type_code": "T01",
+    "parent": "RCTC04",
+    "parentfield": "applicable_document_type_codes",
+    "parenttype": "eTax Purpose Code",
+    "doctype": "eTax Purpose Code Applicable"
+   }
+  ],
+  "code": "RCTC04",
+  "docstatus": 0,
+  "doctype": "eTax Purpose Code",
+  "modified": "2026-10-14 10:00:00.000000",
+  "name": "RCTC04",
+  "purpose_name": "รับคืนสินค้า / ยกเลิกบริการ บางจำนวน (ระบุจำนวนเงิน) บาท",
+  "reason": null
+ },
+ {
+  "applicable_document_type_codes": [
+   {
+    "document_type_code": "T01",
+    "parent": "RCTC99",
+    "parentfield": "applicable_document_type_codes",
+    "parenttype": "eTax Purpose Code",
+    "doctype": "eTax Purpose Code Applicable"
+   }
+  ],
+  "code": "RCTC99",
+  "docstatus": 0,
+  "doctype": "eTax Purpose Code",
+  "modified": "2026-10-14 10:00:00.000000",
+  "name": "RCTC99",
+  "purpose_name": "เหตุอื่นๆ (ระบุสาเหตุ)",
+  "reason": null
+ }
+]
