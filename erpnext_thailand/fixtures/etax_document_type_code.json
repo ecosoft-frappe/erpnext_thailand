@@ -1,0 +1,74 @@
+[
+ {
+  "code": "380",
+  "description": "ใบแจ้งหนี้",
+  "docstatus": 0,
+  "doctype": "eTax Document Type Code",
+  "modified": "2026-10-14 10:00:00.000000",
+  "name": "380"
+ },
+ {
+  "code": "388",
+  "description": "ใบกำกับภาษี",
+  "docstatus": 0,
+  "doctype": "eTax Document Type Code",
+  "modified": "2026-10-14 10:00:00.000000",
+  "name": "388"
+ },
+ {
+  "code": "T01",
+  "description": "ใบรับ (ใบเสร็จรับเงิน)",
+  "docstatus": 0,
+  "doctype": "eTax Document Type Code",
+  "modified": "2026-10-14 10:00:00.000000",
+  "name": "T01"
+ },
+ {
+  "code": "T02",
+  "description": "ใบแจ้งหนี้/ใบกำกับภาษี",
+  "docstatus": 0,
+  "doctype": "eTax Document Type Code",
+  "modified": "2026-10-14 10:00:00.000000",
+  "name": "T02"
+ },
+ {
+  "code": "T03",
+  "description": "ใบเสร็จรับเงิน/ใบกำกับภาษี",
+  "docstatus": 0,
+  "doctype": "eTax Document Type Code",
+  "modified": "2026-10-14 10:00:00.000000",
+  "name": "T03"
+ },
+ {
+  "code": "T04",
+  "description": "ใบส่งของ/ใบกำกับภาษี",
+  "docstatus": 0,
+  "doctype": "eTax Document Type Code",
+  "modified": "2026-10-14 10:00:00.000000",
+  "name": "T04"
+ },
+ {
+  "code": "T05",
+  "description": "ใบกำกับภาษีอย่างย่อ",
+  "docstatus": 0,
+  "doctype": "eTax Document Type Code",
+  "modified": "2026-10-14 10:00:00.000000",
+  "name": "T05"
+ },
+ {
+  "code": "80",
+  "description": "ใบเพิ่มหนี้",
+  "docstatus": 0,
+  "doctype": "eTax Document Type Code",
+  "modified": "2026-10-14 10:00:00.000000",
+  "name": "80"
+ },
+ {
+  "code": "81",
+  "description": "ใบลดหนี้",
+  "docstatus": 0,
+  "doctype": "eTax Document Type Code",
+  "modified": "2026-10-14 10:00:00.000000",
+  "name": "81"
+ }
+]

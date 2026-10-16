@@ -44,6 +44,8 @@ fixtures = [
 			]
 		],
 	},
+	{"doctype": "eTax Document Type Code"},
+	{"doctype": "eTax Purpose Code"},
 	{
 		"doctype": "Custom Field",
 		"filters": [
@@ -108,8 +110,11 @@ doctype_js = {
 	"Currency Exchange Settings": "public/js/currency_exchange_settings.js",
 }
 
+doctype_list_js = {
+	"Sales Invoice": "public/js/etax_list.js",
+	"Payment Entry": "public/js/etax_list.js",
+}
 
-# doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
 # doctype_calendar_js = {"doctype" : "public/js/doctype_calendar.js"}
 
@@ -200,7 +205,12 @@ doc_events = {
 		"after_insert": "erpnext_thailand.custom.custom_api.create_tax_invoice_on_gl_tax",
 	},
 	"Payment Entry": {
-		"validate": "erpnext_thailand.custom.custom_api.validate_company_address",
+		"validate": [
+			"erpnext_thailand.custom.custom_api.validate_company_address",
+			"erpnext_thailand.thai_etax.etax_service.validate_etax",
+		],
+		"before_cancel": "erpnext_thailand.thai_etax.etax_service.validate_cancel",
+		"before_update_after_submit": "erpnext_thailand.thai_etax.etax_service.validate_update_after_submit",
 		"on_update": "erpnext_thailand.custom.custom_api.clear_invoice_undue_tax",
 		"on_submit": [
 			"erpnext_thailand.custom.payment_entry.reconcile_undue_tax",
@@ -214,9 +224,16 @@ doc_events = {
 		"on_submit": "erpnext_thailand.custom.unreconcile_payment.unreconcile_undue_tax",
 	},
 	"Sales Invoice": {
-		"validate": "erpnext_thailand.custom.custom_api.validate_sales_tax_invoice_zero_tax",
+		"validate": [
+			"erpnext_thailand.custom.custom_api.validate_sales_tax_invoice_zero_tax",
+			"erpnext_thailand.thai_etax.etax_service.validate_etax",
+		],
 		"on_submit": "erpnext_thailand.custom.custom_api.create_sales_tax_invoice_on_zero_tax",
-		"before_cancel": "erpnext_thailand.custom.custom_api.cancel_related_tax_invoice",
+		"before_update_after_submit": "erpnext_thailand.thai_etax.etax_service.validate_update_after_submit",
+		"before_cancel": [
+			"erpnext_thailand.thai_etax.etax_service.validate_cancel",
+			"erpnext_thailand.custom.custom_api.cancel_related_tax_invoice",
+		],
 		"before_validate": [
 			"erpnext_thailand.custom.deposit_utils.validate_invoice",
 			"erpnext_thailand.custom.deposit_utils.apply_deposit_deduction",
@@ -277,6 +294,12 @@ doc_events = {
 #         "erpnext_thailand.tasks.monthly"
 #     ],
 # }
+
+scheduler_events = {
+	"all": [
+		"erpnext_thailand.thai_etax.etax_service.update_processing_documents",
+	],
+}
 
 # Testing
 # -------
