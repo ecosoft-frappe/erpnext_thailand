@@ -9,6 +9,7 @@ from erpnext_thailand.constants import (
 	BILLING_CUSTOM_FIELDS,
 	DEPOSIT_CUSTOM_FIELDS,
 	ERP_CUSTOM_FIELDS,
+	ETAX_CUSTOM_FIELDS,
 	ERP_PROPERTY_SETTERS,
 	HRMS_CUSTOM_FIELDS,
 )
@@ -39,6 +40,7 @@ def make_custom_fields():
 	create_custom_fields(ERP_CUSTOM_FIELDS, ignore_validate=True)
 	create_custom_fields(BILLING_CUSTOM_FIELDS, ignore_validate=True)
 	create_custom_fields(DEPOSIT_CUSTOM_FIELDS, ignore_validate=True)
+	create_custom_fields(ETAX_CUSTOM_FIELDS, ignore_validate=True)
 	if "hrms" in frappe.get_installed_apps():
 		print("Setup custom fields for hrms...")
 		create_custom_fields(HRMS_CUSTOM_FIELDS, ignore_validate=True)

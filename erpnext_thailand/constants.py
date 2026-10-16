@@ -984,3 +984,142 @@ DEPOSIT_CUSTOM_FIELDS = {
 		},
 	],
 }
+
+
+def _etax_document_fields(insert_after, purpose_depends_on):
+	"""e-Tax tab shared by Sales Invoice and Payment Entry"""
+	return [
+		{
+			"fieldname": "etax_tab",
+			"fieldtype": "Tab Break",
+			"label": "e-Tax",
+			"insert_after": insert_after,
+		},
+		{
+			"fieldname": "etax_section",
+			"fieldtype": "Section Break",
+			"label": "e-Tax Information",
+			"insert_after": "etax_tab",
+		},
+		{
+			"fieldname": "etax_document_type",
+			"fieldtype": "Link",
+			"label": "Document Type",
+			"options": "eTax Document Type",
+			"insert_after": "etax_section",
+			"read_only": 1,
+			"allow_on_submit": 1,
+			"no_copy": 1,
+		},
+		{
+			"fieldname": "etax_document_type_code",
+			"fieldtype": "Data",
+			"label": "Document Type Code",
+			"insert_after": "etax_document_type",
+			"read_only": 1,
+			"allow_on_submit": 1,
+			"no_copy": 1,
+		},
+		{
+			"fieldname": "etax_status",
+			"fieldtype": "Select",
+			"label": "e-Tax Status",
+			"options": "\nProcessing\nSuccess\nError\nReplaced",
+			"insert_after": "etax_document_type_code",
+			"read_only": 1,
+			"allow_on_submit": 1,
+			"no_copy": 1,
+			"in_list_view": 1,
+			"in_standard_filter": 1,
+			"search_index": 1,
+		},
+		{
+			"fieldname": "etax_column_break",
+			"fieldtype": "Column Break",
+			"insert_after": "etax_status",
+		},
+		{
+			"fieldname": "etax_transaction_code",
+			"fieldtype": "Data",
+			"label": "Transaction Code",
+			"insert_after": "etax_column_break",
+			"read_only": 1,
+			"allow_on_submit": 1,
+			"no_copy": 1,
+		},
+		{
+			"fieldname": "etax_error_code",
+			"fieldtype": "Data",
+			"label": "Error Code",
+			"insert_after": "etax_transaction_code",
+			"read_only": 1,
+			"allow_on_submit": 1,
+			"no_copy": 1,
+		},
+		{
+			"fieldname": "etax_error_message",
+			"fieldtype": "Small Text",
+			"label": "Error Message",
+			"insert_after": "etax_error_code",
+			"read_only": 1,
+			"allow_on_submit": 1,
+			"no_copy": 1,
+		},
+		{
+			"fieldname": "etax_additional_section",
+			"fieldtype": "Section Break",
+			"label": "Additional Information",
+			"insert_after": "etax_error_message",
+		},
+		{
+			"depends_on": purpose_depends_on,
+			"fieldname": "etax_purpose_code",
+			"fieldtype": "Link",
+			"label": "Purpose Code",
+			"options": "eTax Purpose Code",
+			"insert_after": "etax_additional_section",
+			"no_copy": 1,
+			"allow_on_submit": 1,
+			"description": "Required before signing a credit note, debit note or replacement as e-Tax",
+		},
+		{
+			"fieldname": "etax_purpose_column_break",
+			"fieldtype": "Column Break",
+			"insert_after": "etax_purpose_code",
+		},
+		{
+			"depends_on": purpose_depends_on,
+			"fieldname": "etax_purpose",
+			"fieldtype": "Data",
+			"label": "Purpose",
+			"insert_after": "etax_purpose_column_break",
+			"no_copy": 1,
+			"allow_on_submit": 1,
+		},
+	]
+
+
+ETAX_CUSTOM_FIELDS = {
+	"Customer": [
+		{
+			"fieldname": "email_etax",
+			"fieldtype": "Data",
+			"label": "e-Tax Email",
+			"insert_after": "branch_code",
+			"description": "Email addresses for e-Tax delivery, separated by commas",
+		},
+	],
+	"Sales Invoice": _etax_document_fields(
+		"remarks", "eval:doc.is_return || doc.is_debit_note || doc.amended_from"
+	),
+	"Sales Invoice Item": [
+		{
+			"fieldname": "skip_etax",
+			"fieldtype": "Check",
+			"label": "Skip e-Tax",
+			"insert_after": "item_tax_template",
+			"description": "Do not send this line to e-Tax",
+		},
+	],
+	"Payment Entry": _etax_document_fields("title", "eval:doc.amended_from"),
+}

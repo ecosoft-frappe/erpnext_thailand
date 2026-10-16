@@ -1,0 +1,89 @@
+{
+ "actions": [],
+ "allow_import": 1,
+ "autoname": "field:code",
+ "creation": "2026-10-14 10:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "code",
+  "purpose_name",
+  "reason",
+  "applicable_document_type_codes"
+ ],
+ "fields": [
+  {
+   "fieldname": "code",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Code",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "purpose_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Purpose",
+   "reqd": 1
+  },
+  {
+   "description": "Default purpose text sent to e-Tax. Leave empty when the user must specify it.",
+   "fieldname": "reason",
+   "fieldtype": "Data",
+   "label": "Default Reason"
+  },
+  {
+   "fieldname": "applicable_document_type_codes",
+   "fieldtype": "Table MultiSelect",
+   "in_list_view": 1,
+   "label": "Applicable Document Type Codes",
+   "options": "eTax Purpose Code Applicable",
+   "reqd": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-10-14 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Thai eTax",
+ "name": "eTax Purpose Code",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "read": 1,
+   "role": "All"
+  }
+ ],
+ "search_fields": "purpose_name",
+ "show_title_field_in_link": 1,
+ "sort_field": "name",
+ "sort_order": "ASC",
+ "states": [],
+ "title_field": "purpose_name"
+}

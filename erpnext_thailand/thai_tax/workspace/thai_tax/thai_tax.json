@@ -1,7 +1,7 @@
 {
  "app": "erpnext_thailand",
  "charts": [],
- "content": "[{\"id\":\"0xFTodMRF1\",\"type\":\"card\",\"data\":{\"card_name\":\"Tax Invoices\",\"col\":4}},{\"id\":\"MOY2MzVVaE\",\"type\":\"card\",\"data\":{\"card_name\":\"Reports\",\"col\":4}},{\"id\":\"NLSyjJJigj\",\"type\":\"card\",\"data\":{\"card_name\":\"Settings\",\"col\":4}},{\"id\":\"5tON-pYsm4\",\"type\":\"card\",\"data\":{\"card_name\":\"Billing\",\"col\":4}}]",
+ "content": "[{\"id\":\"0xFTodMRF1\",\"type\":\"card\",\"data\":{\"card_name\":\"Tax Invoices\",\"col\":4}},{\"id\":\"MOY2MzVVaE\",\"type\":\"card\",\"data\":{\"card_name\":\"Reports\",\"col\":4}},{\"id\":\"NLSyjJJigj\",\"type\":\"card\",\"data\":{\"card_name\":\"Settings\",\"col\":4}},{\"id\":\"5tON-pYsm4\",\"type\":\"card\",\"data\":{\"card_name\":\"Billing\",\"col\":4}},{\"id\":\"eTaxCard01\",\"type\":\"card\",\"data\":{\"card_name\":\"e-Tax\",\"col\":4}}]",
  "creation": "2023-06-22 11:35:38.341907",
  "custom_blocks": [],
  "docstatus": 0,
@@ -160,9 +160,57 @@
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "e-Tax",
+   "link_count": 4,
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "eTax Connection",
+   "link_count": 0,
+   "link_to": "eTax Connection",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "eTax Document Type",
+   "link_count": 0,
+   "link_to": "eTax Document Type",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "eTax Purpose Code",
+   "link_count": 0,
+   "link_to": "eTax Purpose Code",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "eTax Document Type Code",
+   "link_count": 0,
+   "link_to": "eTax Document Type Code",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
   }
  ],
- "modified": "2026-02-03 14:24:22.927589",
+ "modified": "2026-10-14 12:00:00.000000",
  "modified_by": "Administrator",
  "module": "Thai Tax",
  "name": "Thai Tax",
