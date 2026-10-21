@@ -1,0 +1,105 @@
+{
+ "actions": [],
+ "autoname": "prompt",
+ "creation": "2026-10-14 10:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "applies_to",
+  "document_type_code",
+  "column_break_1",
+  "template_source",
+  "print_format",
+  "server_print_format"
+ ],
+ "fields": [
+  {
+   "fieldname": "applies_to",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Applies To",
+   "options": "Sales Invoice\nCredit Note\nDebit Note\nPayment Entry",
+   "reqd": 1
+  },
+  {
+   "fieldname": "document_type_code",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Document Type Code",
+   "options": "eTax Document Type Code",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "ERPNext",
+   "description": "ERPNext: render the print format here and send the PDF.<br>eTax Server: let the e-Tax server render its own print format.",
+   "fieldname": "template_source",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Template Source",
+   "options": "ERPNext\neTax Server",
+   "reqd": 1
+  },
+  {
+   "depends_on": "eval:doc.template_source=='ERPNext'",
+   "fieldname": "print_format",
+   "fieldtype": "Link",
+   "label": "Print Format",
+   "mandatory_depends_on": "eval:doc.template_source=='ERPNext'",
+   "options": "Print Format"
+  },
+  {
+   "depends_on": "eval:doc.template_source=='eTax Server'",
+   "description": "Name of the print format on the e-Tax server",
+   "fieldname": "server_print_format",
+   "fieldtype": "Data",
+   "label": "Server Print Format",
+   "mandatory_depends_on": "eval:doc.template_source=='eTax Server'"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-10-14 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Thai eTax",
+ "name": "eTax Document Type",
+ "naming_rule": "Set by user",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "read": 1,
+   "role": "Accounts User"
+  }
+ ],
+ "sort_field": "name",
+ "sort_order": "ASC",
+ "states": []
+}

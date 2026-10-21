@@ -1,0 +1,135 @@
+{
+ "actions": [],
+ "autoname": "field:company",
+ "creation": "2026-10-14 10:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "company",
+  "enabled",
+  "connection_section",
+  "server_url",
+  "column_break_1",
+  "api_key",
+  "api_secret",
+  "options_section",
+  "send_email",
+  "require_email",
+  "column_break_2",
+  "replacement_lock_day"
+ ],
+ "fields": [
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "default": "1",
+   "fieldname": "enabled",
+   "fieldtype": "Check",
+   "label": "Enable e-Tax"
+  },
+  {
+   "fieldname": "connection_section",
+   "fieldtype": "Section Break",
+   "label": "Frappe e-Tax Server"
+  },
+  {
+   "description": "Base URL of the Frappe e-Tax server, without an API route, e.g. https://etax.example.com",
+   "fieldname": "server_url",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Server URL",
+   "options": "URL",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "api_key",
+   "fieldtype": "Data",
+   "label": "API Key",
+   "reqd": 1
+  },
+  {
+   "fieldname": "api_secret",
+   "fieldtype": "Password",
+   "label": "API Secret",
+   "reqd": 1
+  },
+  {
+   "fieldname": "options_section",
+   "fieldtype": "Section Break",
+   "label": "Options"
+  },
+  {
+   "default": "0",
+   "description": "Ask the e-Tax server to email the signed document to the customer's e-Tax Email",
+   "fieldname": "send_email",
+   "fieldtype": "Check",
+   "label": "Send Email"
+  },
+  {
+   "default": "0",
+   "depends_on": "send_email",
+   "description": "Block signing when the customer has no e-Tax Email. Otherwise, sign without requesting email delivery.",
+   "fieldname": "require_email",
+   "fieldtype": "Check",
+   "label": "Require Email Before Signing e-Tax"
+  },
+  {
+   "fieldname": "column_break_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "1",
+   "description": "Day of the month after the document date until which a replacement can be created, i.e., 1 means until the 1st of the next month. 0 means no limit.",
+   "fieldname": "replacement_lock_day",
+   "fieldtype": "Int",
+   "label": "Replacement Lock Day"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-10-18 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Thai eTax",
+ "name": "eTax Connection",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}
