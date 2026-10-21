@@ -39,6 +39,8 @@ def create_tax_invoice_on_gl_tax(doc, method):
 		return
 
 	voucher = frappe.get_doc(doc.voucher_type, doc.voucher_no)
+	if voucher.docstatus == 0:
+		return
 
 	is_return = False
 	if doc.voucher_type in ["Sales Invoice", "Purchase Invoice"]:
