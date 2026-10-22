@@ -10,7 +10,10 @@ class WithholdingTaxCert(Document):
 		self.update_payment_entry_wht_status()
 		# Voucher changed, also refresh the previously linked payment
 		before = self.get_doc_before_save()
-		if before and (before.voucher_type, before.voucher_no) != (self.voucher_type, self.voucher_no):
+		if before and (before.voucher_type, before.voucher_no) != (
+			self.voucher_type,
+			self.voucher_no,
+		):
 			update_payment_entry_wht_status(before.voucher_type, before.voucher_no)
 
 	def on_submit(self):
@@ -38,4 +41,6 @@ def update_payment_entry_wht_status(voucher_type, voucher_no):
 		pluck="docstatus",
 	)
 	status = "Issued" if 1 in docstatus else "Not Issued"
-	frappe.db.set_value("Payment Entry", voucher_no, "wht_status", status, update_modified=False)
+	frappe.db.set_value(
+		"Payment Entry", voucher_no, "wht_status", status, update_modified=False
+	)

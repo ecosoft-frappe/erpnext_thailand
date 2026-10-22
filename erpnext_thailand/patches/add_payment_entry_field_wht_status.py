@@ -9,12 +9,11 @@ from erpnext_thailand.thai_tax.doctype.withholding_tax_cert.withholding_tax_cert
 
 def execute():
 	custom_fields = {
-		"Payment Entry": list(
-			filter(
-				lambda l: l["fieldname"] == "wht_status",
-				ERP_CUSTOM_FIELDS["Payment Entry"],
-			)
-		)
+		"Payment Entry": [
+			field
+			for field in ERP_CUSTOM_FIELDS["Payment Entry"]
+			if field["fieldname"] == "wht_status"
+		]
 	}
 	create_custom_fields(custom_fields, ignore_validate=True)
 
