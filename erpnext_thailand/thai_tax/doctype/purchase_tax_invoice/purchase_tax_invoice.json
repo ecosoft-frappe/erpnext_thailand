@@ -168,16 +168,13 @@
    "allow_on_submit": 1,
    "fieldname": "tax_id",
    "fieldtype": "Data",
-   "is_virtual": 1,
-   "label": "Tax ID",
-   "options": "frappe.get_doc('Supplier', doc.party).tax_id"
+   "label": "Tax ID"
   },
   {
+   "allow_on_submit": 1,
    "fieldname": "branch_code",
    "fieldtype": "Data",
-   "is_virtual": 1,
-   "label": "Branch Code",
-   "options": "frappe.get_doc('Supplier', doc.party).branch_code"
+   "label": "Branch Code"
   },
   {
    "fieldname": "reference_section",
@@ -235,7 +232,7 @@
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2025-05-19 15:22:26.907679",
+ "modified": "2026-10-26 13:00:00.000000",
  "modified_by": "Administrator",
  "module": "Thai Tax",
  "name": "Purchase Tax Invoice",

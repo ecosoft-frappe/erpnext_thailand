@@ -93,7 +93,6 @@ def get_columns():
 def get_data(filters):
 
 	tinv = frappe.qb.DocType("Sales Tax Invoice")
-	cust = frappe.qb.DocType("Customer")
 	addr = frappe.qb.DocType("Address")
 	comp = frappe.qb.DocType("Company")
 	addr_company = addr.as_("company_address")
@@ -104,10 +103,6 @@ def get_data(filters):
 
 	query = (
 		frappe.qb.from_(tinv)
-		.left_join(cust)
-		.on(cust.name == tinv.party)
-		.left_join(addr)
-		.on(addr.name == cust.customer_primary_address)
 		.left_join(comp)
 		.on(comp.name == tinv.company)
 		.left_join(addr_company)
@@ -128,7 +123,7 @@ def get_data(filters):
 			.else_(concat(tinv.name, " (CANCEL)"))
 			.as_("name"),
 			tinv.party_name.as_("party_name"),
-			cust.tax_id.as_("tax_id"),
+			tinv.tax_id.as_("tax_id"),
 			Case().when(tinv.docstatus == 1, round(tinv.tax_base, 2)).else_(0).as_("tax_base"),
 			Case()
 			.when(tinv.docstatus == 1, round(tinv.tax_amount, 2))
@@ -139,7 +134,7 @@ def get_data(filters):
 			tinv.voucher_no.as_("voucher_no"),
 			comp.company_name.as_("company_name"),
 			comp.tax_id.as_("company_tax_id"),
-			addr.branch_code.as_("branch_code"),
+			tinv.branch_code.as_("branch_code"),
 		)
 		.where(tinv.docstatus.isin([1, 2]))
 		.orderby(tinv.name)
