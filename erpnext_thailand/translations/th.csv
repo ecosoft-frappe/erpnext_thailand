@@ -299,3 +299,6 @@
 "Year","ปี",""
 "Zip Code","รหัสไปรษณีย์",""
 "{}'s Deposit Account is not set in Item Defaults","บัญชีเงินมัดจำของ {} ยังไม่ได้ตั้งค่าในค่าเริ่มต้นของรายการ",""
+"Refresh Tax ID / Branch Code","ดึงเลขประจำตัวผู้เสียภาษี / รหัสสาขาอีกครั้ง",""
+"Tax ID and Branch Code are already up to date","เลขประจำตัวผู้เสียภาษีและรหัสสาขาเป็นข้อมูลล่าสุดแล้ว",""
+"Change Tax ID from {0} to {1} and Branch Code from {2} to {3}?","เปลี่ยนเลขประจำตัวผู้เสียภาษีจาก {0} เป็น {1} และรหัสสาขาจาก {2} เป็น {3} หรือไม่?",""

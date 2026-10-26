@@ -3,7 +3,7 @@
 
 import frappe
 from frappe import _
-from frappe.query_builder import CustomFunction
+from frappe.query_builder import Case, CustomFunction
 
 
 def execute(filters=None):
@@ -111,11 +111,24 @@ def get_data(filters):
 	addr = frappe.qb.DocType("Address")
 	comp = frappe.qb.DocType("Company")
 	addr_company = addr.as_("company_address")
+	pinv = frappe.qb.DocType("Purchase Invoice")
+	addr_pinv = addr.as_("purchase_invoice_address")
 	round = CustomFunction("round", ["value", "digit"])
 	coalesce = CustomFunction("coalesce", ["value1", "value2"])
 	month = CustomFunction("month", ["date"])
 	year = CustomFunction("year", ["date"])
 	concat_ws = CustomFunction("concat_ws", ["separator", "1", "2", "3", "4", "5", "6"])
+
+	def address_text(address):
+		return concat_ws(
+			" ",
+			address.address_line1,
+			address.address_line2,
+			address.city,
+			address.county,
+			address.state,
+			address.pincode,
+		)
 
 	query = (
 		frappe.qb.from_(tinv)
@@ -123,6 +136,10 @@ def get_data(filters):
 		.on(sup.name == tinv.party)
 		.left_join(addr)
 		.on(addr.name == sup.supplier_primary_address)
+		.left_join(pinv)
+		.on((tinv.voucher_type == "Purchase Invoice") & (pinv.name == tinv.voucher_no))
+		.left_join(addr_pinv)
+		.on(addr_pinv.name == pinv.supplier_address)
 		.left_join(comp)
 		.on(comp.name == tinv.company)
 		.left_join(addr_company)
@@ -139,18 +156,19 @@ def get_data(filters):
 			addr_company.pincode.as_("company_pincode"),
 			addr_company.branch_code.as_("company_branch_code"),
 			coalesce(tinv.number, tinv.name).as_("name"),
-			sup.supplier_name.as_("party_name"),
-			sup.tax_id.as_("tax_id"),
-			sup.branch_code.as_("branch_code"),
-			concat_ws(
-				" ",
-				addr.address_line1,
-				addr.address_line2,
-				addr.city,
-				addr.county,
-				addr.state,
-				addr.pincode,
-			).as_("supplier_address"),
+			tinv.party_name.as_("party_name"),
+			tinv.tax_id.as_("tax_id"),
+			tinv.branch_code.as_("branch_code"),
+			# Same address the Tax ID is taken from, see get_supplier_tax_id_branch_code()
+			Case()
+			.when(
+				(pinv.supplier == tinv.party)
+				& (addr_pinv.tax_id.notnull())
+				& (addr_pinv.tax_id != ""),
+				address_text(addr_pinv),
+			)
+			.else_(address_text(addr))
+			.as_("supplier_address"),
 			round(tinv.tax_base, 2).as_("tax_base"),
 			round(tinv.tax_amount, 2).as_("tax_amount"),
 			tinv.voucher_type.as_("voucher_type"),

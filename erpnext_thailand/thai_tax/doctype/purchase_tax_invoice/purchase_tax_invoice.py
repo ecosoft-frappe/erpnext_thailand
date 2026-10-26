@@ -24,8 +24,12 @@ class PurchaseTaxInvoice(Document):
 		super().cancel()
 
 	def validate(self):
+		self.set_tax_id_branch_code()
 		self.validate_account()
 		self.compute_report_date()
+
+	def before_update_after_submit(self):
+		self.set_tax_id_branch_code()
 
 	def on_update_after_submit(self):
 		if self.get_doc_before_save():  # Some change is made
@@ -54,6 +58,21 @@ class PurchaseTaxInvoice(Document):
 					row.supplier = self.party
 					row.save(ignore_permissions=True)
 
+	def set_tax_id_branch_code(self):
+		"""Keep the supplier tax info at the time the tax invoice is issued"""
+		if self.is_new() and self.tax_id:  # Given by the caller
+			return
+		if not self.is_new() and not self.has_value_changed("party"):
+			return
+		self.tax_id, self.branch_code = get_supplier_tax_id_branch_code(
+			self.party, self.voucher_type, self.voucher_no
+		)
+
+	@frappe.whitelist()
+	def get_refreshed_tax_id_branch_code(self):
+		"""Tax ID and Branch Code from the address or supplier, for the Refresh button"""
+		return get_supplier_tax_id_branch_code(self.party, self.voucher_type, self.voucher_no)
+
 	def compute_report_date(self):
 		if int(self.months_delayed) == 0:
 			self.db_set("report_date", self.date)
@@ -71,3 +90,23 @@ class PurchaseTaxInvoice(Document):
 					"- Returning Invoice with both negative rate and quantity is incorrect"
 				)
 			)
+
+
+def get_supplier_tax_id_branch_code(supplier, voucher_type=None, voucher_no=None):
+	"""Use Tax ID and Branch Code of the Purchase Invoice supplier address if it has Tax ID,
+	otherwise use the ones of the supplier"""
+	if voucher_type == "Purchase Invoice" and voucher_no:
+		invoice = frappe.db.get_value(
+			"Purchase Invoice", voucher_no, ["supplier", "supplier_address"], as_dict=True
+		)
+		if invoice and invoice.supplier == supplier and invoice.supplier_address:
+			address = frappe.db.get_value(
+				"Address", invoice.supplier_address, ["tax_id", "branch_code"], as_dict=True
+			)
+			if address and address.tax_id:
+				return address.tax_id, address.branch_code or "00000"
+	supplier = (
+		frappe.db.get_value("Supplier", supplier, ["tax_id", "branch_code"], as_dict=True)
+		or {}
+	)
+	return supplier.get("tax_id"), supplier.get("branch_code")
