@@ -22,6 +22,7 @@ def after_install():
 		make_property_setters()
 		print("Importing Thailand Zip Codes...")
 		import_thai_zip_code_data()
+		add_thai_tax_to_accounts_sidebar()
 		click.secho("Thank you for installing ERPNext Thailand!", fg="green")
 	except Exception as e:
 		BUG_REPORT_URL = "https://github.com/ecosoft-frappe/erpnext_thailand/issues/new"
@@ -53,6 +54,66 @@ def make_property_setters():
 			for property_setter in property_setters:
 				for_doctype = not property_setter[0]
 				make_property_setter(doctype, *property_setter, for_doctype)
+
+
+THAI_TAX_SIDEBAR_LINKS = (
+	("DocType", "Sales Tax Invoice"),
+	("DocType", "Purchase Tax Invoice"),
+	("DocType", "Sales Billing"),
+	("DocType", "Purchase Billing"),
+	("DocType", "Payment Receipt"),
+	("Report", "Sales Tax Report"),
+	("Report", "Purchase Tax Report"),
+	("Report", "PND3"),
+	("Report", "PND53"),
+	("DocType", "Thai Tax Settings"),
+	("DocType", "Withholding Tax Type"),
+)
+
+
+def add_thai_tax_to_accounts_sidebar():
+	"""Add a Thai Tax section below Journal Entry in the Accounts sidebar (site layer)."""
+	from frappe.desk.doctype.custom_sidebar import custom_sidebar
+
+	if not frappe.db.exists("DocType", "Custom Sidebar"):
+		return
+
+	items = custom_sidebar.layer_arrangement("Accounts", None)
+	if any(item.get("type") == "Section Break" and item.get("label") == "Thai Tax" for item in items):
+		return
+
+	print("Adding Thai Tax to Accounts sidebar...")
+	section = [
+		{
+			"type": "Section Break",
+			"label": "Thai Tax",
+			"icon": "receipt-text",
+			"indent": 1,
+			"collapsible": 1,
+			"keep_closed": 1,
+			"child": 0,
+			"added": 1,
+		}
+	]
+	section += [
+		{
+			"type": "Link",
+			"label": link_to,
+			"link_type": link_type,
+			"link_to": link_to,
+			"child": 1,
+			"collapsible": 1,
+			"added": 1,
+		}
+		for link_type, link_to in THAI_TAX_SIDEBAR_LINKS
+	]
+
+	position = next(
+		(i + 1 for i, item in enumerate(items) if item.get("link_to") == "Journal Entry"),
+		len(items),
+	)
+	items[position:position] = section
+	custom_sidebar._save_customization("Accounts", items, user=None)
 
 
 def after_app_install(app_name):
