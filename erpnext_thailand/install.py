@@ -72,10 +72,16 @@ THAI_TAX_SIDEBAR_LINKS = (
 
 
 def add_thai_tax_to_accounts_sidebar():
-	"""Add a Thai Tax section below Journal Entry in the Accounts sidebar (site layer)."""
+	"""Add a Thai Tax section below Journal Entry in the Accounts sidebar (site layer).
+
+	Only for Frappe versions with `Custom Sidebar` (v16.52+); a no-op on older versions.
+	"""
+	if not frappe.db.exists("DocType", "Custom Sidebar"):
+		return
+
 	from frappe.desk.doctype.custom_sidebar import custom_sidebar
 
-	if not frappe.db.exists("DocType", "Custom Sidebar"):
+	if not all(hasattr(custom_sidebar, fn) for fn in ("layer_arrangement", "_save_customization")):
 		return
 
 	items = custom_sidebar.layer_arrangement("Accounts", None)
